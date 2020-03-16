@@ -15,7 +15,7 @@
     <!-- <a class="navigation_link" href="javascript:void(0);" @click="link('/BuyMain')"><i class="material-icons">local_mall</i>구매</a> -->
     <a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineMain')"><i class="material-icons">shopping_cart</i>온라인</a>
     <a class="navigation_link" href="javascript:void(0);" @click="link('/HumMain')"><i class="material-icons">perm_contact_calendar</i>인재DB</a>
-    <a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineSale')" style="display:none;" id="OnLineSale"><i class="material-icons">local_atm</i>온라인판매</a>
+    <a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineSale')" id="OnLineSale"><i class="material-icons">local_atm</i>온라인판매</a>
   </nav>
 </template>
 
