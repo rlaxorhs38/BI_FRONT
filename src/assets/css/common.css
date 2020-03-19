@@ -225,6 +225,15 @@ address {
   padding-bottom: 0 !important;
 }
 
+.npt {
+  padding-top: 0 !important;
+}
+
+.nptb {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 .fnone {
   float: none !important;
 }
@@ -659,6 +668,12 @@ address {
   padding-bottom: 20px !important;
 }
 
+.ml30 {
+  margin-left: 30px !important;
+}
+.mr30 {
+  margin-right: 30px !important;
+}
 .mt30 {
   margin-top: 30px !important;
 }
@@ -2519,6 +2534,15 @@ origin code
   height: 40px;
 }
 
+.table_condensed>tbody>tr>td, .table_condensed>tbody>tr>th, .table_condensed>tfoot>tr>td, .table_condensed>tfoot>tr>th, .table_condensed>thead>tr>td, .table_condensed>thead>tr>th {
+  padding: 3px !important;
+  height: auto !important;
+}
+
+.table_condensed>tbody>tr {
+  height: auto !important;
+}
+
 .tbl_sheet {
   padding-bottom: 20px;
 }
@@ -2539,7 +2563,7 @@ origin code
 }
 .tbl_sheet .tbl th,
 .tbl_sheet .tbl td {
-  height: 44px;
+  height: 36px;
   padding: 7px 10px;
   border-right: 0;
   background-color: transparent;
@@ -8222,4 +8246,13 @@ author : hj
 .tbl_sheet.cross_w_fixed .tbl tbody tr.tbl_hover_none td:hover::before,
 .tbl_sheet.cross_w_fixed .tbl thead.tbl_hover_none th:hover::after {
     background: none;
+}
+
+.rounded{
+  -moz-border-radius:20px 20px 20px 20px; 
+  border-radius:20px 20px 20px 20px;
+  border:solid 1px #ffffff;
+  background-color:#3f93f5;
+  padding:5px;
+  color:#ffffff;
 }
