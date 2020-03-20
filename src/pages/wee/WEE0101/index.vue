@@ -1308,7 +1308,7 @@ export default {
       delete tempData.LTOTAL
       delete tempData.CTOTAL
       tempData = _.values(tempData)
-      for(let i=0; i<12; i++){
+      for(let i=0; i<new Date().getMonth()+1; i++){
         let obj = {}
         obj.MONTH = (i+1) + "월"
         obj.CVALUE = this.$options.filters.nanToDot(tempData[i])
