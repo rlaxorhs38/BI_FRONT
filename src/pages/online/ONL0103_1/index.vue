@@ -55,7 +55,7 @@
                           <th colspan="3">{{ year-3 }}</th>
                           <th colspan="3">{{ year-2 }}</th>
                           <th colspan="3">{{ year-1 }}</th>
-                          <th colspan="3" class="teamSelector">{{ year }}</th>
+                          <th colspan="3">{{ year }}</th>
                         </tr>
                         <tr>
                           <th>구분</th>
@@ -117,7 +117,7 @@
             <div class="col_md_12">
               <div class="cont_box">
                 <div class="tit">
-                  <strong class="tit_txt" >잇미샤 온/오프 판매비중</strong>
+                  <strong class="tit_txt" >잇미샤 년도별 온/오프 판매비중</strong>
                   <div class="layout_spacer"></div>
                   <span class="txt">&lt; 단위: 천원 &gt;</span>
                 </div>
@@ -136,7 +136,7 @@
                               <th>{{ year-3 }}</th>
                               <th>{{ year-2 }}</th>
                               <th>{{ year-1 }}</th>
-                              <th class="teamSelector">{{ year }}</th>
+                              <th>{{ year }}</th>
                           </tr>
                         </thead>
 
@@ -200,7 +200,8 @@ export default {
         {ITEM: "22", ITEMNM: "백화점몰", AMT_17: "1932000", AMT_18: "1985000", AMT_19: "3503000", AMT: ""},
         {ITEM: "33", ITEMNM: "잇미샤몰", AMT_17: "1127000", AMT_18: "2665000", AMT_19: "4519000", AMT: ""},
         //{ITEM: "OFFLIN", ITEMNM: "오프라인", AMT_17: "37519446", AMT_18: "36878821", AMT_19: "40134894", AMT: ""}
-      ]
+      ],
+      itOnffImptMslList: []
     };
   },
   methods: {
@@ -208,8 +209,9 @@ export default {
       this.$emit("close");
     },
     loadData() {
-      this.getSaleByBrandList();
-      this.getITOnOffSaleList();
+      this.getSaleByBrandList()
+      this.getITOnOffSaleList()
+      this.getITOnOffDetailData()
     },
     totalClass: function (ITEM) {      
       return {
@@ -300,6 +302,60 @@ export default {
           console.log("rej", rej);
         }
       )
+    },
+    getITOnOffDetailData: function () {
+      this.req2svr.getITOnOffDetailData(this.year).then(
+        res => {
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res);
+          } else {
+            this.itOnffImptMslList = JSON.parse("[" + res + "]");
+            for(var i in this.itOnffImptMslList) {
+              this.itOnffImptMslList[i]["ITEMNM"] = this.getItemNm(this.itOnffImptMslList[i]["ITEM"]);
+            }
+
+            let offDataObj = {
+              ITEM: "44", ITEMNM: "오프라인"
+            };
+
+            for(var i=0; i < 12; i++) {
+              offDataObj["AMT"+(i+1)] = this.itOnffImptMslList.map(x => Number(x["AMT"+(i+1)])).reduce(function (pre, value) { return pre - value; });
+            }
+            this.itOnffImptMslList.push(offDataObj);
+            console.log("getITOnOffDetailData >> ", this.itOnffImptMslList);
+          }
+        },
+        rej => {
+          console.log("rej", rej);
+          let ItYearData = JSON.parse("[" + res + "]");
+        }
+      )
+    },
+    getItemNm: function (item) {
+      let returnNm = '';
+      switch(item) {
+        case '00': {
+          returnNm = '매출합계';
+          break;
+        }
+        case '11': {
+          returnNm = '네이버(스타일윈도)';
+          break;
+        }
+        case '22': {
+          returnNm = '백화점몰';
+          break;
+        }
+        case '33': {
+          returnNm = '잇미샤몰';
+          break;
+        }
+        case '44': {
+          returnNm = '오프라인';
+          break;
+        }
+      }
+      return returnNm;
     }
   },
   filters: {
