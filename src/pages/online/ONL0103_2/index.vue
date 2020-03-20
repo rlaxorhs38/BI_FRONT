@@ -403,7 +403,6 @@
 <script>
 import moment from "moment"
 import req2svr from "./req2svr"
-import XLSX from 'xlsx'
 
 export default {
   name: "ONL0104_1",
@@ -628,22 +627,6 @@ export default {
           table.childNodes[0].childNodes[0].childNodes[i].classList.remove("head-title");
         }
       }
-    },
-    onexport () { // On Click Excel download button
-    
-      // export json to Worksheet of Excel
-      // only array possible
-      var sheet_data = XLSX.utils.json_to_sheet(this.testList3)
-
-      // A workbook is the name given to an Excel file
-      var wb = XLSX.utils.book_new() // make Workbook of Excel
-
-      // add Worksheet to Workbook
-      // Workbook contains one or more worksheets
-      XLSX.utils.book_append_sheet(wb, sheet_data, 'DAILY') // sheetAName is name of Worksheet
-
-      // export Excel file
-      XLSX.writeFile(wb, 'json_example.xlsx') // name of the file is 'book.xlsx'
     },
   },
   filters: {
