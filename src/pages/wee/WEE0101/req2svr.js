@@ -5,12 +5,14 @@ export default {
   getData(sql) {
     return axios.get(apiUrl(sql)).then(x => x.data)
   },
-  getDataByClothingType(selectSucd, date, lastYearDate, fromSeason, toSeason, fromLastYearSeason, toLastYearSeason) {
+  getDataByClothingType(selectSucd, date, startDate, lastYearDate, startYearDate, fromSeason, toSeason, fromLastYearSeason, toLastYearSeason) {
     return axios.get(apiUrl() + "wee/getDataByClothingType", {
       params : { 
         selectSucd : selectSucd,
         date : date,
+        startDate : startDate,
         lastYearDate : lastYearDate,
+        startYearDate : startYearDate,
         fromSeason : fromSeason,
         toSeason : toSeason,
         fromLastYearSeason : fromLastYearSeason, 

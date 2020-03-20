@@ -96,11 +96,27 @@
                             <label class="btn_icon_nl" for="date">
                                 <i class="material-icons">calendar_today</i>
                             </label>
-                            <div class="input_text" type="text" id="date">
+                            <div class="input_text" type="text" id="startdate">
+                              <date-pick
+                                v-model="calStartDate"
+                                startWeekOnSunday
+                                :inputAttributes="{readonly: true}"
+                              ></date-pick>
+                              <!-- @input="chageDate" -->
+                            </div>
+                        </form>
+                    </div>
+                    <!-- date -->
+                    <div class="input_group input_icon_group"  style="width:210px;">
+                        <!-- date -->
+                        <form action="#">
+                            <label class="btn_icon_nl" for="date">
+                                <i class="material-icons">calendar_today</i>
+                            </label>
+                            <div class="input_text" type="text" id="enddate">
                               <date-pick
                                 v-model="calDefaultDate"
                                 startWeekOnSunday
-                                :isDateDisabled="isFutureDate"
                                 :inputAttributes="{readonly: true}"
                               ></date-pick>
                               <!-- @input="chageDate" -->
@@ -759,6 +775,12 @@ export default {
       calDefaultDate: "",
       standardStartDate: null,
       standardEndDate: null,
+      //켈린더 추가
+      calStartDate: "",
+      startDate: "",
+      endDate: "",
+      startYear: "",
+      startMonth: "",
       // 매출추이
       dr_P: [{ SUNM: 0, MCODE: 0, LY_SALE_TOT: 0, AMT: 0, SALE_TOT: 0 }],
       foreign: "f_include",
@@ -775,6 +797,12 @@ export default {
     this.standardEndDate = this.calDefaultDate
     this.year = moment(this.calDefaultDate).format("YYYY");
     this.month = moment(this.calDefaultDate).format("M");
+    //켈린더 하나더 추가
+    this.calStartDate = moment().day(-6).format('YYYY-MM-DD')
+    this.startDate = moment(this.calStartDate).subtract(6, 'days').format('YY-MM-DD')
+    this.endDate = this.calStartDate
+    this.startYear = moment(this.calStartDate).format("YYYY");
+    this.startMonth = moment(this.calStartDate).format("M");
 
     this.selectedSUCD = this.authCodeList[0].MCODE
 
@@ -796,7 +824,6 @@ export default {
     
     this.lastseasonStartYear = String.fromCharCode(this.seasonStartYear.charCodeAt()-1)
     this.lastseasonEndYear = String.fromCharCode(this.seasonEndYear.charCodeAt()-1)
-
     // 매출추이
     this.dr_P = [{"AMT":36,"LY_SALE_TOT":37,"SALE_TOT":49,"SALEDT":"10/8","SUNM":"미샤"},{"AMT":86,"LY_SALE_TOT":80,"SALE_TOT":144,"SALEDT":"10/9","SUNM":"미샤"},{"AMT":36,"LY_SALE_TOT":36,"SALE_TOT":70,"SALEDT":"10/10","SUNM":"미샤"},{"AMT":175,"LY_SALE_TOT":24,"SALE_TOT":73,"SALEDT":"10/11","SUNM":"미샤"},{"AMT":110,"LY_SALE_TOT":190,"SALE_TOT":134,"SALEDT":"10/12","SUNM":"미샤"},{"AMT":390,"LY_SALE_TOT":136,"SALE_TOT":170,"SALEDT":"10/13","SUNM":"미샤"},{"AMT":0,"LY_SALE_TOT":393,"SALE_TOT":0,"SALEDT":"10/14","SUNM":"미샤"},{"AMT":4,"LY_SALE_TOT":0,"SALE_TOT":26,"SALEDT":"10/15","SUNM":"미샤"},{"AMT":4,"LY_SALE_TOT":20,"SALE_TOT":31,"SALEDT":"10/16","SUNM":"미샤"},{"AMT":4,"LY_SALE_TOT":5,"SALE_TOT":-5,"SALEDT":"10/17","SUNM":"미샤"},{"AMT":1970,"LY_SALE_TOT":-3,"SALE_TOT":1932,"SALEDT":"10/18","SUNM":"미샤"},{"AMT":689,"LY_SALE_TOT":2024,"SALE_TOT":483,"SALEDT":"10/19","SUNM":"미샤"},{"AMT":1489,"LY_SALE_TOT":671,"SALE_TOT":1461,"SALEDT":"10/20","SUNM":"미샤"},{"AMT":24,"LY_SALE_TOT":1496,"SALE_TOT":26,"SALEDT":"10/21","SUNM":"미샤"},{"AMT":30,"LY_SALE_TOT":41,"SALE_TOT":13,"SALEDT":"10/22","SUNM":"미샤"},{"AMT":30,"LY_SALE_TOT":36,"SALE_TOT":29,"SALEDT":"10/23","SUNM":"미샤"},{"AMT":30,"LY_SALE_TOT":16,"SALE_TOT":44,"SALEDT":"10/24","SUNM":"미샤"},{"AMT":49,"LY_SALE_TOT":31,"SALE_TOT":104,"SALEDT":"10/25","SUNM":"미샤"},{"AMT":49,"LY_SALE_TOT":38,"SALE_TOT":107,"SALEDT":"10/26","SUNM":"미샤"},{"AMT":140,"LY_SALE_TOT":51,"SALE_TOT":189,"SALEDT":"10/27","SUNM":"미샤"},{"AMT":24,"LY_SALE_TOT":115,"SALE_TOT":21,"SALEDT":"10/28","SUNM":"미샤"},{"AMT":30,"LY_SALE_TOT":19,"SALE_TOT":27,"SALEDT":"10/29","SUNM":"미샤"},{"AMT":36,"LY_SALE_TOT":36,"SALE_TOT":29,"SALEDT":"10/30","SUNM":"미샤"},{"AMT":93,"LY_SALE_TOT":141,"SALE_TOT":222,"SALEDT":"10/31","SUNM":"미샤"},{"AMT":251,"LY_SALE_TOT":31,"SALE_TOT":121,"SALEDT":"11/1","SUNM":"미샤"},{"AMT":198,"LY_SALE_TOT":343,"SALE_TOT":141,"SALEDT":"11/2","SUNM":"미샤"},{"AMT":240,"LY_SALE_TOT":192,"SALE_TOT":378,"SALEDT":"11/3","SUNM":"미샤"},{"AMT":23,"LY_SALE_TOT":302,"SALE_TOT":74,"SALEDT":"11/4","SUNM":"미샤"},{"AMT":31,"LY_SALE_TOT":18,"SALE_TOT":49,"SALEDT":"11/5","SUNM":"미샤"},{"AMT":31,"LY_SALE_TOT":30,"SALE_TOT":33,"SALEDT":"11/6","SUNM":"미샤"},{"AMT":41,"LY_SALE_TOT":30,"SALE_TOT":46,"SALEDT":"11/7","SUNM":"미샤"}]
   },
@@ -898,6 +925,11 @@ export default {
       this.standardEndDate = this.calDefaultDate
       this.year = moment(this.calDefaultDate).format("YYYY");
       this.month = moment(this.calDefaultDate).format("M");
+      //켈린더 추가
+      this.startDate = moment(this.calStartDate).subtract(6, 'days').format('YY-MM-DD')
+      this.endDate = this.calStartDate
+      this.startYear = moment(this.calStartDate).format("YYYY");
+      this.startMonth = moment(this.calStartDate).format("M");
       this.loadData()
     },
     getImportanceData() {
@@ -922,12 +954,18 @@ export default {
       let week = moment(selectedDate).week()
       let day = moment(selectedDate).day()
       let lastYearDate = moment(selectedDate).subtract(1, 'year').week(week).day(day).format('YYYYMMDD')
+      //켈린더 추가
+      let startDate = moment(this.calStartDate).format('YYYYMMDD')
+      let startWeek = moment(startDate).week()
+      let startDay = moment(startDate).day()
+      let startYearDate = moment(startDate).subtract(1, 'year').week(startWeek).day(startDay).format('YYYYMMDD')
+
       let fromSeason = this.seasonStartYear + this.seasonStartMonth
       let toSeason = this.seasonEndYear + this.seasonEndMonth
       let fromLastYearSeason = this.lastseasonStartYear + this.seasonStartMonth
       let toLastYearSeason = this.lastseasonEndYear + this.seasonEndMonth
 
-      this.req2svr.getDataByClothingType(this.selectedSUCD, selectedDate, lastYearDate, fromSeason, toSeason, fromLastYearSeason, toLastYearSeason).then(
+      this.req2svr.getDataByClothingType(this.selectedSUCD, selectedDate, startDate, lastYearDate, startYearDate, fromSeason, toSeason, fromLastYearSeason, toLastYearSeason).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
@@ -1186,7 +1224,7 @@ export default {
       let tempData = _.filter(_.values(this.salesResultData[this.salesResultData.length-1]), function(v){ 
         return v != "합계"
         })
-      for(let i=0; i<12; i++){
+      for(let i=0; i<new Date().getMonth()+1; i++){
         let obj = {}
         obj.MONTH = (i+1) + "월"
         obj.CVALUE = this.$options.filters.nanToDot(tempData[i])
@@ -1348,6 +1386,10 @@ export default {
         dataProvider: data
       });
     },
+    isFutureSDate(date) {
+      return date.getDay() > 1;
+    },
+    //켈린더 추가
     isFutureDate(date) {
       return date.getDay() > 0;
     },

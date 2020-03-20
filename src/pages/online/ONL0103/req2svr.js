@@ -34,5 +34,21 @@ export default {
         year : year
       }
     }).then(x => x.data)
+  },
+  getDailySaleList(start_date, end_date) {
+    return axios.get(apiUrl() + "online/getDailySaleList", {
+      params : { 
+        start_date : start_date,
+        end_date : end_date
+      }
+    }).then(x => x.data)
+  },
+  getMonthlySaleList(start_date, end_date) {
+    return axios.get(apiUrl() + "online/getMonthlySaleList", {
+      params : { 
+        start_date : start_date,
+        end_date : end_date
+      }
+    }).then(x => x.data)
   }
 }
