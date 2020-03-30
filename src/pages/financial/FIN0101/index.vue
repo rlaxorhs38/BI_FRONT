@@ -78,10 +78,16 @@
                     <strong class="em_obj" v-else>
                       0<small class="txt">천원</small>
                     </strong>
+                    <strong class="em_obj fs30" v-if="data.AMT" >
+                      <small class="txt">( </small>{{ Math.round(data.AMT/1000) | currency }}<small class="txt fs14">천원</small><small class="txt"> )</small>
+                    </strong>
+                    <strong class="em_obj fs30" v-else >
+                      <small class="txt">( </small>0<small class="txt fs14">천원</small><small class="txt"> )</small>
+                    </strong>
                     <dl class="list_obj">
-                      <dt class="tit">월 누적매출 달성률</dt>
-                      <dd class="txt" v-if="data.SALE_MONTH_TOT">
-                        {{ Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) | nanToDot }} %
+                      <dt class="tit">일 누적매출 달성률</dt>
+                      <dd class="txt" v-if="data.SALE_TOT">
+                        {{ Math.round(rate(data.SALE_TOT, data.AMT)) | nanToDot }} %
                       </dd>
                       <dd class="txt" v-else>
                         0 %
@@ -89,21 +95,21 @@
                       <!-- 초과-->
                       <span
                         class="chip round_chip success"
-                        v-if="Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) >= 100"
+                        v-if="Math.round(rate(data.SALE_TOT, data.AMT)) >= 100"
                       >
                         <span class="chip_text">초과</span>
                       </span>
                       <!-- 정상-->
                       <span
                         class="chip round_chip warning"
-                        v-else-if="Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) >= 95 && Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) <= 99"
+                        v-else-if="Math.round(rate(data.SALE_TOT, data.AMT)) >= 95 && Math.round(rate(data.SALE_TOT, data.AMT)) <= 99"
                       >
                         <span class="chip_text">정상</span>
                       </span>
                       <!-- 주의-->
                       <span
                         class="chip round_chip danger"
-                        v-else-if="Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) < 95"
+                        v-else-if="Math.round(rate(data.SALE_TOT, data.AMT)) < 95"
                       >
                         <span class="chip_text">주의</span>
                       </span>
@@ -132,73 +138,6 @@
         <div class="list_box">
           <ul class="list_card">
             <li>
-              <!-- card_당일 매출 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 매출</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" v-if="dr_C.length > 0">
-                    {{ Math.round(current_dr_C.SALE_TOT/1000) | currency }}<small class="txt">천원</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당일 매출 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 매출 목표</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" v-if="dr_C.length > 0">
-                    {{ Math.round(current_dr_C.AMT/1000) | currency }}<small class="txt">천원</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_월 누적매출 달성률 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 매출 달성률</h4><small class="txt_box">(당일 매출/당일 매출 목표) * 100</small>
-                </div>
-                <div class="card_content" >
-                  <strong class="em_obj" v-if="dr_C.length > 0">
-                    {{ Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) | nanToDot }}
-                    <small
-                      class="txt2"
-                    >%</small>
-                    <!-- 초과-->
-                    <span
-                      class="chip round_chip success"
-                      v-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) >= 100"
-                    >
-                      <span class="chip_text">초과</span>
-                    </span>
-                    <!-- 정상-->
-                    <span
-                      class="chip round_chip warning"
-                      v-else-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) <= 99"
-                    >
-                      <span class="chip_text">정상</span>
-                    </span>
-                    <!-- 주의-->
-                    <span
-                      class="chip round_chip danger"
-                      v-else-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) < 95"
-                    >
-                      <span class="chip_text">주의</span>
-                    </span>
-                    <!-- 달성중 -->
-                    <span class="chip round_chip primary" v-else>
-                      <span class="chip_text">달성중</span>
-                    </span>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
               <!-- card_당월 현금 증감 -->
               <div class="card card_mini">
                 <div class="card_title">
@@ -224,6 +163,120 @@
                 </div>
               </div>
             </li>
+            <li>
+              <!-- card_월 누적매출 달성률 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">월 매출 달성률</h4>
+                </div>
+                <div class="card_title">
+                  <small class="txt_box">(당월 매출/당월 매출 목표) * 100</small>
+                </div>
+                <div class="card_content" >
+                  <strong class="em_obj" v-if="dr_C.length > 0">
+                    {{ Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) | nanToDot }}
+                    <small
+                      class="txt2"
+                    >%</small>
+                    <!-- 초과-->
+                    <span
+                      class="chip round_chip success"
+                      v-if="Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) >= 100"
+                    >
+                      <span class="chip_text">초과</span>
+                    </span>
+                    <!-- 정상-->
+                    <span
+                      class="chip round_chip warning"
+                      v-else-if="Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) <= 99"
+                    >
+                      <span class="chip_text">정상</span>
+                    </span>
+                    <!-- 주의-->
+                    <span
+                      class="chip round_chip danger"
+                      v-else-if="Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) < 95"
+                    >
+                      <span class="chip_text">주의</span>
+                    </span>
+                    <!-- 달성중 -->
+                    <span class="chip round_chip primary" v-else>
+                      <span class="chip_text">달성중</span>
+                    </span>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- card_당년 현금 증감 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">연 누적매출</h4>
+                </div>
+                <div class="card_content">
+                  <strong class="em_obj" v-if="dr_C.length > 0">
+                    {{ Math.round(current_dr_C.SALE_YEAR_TOT/1000000) | currency }}<small class="txt">백만원</small>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- card_월 누적매출 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">연 누적매출 목표</h4>
+                </div>
+                <div class="card_content">
+                  <strong class="em_obj" v-if="dr_C.length > 0">
+                    {{ Math.round(current_dr_C.YEAR_AMT/1000000) | currency }}<small class="txt">백만원</small>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- card_월 누적매출 달성률 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">연 매출 달성률</h4>
+                </div>
+                <div class="card_title">
+                  <small class="txt_box">(올해 매출/올해 매출 목표) * 100</small>
+                </div>
+                <div class="card_content" >
+                  <strong class="em_obj" v-if="dr_C.length > 0">
+                    {{ Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) | nanToDot }}
+                    <small
+                      class="txt2"
+                    >%</small>
+                    <!-- 초과-->
+                    <span
+                      class="chip round_chip success"
+                      v-if="Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) >= 100"
+                    >
+                      <span class="chip_text">초과</span>
+                    </span>
+                    <!-- 정상-->
+                    <span
+                      class="chip round_chip warning"
+                      v-else-if="Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) <= 99"
+                    >
+                      <span class="chip_text">정상</span>
+                    </span>
+                    <!-- 주의-->
+                    <span
+                      class="chip round_chip danger"
+                      v-else-if="Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) < 95"
+                    >
+                      <span class="chip_text">주의</span>
+                    </span>
+                    <!-- 달성중 -->
+                    <span class="chip round_chip primary" v-else>
+                      <span class="chip_text">달성중</span>
+                    </span>
+                  </strong>
+                </div>
+              </div>
+            </li>
           </ul>
         </div>
         <div class="row">
@@ -232,16 +285,40 @@
               <div class="tit">
                 <div class="tab">
                   <ul>
-                    <li :class="{'on': gubun == 1}">
-                      <a href="javascript:void(0);" @click="tabVal('1')">매출유형</a>
-                    </li>
                     <li :class="{'on': gubun == 2}">
                       <a href="javascript:void(0);" @click="tabVal('2')">매출추이</a>
                     </li>
+                    <li :class="{'on': gubun == 1}">
+                      <a href="javascript:void(0);" @click="tabVal('1')">매출유형</a>
+                    </li>
                   </ul>
+                </div>
+                <div class="layout_spacer"></div>
+                <div class="groups">
+                  <div class="toggle_group tg_sty01">
+                    <label class="tg_btn" :class="{'is-checked': choice === 1}">
+                      <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="chageType(1)" />
+                      <span class="btn_n txt_label" >일간</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': choice === 2}">
+                      <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="chageType(2)" />
+                      <span class="btn_n txt_label" >월간</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': choice === 3}">
+                      <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="chageType(3)" />
+                      <span class="btn_n txt_label" >누적</span>
+                    </label>
+                  </div>
                 </div>
               </div>
               <div class="cont">
+                <div class="graph_area" v-show="gubun == 2">
+                  <div class="graph_view">
+                    <div class="graph" style="position:relative; width:100%; height:270px;">
+                      <div id="chartdiv4" style="position:relative; width:100%; height:100%; float:left;"></div>
+                    </div>
+                  </div>
+                </div>
                 <div class="graph_area" v-show="gubun == 1">
                   <!-- 그래프 1 -->
                   <div class="graph_view graph_md" style="width:50%;">
@@ -292,14 +369,7 @@
                       <li><span class="ico_dot" style="background-color:#ffb83c;"></span>균일</li>
                     </ul>
                   </div>
-                </div>    
-                <div class="graph_area" v-show="gubun == 2">
-                  <div class="graph_view">
-                    <div class="graph" style="position:relative; width:100%; height:270px;">
-                      <div id="chartdiv4" style="position:relative; width:100%; height:100%; float:left;"></div>
-                    </div>
-                  </div>
-                </div>
+                </div> 
               </div>
             </div>
           </div>
@@ -398,7 +468,7 @@ export default {
       drawer: null,
       selectDate: null,
       recentDate: null,
-      gubun: 1,
+      gubun: 2,
       selectedCODE: "",
       // 사업부별 일매출
       dr_H: [],
@@ -418,7 +488,10 @@ export default {
       isStoreListVisible: false,
       storeListOrderType: 'desc',
       makeDataDate: null,
-      sucdCodeList:[]
+      sucdCodeList:[],
+      SU_TOT_AMT: 0,
+      SU_TOT_SALE_TOT: 0,
+      choice: 1,
     };
   },
   computed: {
@@ -431,6 +504,7 @@ export default {
     },
     current_dr_C() {
       let list = _.find(this.dr_C, {MCODE: this.selectedCODE})
+      console.log("current_dr_C >>> ", list)
       return list
     },
     current_dr_H() {
@@ -556,7 +630,8 @@ export default {
       return x;
     },
     getData() {
-      this.getTotalSalesData()
+      // this.getTotalSalesData()
+      this.getDailySalesData()
       this.getCumulativeData()
     },
     getTotalSalesData() {
@@ -600,6 +675,59 @@ export default {
         }
       );
 
+      console.log("여기는 안 쓰임 dr_H >>> ", this.dr_H)
+
+    },
+    getDailySalesData() {
+      let i
+      let date = moment().subtract(1, "days").format("YYYYMMDD");
+      this.dr_H = []
+      for (i=0;i<this.authCodeList.length;i++) {
+        let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
+        if (data) {
+          this.dr_H.push({ TEXT: this.authCodeList[i].CODNM, MCODE: this.authCodeList[i].MCODE, SUNM: "", SALE_TOT: 0, AMT: 0 })
+        }
+      }
+      let authMCodeList = _.map(this.authCodeList, 'MCODE')
+
+      this.req2svr.getDailySalesData(this.tabType, date, authMCodeList.toString()).then(
+        res => {
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res)
+          } else {
+            let list = []
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            if(count < 1) {
+            } else if(count == 1) {
+              list.push(res);
+            } else {
+              list = JSON.parse("[" + res + "]")
+            }
+            for (i=0;i<this.authCodeList.length;i++) {
+              let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
+              if (data) {
+                this.dr_H[i] = _.assign(this.dr_H[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }));
+              }
+            }
+
+            let tot_obj = {
+              TEXT: "전체", MCODE: "A",
+              SUNM: "전체",
+              SALE_TOT: _.sumBy(this.dr_H, function(o) { return Number(o.SALE_TOT); }),
+              AMT: _.sumBy(this.dr_H, function(o) { return Number(o.AMT); }),
+            }
+
+            this.dr_H.unshift(tot_obj)
+            console.log("1. dr_H >>> " , this.dr_H);
+
+            this.SU_TOT_AMT = _.sumBy(this.dr_H, function(o) { return Number(o.AMT); })
+            this.SU_TOT_SALE_TOT = _.sumBy(this.dr_H, function(o) { return Number(o.SALE_TOT); })
+          }
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      );
     },
     getCumulativeData() {
       this.dr_C = []
@@ -610,12 +738,12 @@ export default {
         }
       }
       let i
-      let date = moment(this.selectDate).format("YYYYMMDD")
-      let monthStartDate = moment(date).startOf('month').format("YYYYMMDD")
+      // let date = moment(this.selectDate).format("YYYYMMDD")
+      // let monthStartDate = moment(date).startOf('month').format("YYYYMMDD")
 
       this.sucdCodeList = _.map(this.authCodeList, 'MCODE')
 
-      this.req2svr.getCumulativeData(this.tabType, this.sucdCodeList.toString(), date, monthStartDate).then(
+      this.req2svr.getCumulativeData(this.tabType, this.sucdCodeList.toString()).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
@@ -634,6 +762,19 @@ export default {
                 this.dr_C[i] = _.assign(this.dr_C[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }));
               }
             }
+
+            var tot_obj = {
+              MCODE: "A", SUNM: "전체",
+              SALE_TOT: _.sumBy(this.dr_C, function(o) { return Number(o.SALE_TOT); }),
+              SALE_MONTH_TOT: _.sumBy(this.dr_C, function(o) { return Number(o.SALE_MONTH_TOT); }),
+              AMT: _.sumBy(this.dr_C, function(o) { return Number(o.AMT); }),
+              SALE_YEAR_TOT: _.sumBy(this.dr_C, function(o) { return o.MCODE != "10"? Number(o.SALE_YEAR_TOT):0; }),
+              YEAR_AMT: _.sumBy(this.dr_C, function(o) { return o.MCODE != "10"? Number(o.YEAR_AMT):0; }),
+              MONTH_AMT: _.sumBy(this.dr_C, function(o) { return o.MCODE != "10"? Number(o.MONTH_AMT):0; })
+            }
+
+            this.dr_C.unshift(tot_obj)
+            console.log("dr_C >>> ", this.dr_C)
           }
         },
         rej => {
@@ -672,11 +813,12 @@ export default {
         // 당일 매장별 매출
         this.dr_L = []
 
-        this.gubun = 1
+        this.gubun = 2
 
         this.makeChart1()
         this.makeChart2()
         this.makeChart4()
+        
         return
       }
 
@@ -690,6 +832,7 @@ export default {
       if (moment(this.selectDate).diff(moment(this.recentDate)) > 0) {
         return
       }
+      this.choice = '1'
       this.selectedCODE = code
       let date = moment(this.selectDate).format("YYYYMMDD");
       this.getChartData1(code, date)
@@ -718,7 +861,7 @@ export default {
       let lastYear30day = moment(date).subtract(30, 'days').subtract(1, 'year').format("YYYYMMDD")
       let lastYearSelectDay = moment(date).subtract(1, 'year').format("YYYYMMDD")
 
-      this.req2svr.getChartData2(this.tabType, code, lastYear30day, lastYearSelectDay).then(
+      this.req2svr.getChartData2(this.tabType, code, lastYear30day, lastYearSelectDay, this.choice).then(
         res => {
           this.dr_LYP = []
           if (res.MACHBASE_ERROR) {
@@ -757,7 +900,7 @@ export default {
     getCurrentYearData(code, date) {
       let last30day = moment(date).subtract(30, 'days').format("YYYYMMDD")
 
-      this.req2svr.getCurrentYearData(this.tabType, code, last30day, date).then(
+      this.req2svr.getCurrentYearData(this.tabType, code, last30day, date, this.choice).then(
         res => {
           this.dr_P = [{ SUNM: 0, MCODE: 0, LY_SALE_TOT: 0, AMT: 0, SALE_TOT: 0 }]
           if (res.MACHBASE_ERROR) {
@@ -787,27 +930,78 @@ export default {
                   SUNM: currentlist[i].SUNM
                 })
               }
-              let count = Math.max(list.length, this.dr_LYP.length)
-              let l1 = list.length > this.dr_LYP.length ? list : this.dr_LYP
-              let l2 = list.length > this.dr_LYP.length ? this.dr_LYP : list
-              for (let i=0;i<count;i++) {
-                let data = _.find(l2, function(o) { return o.SALEDT.slice(4, 8) == l1[i].SALEDT.slice(4, 8)})
-                let AMT2 = data ? Number(data.AMT) : 0
-                let LY_SALE_TOT2 = data ? Number(data.LY_SALE_TOT) : 0
-                let SALE_TOT2 = data ? Number(data.SALE_TOT) : 0
-
-                let _AMT = Number(l1[i].AMT) != 0 ? Number(l1[i].AMT) : AMT2
-                let _LY_SALE_TOT = Number(l1[i].LY_SALE_TOT) != 0 ? Number(l1[i].LY_SALE_TOT) : LY_SALE_TOT2
-                let _SALE_TOT = Number(l1[i].SALE_TOT) != 0 ? Number(l1[i].SALE_TOT) : SALE_TOT2
-
-                this.dr_P.push({
-                  AMT: _AMT,
-                  LY_SALE_TOT: _LY_SALE_TOT,
-                  SALE_TOT: _SALE_TOT,
-                  SALEDT: Number(l1[i].SALEDT.slice(4, 6)) + "/" + Number(l1[i].SALEDT.slice(6, 8)),
-                  SUNM: l1[i].SUNM
-                })
+              if(this.choice == 1) {
+                let count = Math.max(list.length, this.dr_LYP.length)
+                let l1 = list.length > this.dr_LYP.length ? list : this.dr_LYP
+                let l2 = list.length > this.dr_LYP.length ? this.dr_LYP : list
+                for (let i=0;i<count;i++) {
+                  let data = _.find(l2, function(o) { return o.SALEDT.slice(4, 8) == l1[i].SALEDT.slice(4, 8)})
+                  let AMT2 = data ? Number(data.AMT) : 0
+                  let LY_SALE_TOT2 = data ? Number(data.LY_SALE_TOT) : 0
+                  let SALE_TOT2 = data ? Number(data.SALE_TOT) : 0
+  
+                  let _AMT = Number(l1[i].AMT) != 0 ? Number(l1[i].AMT) : AMT2
+                  let _LY_SALE_TOT = Number(l1[i].LY_SALE_TOT) != 0 ? Number(l1[i].LY_SALE_TOT) : LY_SALE_TOT2
+                  let _SALE_TOT = Number(l1[i].SALE_TOT) != 0 ? Number(l1[i].SALE_TOT) : SALE_TOT2
+  
+                  this.dr_P.push({
+                    AMT: Math.round(_AMT/1000),
+                    LY_SALE_TOT: Math.round(_LY_SALE_TOT/1000),
+                    SALE_TOT: Math.round(_SALE_TOT/1000),
+                    SALEDT: Number(l1[i].SALEDT.slice(4, 6)) + "/" + Number(l1[i].SALEDT.slice(6, 8)),
+                    SUNM: l1[i].SUNM
+                  })
+                }
+              } else {
+                this.dr_P = list;
               }
+              console.log("dr_P >>> ", this.dr_P)
+            }
+          }
+          this.makeChart4();
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      );
+    },
+    getCumulativeSales(code, date) {
+      this.req2svr.getCumulativeSales(this.tabType, code, date, this.choice).then(
+        res => {
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res)
+          } else {
+            this.dr_P = []
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            if(count < 1) {
+            } else if(count == 1) {
+              this.dr_P.push(res);
+            } else {
+              let list = JSON.parse("[" + res + "]")
+              if(this.choice == "2") {
+                this.dr_P = list
+              } else {
+                for(var i in list) {
+                  let PRE_LY_SALE_TOT, PRE_SALE_TOT, PRE_AMT
+                  if(i-1 < 0) {
+                    PRE_LY_SALE_TOT = 0;
+                    PRE_SALE_TOT = 0;
+                    PRE_AMT = 0;
+                  } else {
+                    PRE_LY_SALE_TOT = Number(this.dr_P[i-1].LY_SALE_TOT);
+                    PRE_SALE_TOT = Number(this.dr_P[i-1].SALE_TOT);
+                    PRE_AMT = Number(this.dr_P[i-1].AMT);
+                  }
+                  this.dr_P.push({
+                    AMT: PRE_AMT + Number(list[i].AMT),
+                    LY_SALE_TOT: PRE_LY_SALE_TOT + Number(list[i].LY_SALE_TOT),
+                    SALE_TOT: PRE_SALE_TOT + Number(list[i].SALE_TOT),
+                    SALEDT: list[i].SALEDT,
+                    SUNM: list[i].SUNM
+                  })
+                }
+              }
+              console.log("dr_P >>> ", this.dr_P)
             }
           }
           this.makeChart4();
@@ -840,7 +1034,7 @@ export default {
       )
     },
     getSalesChartCount(code, date) {
-      this.req2svr.getSalesChartCount(this.tabType, code, date).then(
+      this.req2svr.getSalesChartCount(this.tabType, code, date, this.choice).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
@@ -901,17 +1095,19 @@ export default {
       } else if (val == "2") {
         this.gubun = 2
         this.makeChart4();
-      }
+      } 
     },
     makeChart1() {
+      let txt = '당일'
+      if(this.choice == 1) { txt = '당일'; } else if(this.choice == 2) { txt = '당월'; } else { txt = '당년'; }
       let title = ["정상", "할인", "균일"]
       let data = [
-        { category: "당일판매", 
+        { category: txt + "판매", 
           JQTY_T: "정상", JQTY: this.dr_S.JQTY, 
           DCQTY_T: "할인", DCQTY: this.dr_S.DCQTY, 
           GQTY_T: "균일", GQTY: this.dr_S.GQTY
         },
-        { category: "당일반품", 
+        { category: txt + "반품", 
           JQTY_T: "정상", JQTY: Math.abs(this.dr_S.R_JQTY),
           DCQTY_T: "할인", DCQTY: Math.abs(this.dr_S.R_DCQTY),
           GQTY_T: "균일", GQTY: Math.abs(this.dr_S.R_GQTY)
@@ -985,14 +1181,16 @@ export default {
       })
     },
     makeChart2() {
+      let txt = '당일'
+      if(this.choice == 1) { txt = '당일'; } else if(this.choice == 2) { txt = '당월'; } else { txt = '당년'; }
       let title = ["정상", "할인", "균일"]
       let data = [
-        { category: "당일판매", 
+        { category: txt + "판매", 
           JAMT_T: "정상", JAMT: Math.round(this.dr_S.JAMT/1000),
           DCAMT_T: "할인", DCAMT: Math.round(this.dr_S.DCAMT/1000),
           GAMT_T: "균일", GAMT: Math.round(this.dr_S.GAMT/1000)
         },
-        { category: "당일반품", 
+        { category: txt + "반품", 
           JAMT_T: "정상", JAMT: Math.round(Math.abs(this.dr_S.R_JAMT/1000)),
           DCAMT_T: "할인", DCAMT: Math.round(Math.abs(this.dr_S.R_DCAMT/1000)),
           GAMT_T: "균일", GAMT: Math.round(Math.abs(this.dr_S.R_GAMT/1000))
@@ -1005,7 +1203,7 @@ export default {
         categoryField: "category",
         marginRight: 100,
         rotate: true,
-        colors: [ "#3f93f5", "#ff7f92", "#ffb83c", "#a3e326" ],
+        colors: [ "#3F93F5", "#FF7F92", "#FFB83C", "#A3E326" ],
         startDuration: 1,
         fontSize: 18,
         categoryAxis: {
@@ -1056,6 +1254,7 @@ export default {
             gridAlpha: 0.3,
             gridThickness: 0,
             labelsEnabled: false,
+            showFirstLabel: true,
             titleRotation: 0,
             totalText: "[[total]]"
           }
@@ -1067,21 +1266,63 @@ export default {
     },
     makeChart4() {
       let data = this.dr_P
-
+      let colors = ["#E56464", "#FFB83C", "#3F93F5"];
+      var txt = "";
+      if(this.choice == 1) { txt = "일별"; }
+      else if(this.choice == 2) { txt = "월별" }
+      else { txt = "월별누적" }
+      let graphs = [
+        {
+          balloonText: "작년동기매출(천원) : [[value]]",
+          fillAlphas: 0,
+          id: "AmGraph-1",
+          lineAlpha: 1,
+          lineThickness: 2,
+          title: "작년동기매출",
+          valueField: "LY_SALE_TOT",
+          markerType: "diamond",
+          bullet: "diamond",
+          bulletSize: 5,
+          //type: "column",
+        },
+        {
+          balloonText: txt+"매출목표(천원) : [[value]]",
+          fillAlphas: 0.5,
+          lineAlpha: 0,
+          fontSize: 0,
+          id: "AmGraph-2",
+          title: txt+"매출목표",
+          valueField: "AMT",
+          //markerType: "circle"
+          type: "column"
+        },
+        {
+          balloonText: txt+"매출실적(천원) : [[value]]",
+          fillAlphas: 0,
+          lineAlpha: 1,
+          lineThickness: 2,
+          id: "AmGraph-3",
+          title: txt+"매출실적",
+          valueField: "SALE_TOT",
+          markerType: "circle",
+          bullet: "round",
+          bulletSize: 5,
+        }
+      ];
       AmCharts.makeChart("chartdiv4", {
         type: "serial",
-        startEffect: "easeOutSine",
+        //startEffect: "easeOutSine",
         categoryField: "SALEDT",
-        colors: ["#bd7adf", "#bababa", "#3f93f5"],
+        colors: colors,
         sequencedAnimation: false,
-        startEffect: "easeInSine",
+        //startEffect: "easeInSine",
         categoryAxis: {
           axisAlpha: 0.1,
           gridPosition: "start",
           gridAlpha: 0.05,
           tickLength: 0,
-          startOnAxis: true,
-          fontSize: 14
+          startOnAxis: false,
+          fontSize: 13
         },
         chartCursor: {
           enabled: true,
@@ -1089,55 +1330,30 @@ export default {
           cursorPosition: "mouse"
         },
         trendLines: [],
-        graphs: [
-          {
-            balloonText: "작년동기매출(백만원) : [[value]]",
-            fillAlphas: 0,
-            id: "AmGraph-1",
-            lineAlpha: 0.99,
-            title: "작년동기매출(백만원)",
-            valueField: "LY_SALE_TOT",
-            markerType: "circle"
-          },
-          {
-            balloonText: "일별매출목표(백만원) : [[value]]",
-            fillAlphas: 0,
-            fontSize: 0,
-            id: "AmGraph-2",
-            title: "일별매출목표(백만원)",
-            valueField: "AMT",
-            markerType: "circle"
-          },
-          {
-            balloonText: "일별매출실적(백만원) : [[value]]",
-            bullet: "round",
-            bulletSize: 6,
-            fillAlphas: 0,
-            id: "AmGraph-3",
-            title: "일별매출실적(백만원)",
-            valueField: "SALE_TOT",
-            markerType: "circle"
-          }
-        ],
+        graphs: graphs,
         guides: [],
         valueAxes: [
           {
-            axisAlpha: 0.1,
             id: "ValueAxis-1",
             gridColor: "#FFFFFF",
             tickLength: 0,
             showFirstLabel: false,
             title: "",
-            fontSize: 13
+            fontSize: 13,
+            autoGridCount: false,
           }
         ],
         allLabels: [],
         balloon: {},
         legend: {
           enabled: true,
-          align: "center",
-          fontSize: 18,
-          position: "top"
+          align: "left",
+          fontSize: 12,
+          position: "right",
+          //equalWidths: false,
+          valueWidth: 0,
+          //labelWidth: 50
+          //width: 120
         },
         titles: [],
         dataProvider: data
@@ -1154,7 +1370,18 @@ export default {
       } else {
         return (v/t)*100
       }
-    }
+    },
+    chageType(value) {
+      this.choice = value
+      let date = moment(this.selectDate).format("YYYYMMDD");
+      let code = this.selectedCODE;
+      this.getChartData1(code, date)
+      if(value == 1) {
+        this.getChartData2(code, date)
+      } else {
+        this.getCumulativeSales(code, date)
+      }
+    },
   }
 };
 </script>

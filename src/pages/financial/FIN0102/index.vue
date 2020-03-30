@@ -20,6 +20,34 @@
             </small>
           </h2>
           <div class="layout_spacer"></div>
+          <div class="groups pr20">
+            <div class="toggle_group tg_sty01">
+              <label class="tg_btn" :class="{'is-checked': p_tb_choice === 1}">
+                <input type="radio" id="option-s" class="tg_radio" name="select_table" :value="1" v-model="p_tb_choice" style="display:none" @click="p_chageTable(1)" />
+                <span class="btn_n txt_label">판매유형</span>
+              </label>
+              <label class="tg_btn" :class="{'is-checked': p_tb_choice === 2}">
+                <input type="radio" id="option-p" class="tg_radio" name="select_table" :value="2" v-model="p_tb_choice" style="display:none" @click="p_chageTable(2)" />
+                <span class="btn_n txt_label">전년대비</span>
+              </label>
+            </div>
+          </div>
+          <div class="groups pr20">
+            <div class="toggle_group tg_sty01">
+              <label class="tg_btn" :class="{'is-checked': p_choice === 1}" id="select_day">
+                <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="p_choice" style="display:none" @click="p_chageType(1)" :disabled="p_tb_choice == 2"/>
+                <span class="btn_n txt_label">일간</span>
+              </label>
+              <label class="tg_btn" :class="{'is-checked': p_choice === 2}">
+                <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="p_choice" style="display:none" @click="p_chageType(2)" />
+                <span class="btn_n txt_label">월간</span>
+              </label>
+              <label class="tg_btn" :class="{'is-checked': p_choice === 3}">
+                <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="p_choice" style="display:none" @click="p_chageType(3)" />
+                <span class="btn_n txt_label">누적</span>
+              </label>
+            </div>
+          </div>
           <div style="margin-right: 10px;"><small class="txt_s">데이터 기준일 : {{ makeDataDate }}</small></div>
           <!-- groups -->
           <div class="groups">
@@ -45,7 +73,7 @@
       <div class="container">
         <div class="content">
           <!-- 테이블 -->
-          <div class="tbl_sheet sheet_scroll tbl_right sheet_scroll_sty01" style="height:100%;">
+          <div class="tbl_sheet sheet_scroll tbl_right sheet_scroll_sty01" style="height:100%;" id="table_1">
             <div class="thead_wrap">
               <table class="tbl">
                 <colgroup>
@@ -105,71 +133,7 @@
                 </thead>
               </table>
             </div>
-            <div class="tfoot_wrap">
-              <table class="tbl">
-                <colgroup>
-                  <col style="width:10%;"/>
-                  <col style="width:5%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col style="width:4%;"/>
-                  <col style="width:3%;"/>
-                  <col v-if="(dr_H.MCODE == '1') || (dr_H.MCODE == 'MI')" style="width:4%;"/>
-                </colgroup>
-                <tfoot>
-                  <tr>
-                    <th scope="col"><strong>합계</strong></th>
-                    <td><strong>{{ Math.round(totalData.SALE_TOT/1000) | currency}}</strong></td>
-                    <td><small class="point_col1">{{totalData.QTY_TOT | currency}}</small></td>
-                    <!-- 정상(판매) -->
-                    <td><strong>{{ Math.round(totalData.JAMT/1000) | currency}}</strong></td>
-                    <td><small class="txt_num point_col1">{{totalData.JQTY | currency}}</small></td>
-                    <!-- 정상(반품) -->
-                    <td><strong>{{ Math.round(totalData.R_JAMT/1000) | currency}}</strong></td>
-                    <td><small class="txt_num point_col1">{{totalData.R_JQTY | currency}}</small></td>
-                    <!-- 정상(매출) -->
-                    <td><strong>{{ Math.round((totalData.JAMT+totalData.R_JAMT)/1000) | currency}}</strong></td>
-                    <td><small class="txt_num point_col1">{{totalData.JQTY+totalData.R_JQTY | currency}}</small></td>
-                    <!-- 할인(판매) -->
-                    <td><strong>{{ Math.round(totalData.DCAMT/1000) | currency}}</strong></td>
-                    <td><small class="txt_num point_col1">{{totalData.DCQTY | currency}}</small></td>
-                    <!-- 할인(반품) -->
-                    <td><strong>{{ Math.round(totalData.R_DCAMT/1000) | currency}}</strong></td>
-                    <td><small class="txt_num point_col1">{{totalData.R_DCQTY | currency}}</small></td>
-                    <!-- 할인(매출) -->
-                    <td><strong>{{ Math.round((totalData.DCAMT+totalData.R_DCAMT)/1000) | currency}}</strong></td>
-                    <td><small class="txt_num point_col1">{{totalData.DCQTY+totalData.R_DCQTY | currency}}</small></td>
-                    <!-- 균일(판매) -->
-                    <td><strong>{{ Math.round(totalData.GAMT/1000) | currency}}</strong>
-                    <td><small class="txt_num point_col1">{{totalData.GQTY | currency}}</small></td>
-                    <!-- 균일(반품) -->
-                    <td><strong>{{ Math.round(totalData.R_GAMT/1000) | currency}}</strong></td>
-                    <td><small class="txt_num point_col1">{{totalData.R_GQTY | currency}}</small></td>
-                    <!-- 균일(매출) -->
-                    <td><strong>{{ Math.round((totalData.GAMT+totalData.R_GAMT)/1000) | currency}}</strong></td>
-                    <td><small class="txt_num point_col1">{{totalData.GQTY+totalData.R_GQTY | currency}}</small></td>
-                    <!-- 선수금 -->
-                    <td v-if="(dr_H.MCODE == '1') || (dr_H.MCODE == 'MI')"><strong>{{ Math.round(totalData.ADVDEPAMT/1000) | currency}}</strong></td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-            <div class="tbody_wrap">
+            <div class="tbody_wrap" style="height:650px;">
               <table class="tbl">
                 <colgroup>
                   <col style="width:10%;"/>
@@ -238,6 +202,169 @@
                     <td v-if="(dr_H.MCODE == '1') || (dr_H.MCODE == 'MI')">{{ Math.round(data.ADVDEPAMT/1000) | currency}}</td>
                   </tr>
                 </tbody>
+              </table>
+            </div>
+            <div class="tfoot_wrap">
+              <table class="tbl">
+                <colgroup>
+                  <col style="width:10%;"/>
+                  <col style="width:5%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col style="width:4%;"/>
+                  <col style="width:3%;"/>
+                  <col v-if="(dr_H.MCODE == '1') || (dr_H.MCODE == 'MI')" style="width:4%;"/>
+                </colgroup>
+                <tfoot>
+                  <tr>
+                    <th scope="col"><strong>합계</strong></th>
+                    <td><strong>{{ Math.round(totalData.SALE_TOT/1000) | currency}}</strong></td>
+                    <td><small class="point_col1">{{totalData.QTY_TOT | currency}}</small></td>
+                    <!-- 정상(판매) -->
+                    <td><strong>{{ Math.round(totalData.JAMT/1000) | currency}}</strong></td>
+                    <td><small class="txt_num point_col1">{{totalData.JQTY | currency}}</small></td>
+                    <!-- 정상(반품) -->
+                    <td><strong>{{ Math.round(totalData.R_JAMT/1000) | currency}}</strong></td>
+                    <td><small class="txt_num point_col1">{{totalData.R_JQTY | currency}}</small></td>
+                    <!-- 정상(매출) -->
+                    <td><strong>{{ Math.round((totalData.JAMT+totalData.R_JAMT)/1000) | currency}}</strong></td>
+                    <td><small class="txt_num point_col1">{{totalData.JQTY+totalData.R_JQTY | currency}}</small></td>
+                    <!-- 할인(판매) -->
+                    <td><strong>{{ Math.round(totalData.DCAMT/1000) | currency}}</strong></td>
+                    <td><small class="txt_num point_col1">{{totalData.DCQTY | currency}}</small></td>
+                    <!-- 할인(반품) -->
+                    <td><strong>{{ Math.round(totalData.R_DCAMT/1000) | currency}}</strong></td>
+                    <td><small class="txt_num point_col1">{{totalData.R_DCQTY | currency}}</small></td>
+                    <!-- 할인(매출) -->
+                    <td><strong>{{ Math.round((totalData.DCAMT+totalData.R_DCAMT)/1000) | currency}}</strong></td>
+                    <td><small class="txt_num point_col1">{{totalData.DCQTY+totalData.R_DCQTY | currency}}</small></td>
+                    <!-- 균일(판매) -->
+                    <td><strong>{{ Math.round(totalData.GAMT/1000) | currency}}</strong>
+                    <td><small class="txt_num point_col1">{{totalData.GQTY | currency}}</small></td>
+                    <!-- 균일(반품) -->
+                    <td><strong>{{ Math.round(totalData.R_GAMT/1000) | currency}}</strong></td>
+                    <td><small class="txt_num point_col1">{{totalData.R_GQTY | currency}}</small></td>
+                    <!-- 균일(매출) -->
+                    <td><strong>{{ Math.round((totalData.GAMT+totalData.R_GAMT)/1000) | currency}}</strong></td>
+                    <td><small class="txt_num point_col1">{{totalData.GQTY+totalData.R_GQTY | currency}}</small></td>
+                    <!-- 선수금 -->
+                    <td v-if="(dr_H.MCODE == '1') || (dr_H.MCODE == 'MI')"><strong>{{ Math.round(totalData.ADVDEPAMT/1000) | currency}}</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+          <!-- 테이블 -->
+          <div class="tbl_sheet sheet_scroll tbl_right sheet_scroll_sty01" style="height:100%; display:none;"  id="table_2">
+            <div class="thead_wrap" style="height:45px;">
+              <table class="tbl">
+                <colgroup>
+                  <col width="20%"/>
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col" >매장 매출순위</th>
+                    <th scope="col" >매출합계 (천원)</th>
+                    <th scope="col" >수량합계 (개)</th>
+                    <th scope="col" >매장 목표</th>
+                    <th scope="col" >전년 매출합계(천원)</th>
+                    <th scope="col" >전년대비 신장률</th>
+                    <th scope="col" >달성율</th>
+                    <th scope="col" >담당영업</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <div class="tbody_wrap" style="height:690px;">
+              <table class="tbl">
+                <colgroup>
+                  <col width="20%"/>
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                </colgroup>
+                <tbody>
+                  <tr v-for="(data, index) in listData2" :key="index">
+                    <th scope="row">
+                      <span class="num_box">
+                        <strong>{{index+1}}</strong>
+                      </span>
+                      {{data.VDSNM}}
+                    </th>
+                    <!-- 합계 -->
+                    <td>{{ Math.round(data.SALE_TOT/1000) | currency}}</td>
+                    <td>
+                      <span class="point_col1">{{data.QTY_TOT | currency}}</span>
+                    </td>
+                    <!-- 매장 목표 -->
+                    <td>{{ Math.round(data.TARGETAMT/1000) | currency}}</td>
+                    <!-- 전년 매출합계 -->
+                    <td><span class="txt_num point_col1">{{Math.round(data.PRE_SALE_TOT/1000) | currency}}</span></td>
+                    <!-- 전년대비 신장률 -->
+                    <td><span class="txt_num point_col1">{{data.GROWTH_RATE | currency}}%</span></td>
+                    <!-- 달성률 -->
+                    <td><span class="txt_num point_col1">{{data.ACHIEVEMENT_RATE | currency}}%</span></td>
+                    <!-- 담당영업 -->
+                    <td class="tc">{{ data.MEMPNM }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tfoot_wrap">
+              <table class="tbl">
+                <colgroup>
+                  <col width="20%" />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                </colgroup>
+                <tfoot>
+                  <tr>
+                    <th scope="col"><strong>합계</strong></th>
+                    <td><strong>{{ Math.round(totalData2.SALE_TOT/1000) | currency}}</strong></td>
+                    <td><small class="point_col1">{{totalData2.QTY_TOT | currency}}</small></td>
+                    <!-- 매장목표 -->
+                    <td><strong>{{ Math.round(totalData2.TARGETAMT/1000) | currency}}</strong></td>
+                    <!-- 전년 매출합계 -->
+                    <td><small class="txt_num point_col1">{{ Math.round(totalData2.PRE_SALE_TOT/1000) | currency}}</small></td>
+                    <!-- 전년대비 신장률 -->
+                    <td><small class="txt_num point_col1">{{totalData2.GROWTH_RATE | currency}}%</small></td>
+                    <!-- 달성율 -->
+                    <td><small class="txt_num point_col1">{{totalData2.ACHIEVEMENT_RATE | currency}}%</small></td>
+                    <!-- 담당영업 -->
+                    <td></td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -329,6 +456,16 @@ export default {
         ADVDEPAMT: _.sumBy(this.listData, function(o) { return Number(o.ADVDEPAMT) })
       }
     },
+    totalData2() {
+      return {
+        SALE_TOT: _.sumBy(this.listData2, function(o) { return Number(o.SALE_TOT); }),
+        QTY_TOT: _.sumBy(this.listData2, function(o) { return Number(o.QTY_TOT); }),
+        PRE_SALE_TOT: _.sumBy(this.listData2, function(o) { return Number(o.PRE_SALE_TOT); }),
+        TARGETAMT: _.sumBy(this.listData2, function(o) { return Number(o.TARGETAMT); }),
+        GROWTH_RATE: Math.round(_.meanBy(this.listData2, function(o) { return Number(o.GROWTH_RATE); })),
+        ACHIEVEMENT_RATE: Math.round(_.meanBy(this.listData2, function(o) { return Number(o.ACHIEVEMENT_RATE); }))
+      }
+    },
     storeList() {
       if (this.orderType == 'asc') {
         return _.orderBy(this.listData, function(o) { return Number(o.SALE_TOT) }, 'asc')
@@ -348,7 +485,10 @@ export default {
       yearList: [],
       monthList: [],
       listData: [],
-      makeDataDate: null
+      listData2: [],
+      makeDataDate: null,
+      p_choice: 1,
+      p_tb_choice: 1
     };
   },
   methods: {
@@ -371,7 +511,62 @@ export default {
         }
       );
     },
+    p_chageType(value) {
+      if(this.p_tb_choice == "2" && value == "1") {
+        // this.p_choice = 2;
+        // return;
+      } else {
+        this.p_choice = value;
+        this.getStoreList();
+        this.getsalesRanking();
+      }
+    },
+    p_chageTable(value) {
+      this.p_tb_choice = value;
+      if(this.p_tb_choice == 1) {
+        this.p_choice = 1;
+        document.getElementById("table_1").style.display = "block";
+        document.getElementById("table_2").style.display = "none";
+      } else {
+        this.p_choice = 2;
+        document.getElementById("table_1").style.display = "none";
+        document.getElementById("table_2").style.display = "block";
+      }
+      this.getsalesRanking();
+    },
+    getsalesRanking() {
+      this.req2svr.getsalesRanking(this.orderType, this.tabType, this.dr_H.MCODE, this.p_choice, this.selectDate).then(
+        res => {
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res)
+          } else {
+            let list = []
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            console.log("count >>> ", count, " / ", res)
+            if(count < 1) {
+            } else if(count == 1) {
+              list.push(res);
+            } else {
+              this.listData2 = JSON.parse("[" + res + "]");
+              console.log("list >>> ", list)
+            }
+          }
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      );
+    },
     getStoreList() {
+      let start_date;
+      if(this.p_choice == 1) {
+        start_date = moment(this.selectDate).format("YYYYMMDD");
+      } else if(this.p_choice == 2) {
+        start_date = moment(this.selectDate).format("YYYYMM")+"01";
+      } else {
+        start_date = moment(this.selectDate).format("YYYY")+"0101";
+      }
+      let end_date = moment(this.selectDate).format("YYYYMMDD");
       // 매장 매출순위 팝업 리스트 개수
       // 당일매출 순위
       let sql = "SELECT ROWNUM() RN, VDCD, VDSNM, SALE_TOT, QTY_TOT, "
@@ -384,7 +579,7 @@ export default {
       sql += "SUM(ADVDEPAMT) ADVDEPAMT "
       sql += "FROM BISL060 "
       // sql += "WHERE " + this.tabType + " = '" + this.dr_H.MCODE + "' "
-      sql += "WHERE SALEDT = '"+ moment(this.selectDate).format("YYYYMMDD") +"' "
+      sql += "WHERE SALEDT BETWEEN '"+ start_date +"' AND '"+ end_date +"' "
       sql += "AND CREATEDATE = (SELECT MAX(CREATEDATE) FROM BISL060) ";
       sql += "GROUP BY VDCD, VDSNM, SUCD "
       sql += "HAVING " + this.tabType + " = '" + this.dr_H.MCODE + "' "
