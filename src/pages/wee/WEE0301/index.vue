@@ -39,10 +39,10 @@
       <div class="tabs">
         <ul class="tab_list">
           <!--활성화 class on-->
-          <li><a href="javascript:void(0);" @click="link('/WeeklyClothSale')">복종별 판매 및 할인율</a></li>
-          <li><a href="javascript:void(0);" @click="link('/WeeklyBest20')">주간판매 BEST 20</a></li>
-          <li class="on"><a href="javascript:void(0);" @click="link('/WeeklyResearch')">신상품 반응조사</a></li>
-          <li><a href="javascript:void(0);" @click="link('/WeeklyProgress')">주간판매 동향</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0101')">복종별 판매 및 할인율</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0201')">주간판매 BEST 20</a></li>
+          <li class="on"><a href="javascript:void(0);" @click="link('WEE0301')">신상품 반응조사</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
         </ul>
       </div>
     </div>
@@ -211,7 +211,7 @@
                                             </tr>
                                             <!--NO.1-->
                                             <template v-for="(data,index) in styleListData">
-                                            <tr>
+                                            <tr :key="'A'+index">
                                                 <th rowspan="2"><span class="tit_row">{{ index+1 }}</span></th>
                                                 <td rowspan="2">
                                                     <div>{{ data.STYCD }}</div>
@@ -225,67 +225,67 @@
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.COLCD }}</div>
+                                                        <div :key="index">{{ detail.COLCD }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.TOTPQTY | currency }}</div>
+                                                        <div :key="index">{{ detail.TOTPQTY | currency }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.INQTY | currency }}</div>
+                                                        <div :key="index">{{ detail.INQTY | currency }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.CHINASQTY | currency }}</div>
+                                                        <div :key="index">{{ detail.CHINASQTY | currency }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.DOMPQTY | currency }}</div>
+                                                        <div :key="index">{{ detail.DOMPQTY | currency }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.DOMQTY | currency }}</div>
+                                                        <div :key="index">{{ detail.DOMQTY | currency }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.UNSTOCKED | currency }}</div>
+                                                        <div :key="index">{{ detail.UNSTOCKED | currency }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.SQTY | currency }}</div>
+                                                        <div :key="index">{{ detail.SQTY | currency }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.SALES }}%</div>
+                                                        <div :key="index">{{ detail.SALES }}%</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.CONVERT_OUTDT }}</div>
+                                                        <div :key="index">{{ detail.CONVERT_OUTDT }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.SALDT }}</div>
+                                                        <div :key="index">{{ detail.SALDT }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.DAYQTY }}</div>
+                                                        <div :key="index">{{ detail.DAYQTY }}</div>
                                                     </template>
                                                 </td>
                                                 <td class="vt">
                                                     <template v-for="(detail,index) in data.total">
-                                                        <div>{{ detail.STOCK | currency }}</div>
+                                                        <div :key="index">{{ detail.STOCK | currency }}</div>
                                                     </template>
                                                 </td>
                                                 <!-- <td rowspan="2" class="tl">
@@ -298,7 +298,7 @@
                                                     <div class="row txt_bold">
                                                         <template v-for="(store,index) in data.store">
                                                             <!-- <div class="col_md_6 np" :data-tooltip-text="store.VDSNM">{{ store.VDSNM }} {{ store.SQTY }}</div> -->
-                                                            <div class="col_md_6 npb" :data-tooltip-text="store.VDSNM">
+                                                            <div class="col_md_6 npb" :data-tooltip-text="store.VDSNM" :key="index">
                                                                 <div class="fl one_line w70">{{ store.VDSNM }}</div>
                                                                 <div class="fr">{{ store.SQTY }}</div>
                                                             </div>
@@ -306,7 +306,7 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr>
+                                            <tr :key="'B'+index">
                                                 <td>S-TTL</td>
                                                 <td>{{ data.sttl.TOTPQTY | currency }}</td>
                                                 <td>{{ data.sttl.INQTY | currency }}</td>
@@ -416,7 +416,12 @@ export default {
     // 파라미터로 넘길 기준일 to날짜
     this.paramStToDate = standardMoment.clone().format('YYYYMMDD')
 
-    this.selectSucd = this.authCodeList[0].MCODE
+    console.log("3 data >>> "+this.data+" / "+this.selectSucd)
+    if(this.data) {
+      this.selectSucd = this.data.selectSucd
+    } else {
+      this.selectSucd = this.authCodeList[0].MCODE
+    }
   },
   computed: {
     req2svr: () => req2svr,
@@ -709,7 +714,16 @@ export default {
         }
     },
     link(val) {
-      this.$router.push(val)
+      //this.$router.push(val)
+      this.$router.push({
+        name: val,
+        params: {
+          data: 
+          {
+            selectSucd: this.selectSucd
+          }
+        }
+      })
     },
     excelDownLoad(id1) {
       var tab_text = ""

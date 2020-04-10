@@ -39,10 +39,10 @@
       <div class="tabs">
         <ul class="tab_list">
           <!--활성화 class on-->
-          <li><a href="javascript:void(0);" @click="link('/WeeklyClothSale')">복종별 판매 및 할인율</a></li>
-          <li class="on"><a href="javascript:void(0);" @click="link('/WeeklyBest20')">주간판매 BEST 20</a></li>
-          <li><a href="javascript:void(0);" @click="link('/WeeklyResearch')">신상품 반응조사</a></li>
-          <li><a href="javascript:void(0);" @click="link('/WeeklyProgress')">주간판매 동향</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0101')">복종별 판매 및 할인율</a></li>
+          <li class="on"><a href="javascript:void(0);" @click="link('WEE0201')">주간판매 BEST 20</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0301')">신상품 반응조사</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
         </ul>
       </div>
     </div>
@@ -223,19 +223,19 @@
                                             <li>
                                                 <strong class="title w15 tc">주간매출</strong>
                                                 <template v-for="(data,index) in weeklySaleData">
-                                                    <span class="cont w25" >{{ Math.round(data.TOTSILAMT/1000000) | currency }}</span>
+                                                    <span class="cont w25" :key="index"  >{{ Math.round(data.TOTSILAMT/1000000) | currency }}</span>
                                                 </template>
                                             </li>
                                             <li>
                                                 <strong class="title w15 tc">BEST 20 매출</strong>
                                                 <template v-for="(data,index) in weeklySaleData">
-                                                    <span class="cont w25" >{{ Math.round(data.SILAMT/1000000) | currency }}</span>
+                                                    <span class="cont w25" :key="index"  >{{ Math.round(data.SILAMT/1000000) | currency }}</span>
                                                 </template>
                                             </li>
                                             <li>
                                                 <strong class="title w15 tc">비중</strong>
                                                 <template v-for="(data,index) in weeklySaleData">
-                                                    <span class="cont w25" >{{ data.RATE }}%</span>
+                                                    <span class="cont w25" :key="index"  >{{ data.RATE }}%</span>
                                                 </template>
                                             </li>
                                         </ul>
@@ -295,14 +295,14 @@
                                     <table id="excelDown3" class="tbl tbl_center">
                                         <colgroup>
                                             <template v-for="(data,index) in mCountData">
-                                                <col />
+                                                <col  :key="index" />
                                             </template>
                                         </colgroup>
                                         <thead>
                                             <tr>
                                                 <th>구분</th>
-                                                <template v-for="(data,index) in mCountData">
-                                                    <th>{{ data.ITEM }}</th>
+                                                <template v-for="(data,index) in mCountData" >
+                                                    <th :key="index" >{{ data.ITEM }}</th>
                                                 </template>
                                             </tr>
                                         </thead>
@@ -310,13 +310,13 @@
                                             <tr>
                                                 <th class="tc">수량(M)</th>
                                                 <template v-for="(data,index) in mCountData">
-                                                    <td>{{ data.CNT }}</td>
+                                                    <td :key="index" >{{ data.CNT }}</td>
                                                 </template>
                                             </tr>
                                             <tr>
                                                 <th class="tc">금액(%)</th>
                                                 <template v-for="(data,index) in mCountData">
-                                                    <td>{{ data.RATE }}%</td>
+                                                    <td :key="index" >{{ data.RATE }}%</td>
                                                 </template>
                                             </tr>
                                         </tbody>
@@ -513,6 +513,7 @@ export default {
     }
   },
   created() {
+    console.log("data >>> ", this.data)
     this.year = moment().format("YYYY");
     this.month = moment().format("M");
 
@@ -552,7 +553,12 @@ export default {
     // 선택한 월
     this.choiceMonth = calDateMoment.clone().format('MM')
 
-    this.selectSucd = this.authCodeList[0].MCODE
+    console.log("2 data >>> "+this.data+" / "+this.selectSucd)
+    if(this.data) {
+      this.selectSucd = this.data.selectSucd
+    } else {
+      this.selectSucd = this.authCodeList[0].MCODE
+    }
 
     let currentYear = Number(moment().format("YYYY"))
     let code
@@ -1008,7 +1014,16 @@ export default {
         // }
     },
     link(val) {
-      this.$router.push(val)
+      //this.$router.push(val)
+      this.$router.push({
+          name: val,
+          params: {
+            data: 
+            {
+              selectSucd: this.selectSucd
+            }
+          }
+      })
     },
     excelDownLoad(id1) {
         let file = new Blob([$('#exceldown_tbody').html()], {type:"application/vnd.ms-excel"});

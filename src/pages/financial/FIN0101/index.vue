@@ -22,8 +22,7 @@
           <i class="material-icons">arrow_back_ios</i>
         </button> -->
         <!-- Title -->
-        <h2 class="layout_title">
-          Daily Report
+        <h2 class="layout_title">일매출현황
           <small class="txt_date">
             <span v-show="headerDate == today" class="chip chip_m">
               <span class="chip_text">TODAY</span>
@@ -78,16 +77,18 @@
                     <strong class="em_obj" v-else>
                       0<small class="txt">천원</small>
                     </strong>
+                    <!--
                     <strong class="em_obj fs30" v-if="data.AMT" >
                       <small class="txt">( </small>{{ Math.round(data.AMT/1000) | currency }}<small class="txt fs14">천원</small><small class="txt"> )</small>
                     </strong>
                     <strong class="em_obj fs30" v-else >
                       <small class="txt">( </small>0<small class="txt fs14">천원</small><small class="txt"> )</small>
                     </strong>
+                    -->
                     <dl class="list_obj">
-                      <dt class="tit">일 누적매출 달성률</dt>
-                      <dd class="txt" v-if="data.SALE_TOT">
-                        {{ Math.round(rate(data.SALE_TOT, data.AMT)) | nanToDot }} %
+                      <dt class="tit">월 누적매출 달성률</dt>
+                      <dd class="txt" v-if="data.SALE_MONTH_TOT">
+                        {{ Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) | nanToDot }} %
                       </dd>
                       <dd class="txt" v-else>
                         0 %
@@ -95,21 +96,21 @@
                       <!-- 초과-->
                       <span
                         class="chip round_chip success"
-                        v-if="Math.round(rate(data.SALE_TOT, data.AMT)) >= 100"
+                        v-if="Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) > 100"
                       >
                         <span class="chip_text">초과</span>
                       </span>
                       <!-- 정상-->
                       <span
                         class="chip round_chip warning"
-                        v-else-if="Math.round(rate(data.SALE_TOT, data.AMT)) >= 95 && Math.round(rate(data.SALE_TOT, data.AMT)) <= 99"
+                        v-else-if="Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) >= 95 && Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) <= 100"
                       >
                         <span class="chip_text">정상</span>
                       </span>
                       <!-- 주의-->
                       <span
                         class="chip round_chip danger"
-                        v-else-if="Math.round(rate(data.SALE_TOT, data.AMT)) < 95"
+                        v-else-if="Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) < 95"
                       >
                         <span class="chip_text">주의</span>
                       </span>
@@ -138,14 +139,71 @@
         <div class="list_box">
           <ul class="list_card">
             <li>
-              <!-- card_당월 현금 증감 -->
+              <!-- card_당일 매출 목표 -->
               <div class="card card_mini">
                 <div class="card_title">
-                  <h4 class="card_title_text">월 누적매출</h4>
+                  <h4 class="card_title_text">당일 매출 목표</h4>
                 </div>
                 <div class="card_content">
                   <strong class="em_obj" v-if="dr_C.length > 0">
-                    {{ Math.round(current_dr_C.SALE_MONTH_TOT/1000) | currency }}<small class="txt">천원</small>
+                    {{ Math.round(current_dr_C.AMT/1000) | currency }}<small class="txt">천원</small>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- card_당일 매출 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">당일 매출</h4>
+                </div>
+                <div class="card_content">
+                  <strong class="em_obj" v-if="dr_C.length > 0">
+                    {{ Math.round(current_dr_C.SALE_TOT/1000) | currency }}<small class="txt">천원</small>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- card_당일 매출 달성률 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">당일 매출 달성률</h4>
+                </div>
+                <div class="card_title">
+                  <small class="txt_box">(당일 매출/당일 매출 목표) * 100</small>
+                </div>
+                <div class="card_content" >
+                  <strong class="em_obj" v-if="dr_C.length > 0">
+                    {{ Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) | nanToDot }}
+                    <small
+                      class="txt2"
+                    >%</small>
+                    <!-- 초과-->
+                    <span
+                      class="chip round_chip success"
+                      v-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) >= 100"
+                    >
+                      <span class="chip_text">초과</span>
+                    </span>
+                    <!-- 정상-->
+                    <span
+                      class="chip round_chip warning"
+                      v-else-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) <= 99"
+                    >
+                      <span class="chip_text">정상</span>
+                    </span>
+                    <!-- 주의-->
+                    <span
+                      class="chip round_chip danger"
+                      v-else-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) < 95"
+                    >
+                      <span class="chip_text">주의</span>
+                    </span>
+                    <!-- 달성중 -->
+                    <span class="chip round_chip primary" v-else>
+                      <span class="chip_text">달성중</span>
+                    </span>
                   </strong>
                 </div>
               </div>
@@ -159,6 +217,19 @@
                 <div class="card_content">
                   <strong class="em_obj" v-if="dr_C.length > 0">
                     {{ Math.round(current_dr_C.MONTH_AMT/1000) | currency }}<small class="txt">천원</small>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- card_당월 현금 증감 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">월 누적매출</h4>
+                </div>
+                <div class="card_content">
+                  <strong class="em_obj" v-if="dr_C.length > 0">
+                    {{ Math.round(current_dr_C.SALE_MONTH_TOT/1000) | currency }}<small class="txt">천원</small>
                   </strong>
                 </div>
               </div>
@@ -207,7 +278,20 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li style="display: none;">
+              <!-- card_연 누적매출 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">연 누적매출 목표</h4>
+                </div>
+                <div class="card_content">
+                  <strong class="em_obj" v-if="dr_C.length > 0">
+                    {{ Math.round(current_dr_C.YEAR_AMT/1000000) | currency }}<small class="txt">백만원</small>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li style="display: none;">
               <!-- card_당년 현금 증감 -->
               <div class="card card_mini">
                 <div class="card_title">
@@ -220,20 +304,7 @@
                 </div>
               </div>
             </li>
-            <li>
-              <!-- card_월 누적매출 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">연 누적매출 목표</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" v-if="dr_C.length > 0">
-                    {{ Math.round(current_dr_C.YEAR_AMT/1000000) | currency }}<small class="txt">백만원</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
+            <li style="display: none;">
               <!-- card_월 누적매출 달성률 -->
               <div class="card card_mini">
                 <div class="card_title">
@@ -304,10 +375,12 @@
                       <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="chageType(2)" />
                       <span class="btn_n txt_label" >월간</span>
                     </label>
+                    <!--
                     <label class="tg_btn" :class="{'is-checked': choice === 3}">
                       <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="chageType(3)" />
                       <span class="btn_n txt_label" >누적</span>
                     </label>
+                    -->
                   </div>
                 </div>
               </div>
@@ -504,7 +577,6 @@ export default {
     },
     current_dr_C() {
       let list = _.find(this.dr_C, {MCODE: this.selectedCODE})
-      console.log("current_dr_C >>> ", list)
       return list
     },
     current_dr_H() {
@@ -549,7 +621,8 @@ export default {
     },
     authCodeList() {
       if (this.isTabTypeSU) {
-        return this.$store.getters.getAuthSUCDCode[0]
+        let list = this.$store.getters.getAuthSUCDCode[0]
+        return list
       }
       return this.$store.getters.getAuthBRCDCode[0]
     }
@@ -630,8 +703,8 @@ export default {
       return x;
     },
     getData() {
-      // this.getTotalSalesData()
-      this.getDailySalesData()
+      this.getTotalSalesData()
+      //this.getDailySalesData()
       this.getCumulativeData()
     },
     getTotalSalesData() {
@@ -646,6 +719,7 @@ export default {
           this.dr_H.push({ TEXT: this.authCodeList[i].CODNM, MCODE: this.authCodeList[i].MCODE, SUNM: "", SALE_TOT: 0, AMT: 0 })
         }
       }
+      //this.dr_H.unshift({TEXT: "전체", MCODE: "A", SUNM: "전체", SALE_TOT: 0, AMT: 0, SALE_MONTH_TOT: 0});
 
       this.sucdCodeList = _.map(this.authCodeList, 'MCODE')
 
@@ -662,12 +736,24 @@ export default {
             } else {
               list = JSON.parse("[" + res + "]")
             }
+            
             for (i=0;i<this.authCodeList.length;i++) {
               let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
               if (data) {
                 this.dr_H[i] = _.assign(this.dr_H[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }))
               }
             }
+
+            let tot_obj = {
+              TEXT: "전체", MCODE: "A",
+              SUNM: "전체",
+              SALE_TOT: _.sumBy(this.dr_H, function(o) { return Number(o.SALE_TOT); }),
+              SALE_MONTH_TOT: _.sumBy(this.dr_H, function(o) { return o.SALE_MONTH_TOT?Number(o.SALE_MONTH_TOT):0; }),
+              AMT: _.sumBy(this.dr_H, function(o) { return Number(o.AMT); }),
+            }
+
+            this.dr_H.unshift(tot_obj)
+            //this.dr_H[0] = tot_obj;
           }
         },
         rej => {
@@ -675,7 +761,7 @@ export default {
         }
       );
 
-      console.log("여기는 안 쓰임 dr_H >>> ", this.dr_H)
+      console.log("1. dr_H >>> ", this.dr_H)
 
     },
     getDailySalesData() {
@@ -688,6 +774,7 @@ export default {
           this.dr_H.push({ TEXT: this.authCodeList[i].CODNM, MCODE: this.authCodeList[i].MCODE, SUNM: "", SALE_TOT: 0, AMT: 0 })
         }
       }
+      
       let authMCodeList = _.map(this.authCodeList, 'MCODE')
 
       this.req2svr.getDailySalesData(this.tabType, date, authMCodeList.toString()).then(
@@ -717,8 +804,8 @@ export default {
               AMT: _.sumBy(this.dr_H, function(o) { return Number(o.AMT); }),
             }
 
-            this.dr_H.unshift(tot_obj)
-            console.log("1. dr_H >>> " , this.dr_H);
+            this.dr_H.unshift(tot_obj);
+            console.log("2. dr_H >>> " , this.dr_H);
 
             this.SU_TOT_AMT = _.sumBy(this.dr_H, function(o) { return Number(o.AMT); })
             this.SU_TOT_SALE_TOT = _.sumBy(this.dr_H, function(o) { return Number(o.SALE_TOT); })
@@ -731,19 +818,22 @@ export default {
     },
     getCumulativeData() {
       this.dr_C = []
+      
       for (i=0;i<this.authCodeList.length;i++) {
         let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
         if (data) {
           this.dr_C.push({ MCODE: this.authCodeList[i].MCODE, SUNM: "", SALE_TOT: 0, SALE_MONTH_TOT: 0, AMT: 0 })
         }
       }
+      //this.dr_C.unshift({ MCODE: "A", SUNM: "", SALE_TOT: 0, SALE_MONTH_TOT: 0, AMT: 0 })
+      
       let i
-      // let date = moment(this.selectDate).format("YYYYMMDD")
-      // let monthStartDate = moment(date).startOf('month').format("YYYYMMDD")
+      let date = moment(this.selectDate).format("YYYYMMDD")
+      let monthStartDate = moment(date).startOf('month').format("YYYYMMDD")
 
       this.sucdCodeList = _.map(this.authCodeList, 'MCODE')
 
-      this.req2svr.getCumulativeData(this.tabType, this.sucdCodeList.toString()).then(
+      this.req2svr.getCumulativeData(this.tabType, this.sucdCodeList.toString(), date, monthStartDate).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
@@ -762,7 +852,6 @@ export default {
                 this.dr_C[i] = _.assign(this.dr_C[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }));
               }
             }
-
             var tot_obj = {
               MCODE: "A", SUNM: "전체",
               SALE_TOT: _.sumBy(this.dr_C, function(o) { return Number(o.SALE_TOT); }),
@@ -774,6 +863,7 @@ export default {
             }
 
             this.dr_C.unshift(tot_obj)
+            //this.dr_C[0] = tot_obj;
             console.log("dr_C >>> ", this.dr_C)
           }
         },
@@ -787,6 +877,7 @@ export default {
     },
     loadData() {
       if (moment(this.selectDate).diff(moment(this.recentDate)) > 0) {
+        
         this.dr_H = []
         for (let i=0;i<this.authCodeList.length;i++) {
           let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
@@ -794,6 +885,7 @@ export default {
             this.dr_H.push({ TEXT: this.authCodeList[i].CODNM, MCODE: this.authCodeList[i].MCODE, SUNM: "", SALE_TOT: 0, AMT: 0 })
           }
         }
+        this.dr_H.unshift({TEXT: "전체", MCODE: "A", SUNM: "전체", SALE_TOT: 0, AMT: 0});
         // 당일 매출, 월 누적매출, 월 누적매출 목표, 월 누적매출 달성률
         this.dr_C = []
         for (let i=0;i<this.authCodeList.length;i++) {
@@ -802,6 +894,8 @@ export default {
             this.dr_C.push({ MCODE: this.authCodeList[i].MCODE, SUNM: "", SALE_TOT: 0, SALE_MONTH_TOT: 0, AMT: 0 })
           }
         }
+        this.dr_C.unshift({ MCODE: "A", SUNM: "전체", SALE_TOT: 0, AMT: 0, SALE_MONTH_TOT: 0});
+        
         // 매출유형
         this.dr_S = {
           JQTY: 0, DCQTY: 0, GQTY: 0, JAMT: 0, DCAMT: 0, GAMT: 0,
@@ -825,7 +919,7 @@ export default {
       this.getData()
 
       if (this.authCodeList.length > 0) {
-        this.changeBusiness(this.authCodeList[0].MCODE);
+        this.changeBusiness("A");
       }
     },
     changeBusiness(code) {
@@ -979,7 +1073,27 @@ export default {
             } else {
               let list = JSON.parse("[" + res + "]")
               if(this.choice == "2") {
-                this.dr_P = list
+                //this.dr_P = list
+                let month = moment(this.selectDate).format("MM");
+                for(var i in list) {
+                  if(list[i].SALEDT > month) {
+                    this.dr_P.push({
+                      LY_SALE_TOT: Number(list[i].LY_SALE_TOT),
+                      SALEDT: list[i].SALEDT,
+                      SUNM: list[i].SUNM,
+                      SUCD: list[i].SUCD
+                    })
+                  } else {
+                    this.dr_P.push({
+                      AMT: Number(list[i].AMT),
+                      LY_SALE_TOT: Number(list[i].LY_SALE_TOT),
+                      SALE_TOT: Number(list[i].SALE_TOT),
+                      SALEDT: list[i].SALEDT,
+                      SUNM: list[i].SUNM,
+                      SUCD: list[i].SUCD
+                    })
+                  }
+                }
               } else {
                 for(var i in list) {
                   let PRE_LY_SALE_TOT, PRE_SALE_TOT, PRE_AMT

@@ -39,10 +39,10 @@
       <div class="tabs">
         <ul class="tab_list">
           <!--활성화 class on-->
-          <li><a href="javascript:void(0);" @click="link('/WeeklyClothSale')">복종별 판매 및 할인율</a></li>
-          <li><a href="javascript:void(0);" @click="link('/WeeklyBest20')">주간판매 BEST 20</a></li>
-          <li><a href="javascript:void(0);" @click="link('/WeeklyResearch')">신상품 반응조사</a></li>
-          <li class="on"><a href="javascript:void(0);" @click="link('/WeeklyProgress')">주간판매 동향</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0101')">복종별 판매 및 할인율</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0201')">주간판매 BEST 20</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0301')">신상품 반응조사</a></li>
+          <li class="on"><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
         </ul>
       </div>
     </div>
@@ -232,7 +232,7 @@
                                         <tbody class="tbody_s">
                                             <!-- J4,L4 -->
                                             <template v-for="(data,index) in tableData">
-                                            <tr>
+                                            <tr :key="'A'+index">
                                                 <!-- 선택년 -->
                                                 <th rowspan="3" :class="[data.YSCD == 'SSUM' && (data.SEASON == 'SPRING' || data.SEASON == 'SUMMER' || data.SEASON == 'FALL' ||data.SEASON == 'WINTER') ? 'bg_point_col19' : '']">
                                                   <span class="tit_row" v-if="data.YSCD == 'SSUM' && data.SEASON == 'SPRING'">SP계</span>
@@ -286,7 +286,7 @@
                                                 <td>{{ Math.round(data.PRICE/1000) | currency }}</td>
                                                 <td>{{ Math.round(data.JPRICE/1000) | currency }}</td>
                                             </tr>
-                                            <tr>
+                                            <tr :key="'B'+index">
                                                 <!-- 선택년 -->
                                                 <td :class="[data.YSCD == 'SSUM' && (data.SEASON == 'SPRING' || data.SEASON == 'SUMMER' || data.SEASON == 'FALL' ||data.SEASON == 'WINTER') ? 'bg_point_col19' : 'tr']">
                                                   {{ data.SALQTY | currency }}
@@ -325,7 +325,7 @@
                                                 <td>{{ Math.round(data.PRICE1/1000) | currency }}</td>
                                                 <td>{{ Math.round(data.JPRICE1/1000) | currency }}</td>
                                             </tr>
-                                            <tr>
+                                            <tr :key="'C'+index">
                                                 <!-- 선택년 -->
                                                 <td :class="[data.YSCD == 'SSUM' && (data.SEASON == 'SPRING' || data.SEASON == 'SUMMER' || data.SEASON == 'FALL' ||data.SEASON == 'WINTER') ? 'bg_point_col19' : 'tr']">
                                                   <strong>{{ data.INQTYPER }}%</strong>
@@ -608,7 +608,12 @@ export default {
     // 작년 날짜 6주전
     this.lastBe6Week = moment(this.lastWeek, 'MM/DD').subtract(6, 'week').format('MM/DD')
 
-    this.selectSucd = this.authCodeList[0].MCODE
+    console.log("4 data >>> "+this.data+" / "+this.selectSucd)
+    if(this.data) {
+      this.selectSucd = this.data.selectSucd
+    } else {
+      this.selectSucd = this.authCodeList[0].MCODE
+    }
 
     let currentYear = Number(moment().format("YYYY"))
     let code
@@ -1085,7 +1090,16 @@ export default {
       });
     },
     link(val) {
-      this.$router.push(val)
+      //this.$router.push(val)
+      this.$router.push({
+        name: val,
+        params: {
+          data: 
+          {
+            selectSucd: this.selectSucd
+          }
+        }
+      })
     },
     excelDownLoad(id1) {
       var tab_text = ""

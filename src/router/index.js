@@ -1046,13 +1046,21 @@ export default new Router({
     // 시니어 타사 Detail 기본정보
     { name: 'HUM0501', component: HUM0501, path: '/HumSeDetail2', beforeEnter: requireAuth },
     // 주간보고(복종별 판매 및 할인율)
-    { name: 'WEE0101', component: WEE0101, path: '/WeeklyClothSale', beforeEnter: requireAuth },
+    { name: 'WEE0101', component: WEE0101, path: '/WeeklyClothSale', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
+    },
     // 주간보고(주간판매 BEST 20)
-    { name: 'WEE0201', component: WEE0201, path: '/WeeklyBest20', beforeEnter: requireAuth },
+    { name: 'WEE0201', component: WEE0201, path: '/WeeklyBest20', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
+    },
     // 주간보고(신상품 반응조사)
-    { name: 'WEE0301', component: WEE0301, path: '/WeeklyResearch', beforeEnter: requireAuth },
+    { name: 'WEE0301', component: WEE0301, path: '/WeeklyResearch', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
+    },
     // 주간보고(주간판매 추이)
-    { name: 'WEE0401', component: WEE0401, path: '/WeeklyProgress', beforeEnter: requireAuth },
+    { name: 'WEE0401', component: WEE0401, path: '/WeeklyProgress', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
+    },
     // ERROR
     { name: 'Error', component: ERR0001, path: '/Error'}
   ]

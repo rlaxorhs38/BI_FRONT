@@ -28,9 +28,13 @@
             </li> -->
             <li>
               <div class="btns">
+                <div class="sub_btns">
+                  <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_sub">일매출보고</a>
+                  <a href="javascript:void(0);" @click="link('/OnLineSale')" class="btn_sub">온라인매출현황</a>
+                </div>
                 <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_main">
-                  <i class="material-icons">today</i>DailyReport
-                </a>
+                  <i class="material-icons">today</i>일매출현황
+                </a>                            
               </div>
             </li>
             <li>
@@ -83,13 +87,6 @@
               <div class="btns">
                 <a href="javascript:void(0);" @click="link('/HumMain')" class="btn_main">
                   <i class="material-icons">perm_contact_calendar</i>인재DB
-                </a>
-              </div>
-            </li>
-            <li>
-              <div class="btns">
-                <a href="javascript:void(0);" @click="link('/OnLineSale')" class="btn_main">
-                  <i class="material-icons">local_atm</i>온라인판매현황
                 </a>
               </div>
             </li>

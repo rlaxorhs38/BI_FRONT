@@ -18,13 +18,13 @@ export default {
       }
     }).then(x => x.data)
   },
-  getCumulativeData(tabType, authCodeList) { 
+  getCumulativeData(tabType, authCodeList, date, monthStartDate) { 
     return axios.get(apiUrl() + "fin/getCumulativeData", {
       params : { 
         tabType : tabType,
         authCodeList : authCodeList,
-        // date : date,
-        // monthStartDate : monthStartDate
+        date : date,
+        monthStartDate : monthStartDate
       }
     }).then(x => x.data)
   },
