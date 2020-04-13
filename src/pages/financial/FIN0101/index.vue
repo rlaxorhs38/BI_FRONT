@@ -22,7 +22,7 @@
           <i class="material-icons">arrow_back_ios</i>
         </button> -->
         <!-- Title -->
-        <h2 class="layout_title">일매출현황
+        <h2 class="layout_title">일 매출보고
           <small class="txt_date">
             <span v-show="headerDate == today" class="chip chip_m">
               <span class="chip_text">TODAY</span>
@@ -1201,13 +1201,14 @@ export default {
     },
     tabVal(val) {
       if (moment(this.selectDate).diff(moment(this.recentDate)) > 0) {
-        this.gubun = 1
+        this.gubun = 1;
         return
       }
       if (val == "1") {
-        this.gubun = 1
+        this.gubun = 1;
+        this.chageType(this.choice);
       } else if (val == "2") {
-        this.gubun = 2
+        this.gubun = 2;
         this.makeChart4();
       } 
     },
