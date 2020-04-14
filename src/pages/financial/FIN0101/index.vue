@@ -369,11 +369,11 @@
                   <div class="toggle_group tg_sty01">
                     <label class="tg_btn" :class="{'is-checked': choice === 1}">
                       <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="chageType(1)" />
-                      <span class="btn_n txt_label" >일간</span>
+                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;">일간</span>
                     </label>
                     <label class="tg_btn" :class="{'is-checked': choice === 2}">
                       <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="chageType(2)" />
-                      <span class="btn_n txt_label" >월간</span>
+                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;">월간</span>
                     </label>
                     <!--
                     <label class="tg_btn" :class="{'is-checked': choice === 3}">
@@ -1163,6 +1163,7 @@ export default {
               this.dr_S.R_DCQTY = Number(res.R_DCQTY)
               this.dr_S.R_GQTY = Number(res.R_GQTY)
             }
+              console.log("??? getSalesChartCount >>>>", res)
             this.makeChart1()
           }
         },
@@ -1172,7 +1173,7 @@ export default {
       )
     },
     getSalesChartAMT(code, date) {
-      this.req2svr.getSalesChartAMT(this.tabType, code, date).then(
+      this.req2svr.getSalesChartAMT(this.tabType, code, date, this.choice).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
@@ -1206,7 +1207,9 @@ export default {
       }
       if (val == "1") {
         this.gubun = 1;
-        this.chageType(this.choice);
+        //this.chageType(this.choice);
+        this.makeChart1();
+        this.makeChart2();
       } else if (val == "2") {
         this.gubun = 2;
         this.makeChart4();

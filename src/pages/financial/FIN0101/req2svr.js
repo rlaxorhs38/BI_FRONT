@@ -69,12 +69,13 @@ export default {
       }
     }).then(x => x.data)
   },
-  getSalesChartAMT(tabType, code, date) { 
+  getSalesChartAMT(tabType, code, date, searchType) { 
     return axios.get(apiUrl() + "fin/getSalesChartAMT", {
       params : { 
         tabType : tabType,
         code : code,
-        date : date
+        date : date,
+        searchType : searchType
       }
     }).then(x => x.data)
   },
