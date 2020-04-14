@@ -2,9 +2,6 @@ import axios from 'axios'
 import apiUrl from '@/config/apiUrl'
 
 export default {
-  getMakeDataDate() {
-    return axios.get(apiUrl() + "fin/getMakeDataDate").then(x => x.data)
-  },
   getSaleByBrandList(year) {
     return axios.get(apiUrl() + "online/getSaleByBrandList", {
       params : { 

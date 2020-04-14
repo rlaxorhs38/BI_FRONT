@@ -14,260 +14,299 @@
     <!-- header -->
     <header class="header">
         <div class="header_inner">
+        <!-- Title button -->
+        <!-- <button type="button" class="btn_n btn_icon btn_prev" @click="prev">
+          <i class="material-icons">arrow_back_ios</i>
+        </button> -->
         <!-- Title -->
-        <h2 class="layout_title">온라인 매출현황
-          <small class="txt_date">
-            <span v-show="headerDate == today" class="chip chip_m">
-              <span class="chip_text">TODAY</span>
-            </span>
-            <strong class="point_col1">{{ headerDate }}</strong>
-          </small>
+        <h2 class="layout_title">온라인 매출 실적
+          <span class="txt_date">
+              <strong class="point_col1">{{year}}년 {{month}}월 {{toDay-1}}일</strong>
+          </span>
         </h2>
         <div class="layout_spacer"></div>
         <div style="margin-right: 10px;">
           <button type="button" class="btn_n" style="height:55px;"  @click="showYearly()">년도별 매출 현황</button>
         </div>
-        <div style="margin-left: 10px; margin-right: 10px;">
-          <button type="button" class="btn_n" style="height:55px;"  @click="showDaily()"><label>일별 매출 현황</label></button>
-        </div>
-        <div style="margin-right: 10px;"><small class="txt_s">데이터 기준일 : {{ makeDataDate }}</small></div>
-        <!-- groups --> 
-        <div class="groups">
-          <!-- date -->
-          <div class="input_group input_icon_group" style="width:210px;">
-            <form action="#">
-              <label class="btn_icon_nl" for="date">
-                <i class="material-icons">calendar_today</i>
-              </label>
-              <div class="input_text" type="text" id="date">
-                <date-pick
-                    v-model="selectDate"
-                    @input="changeDate"
-                    startWeekOnSunday
-                    :inputAttributes="{readonly: true}"
-                  ></date-pick>
-              </div>
-            </form>
-          </div>
-        </div>
       </div>
     </header>
     <div class="container">
       <div class="content">
-        <!-- scrolling card -->
-        <div class="list_box lb_sty01">
-          <div class="inner">
-            <ul class="list_card">
-              <template v-for="data in baseSaleList">
-              <li :key="data.ITEM">
-                <!-- card_MI 사업부 -->
-                <div
-                  class="card card_mini"
-                  @click="changeBusiness(data.ITEM)"
-                  :class="{on : selectedCODE == data.ITEM}"
-                >
-                  <div class="card_title">
-                    <h4 class="card_title_text">{{ data.BRCD }} 사업부</h4>
-                  </div>
-                  <div class="card_content">
-                    <strong class="em_obj" v-if="data.DAYTOT">
-                      {{ data.DAYTOT | currency }}<small class="txt">천원</small>
-                    </strong>
-                    <strong class="em_obj" v-else>
-                      0<small class="txt">천원</small>
-                    </strong>
-                    <dl class="list_obj">
-                      <dt class="tit">비율</dt>
-                      <dd class="txt" v-if="data.DAYRAT">
-                        {{ data.DAYRAT | nanToDot }} %
-                      </dd>
-                      <dd class="txt" v-else>
-                        0 %
-                      </dd>
-                    </dl>
-                  </div>
+        <div class="row">
+          <div class="col_md_12">
+            <div class="cont_box">
+              <div class="tit">
+                <strong class="tit_txt">온/오프라인 매출 실적</strong>
+                <div class="layout_spacer"></div>
+                <span class="txt">&lt; 단위: 천원 &gt;</span>
+              </div>
+              <div class="cont">
+                <div class="tbl_sheet yellow np">
+                  <table id="exceldown_tbody" class="tbl tbl_center tbl_scroll_horizontally">
+                    <colgroup style="width: 1%">
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th rowspan="2">구분</th>
+                        <th colspan="4">당일 ({{ month }}월 {{ toDay-1 }}일)</th>
+                        <th colspan="4">당월({{ month }}월)</th>
+                        <th colspan="4">연간누적({{ year }}년)</th>
+                      </tr>
+                      <tr>
+                        <th>전체 매출</th>
+                        <th>자사몰 매출</th>
+                        <th>외부몰 매출</th>
+                        <th>비율(%)</th>
+
+                        <th>전체 매출</th>
+                        <th>자사몰 매출</th>
+                        <th>외부몰 매출</th>
+                        <th>비율(%)</th>
+
+                        <th>전체 매출</th>
+                        <th>자사몰 매출</th>
+                        <th>외부몰 매출</th>
+                        <th>비율(%)</th>
+                      </tr>
+                    </thead>
+
+                    <tbody id="sales_status" class="tbody_s">
+                      <tr v-for="(data , index) in baseSaleList" v-bind:key="index" v-bind:class="totalClass(data.ITEM)">
+                        <td style="font-weight: bold;">{{data.BRCD}}</td>
+
+                        <td class="tr">{{ data.DAYTOT  | currency }}</td>
+                        <td class="tr">{{ data.DAYJASA | currency }}</td>
+                        <td class="tr">{{ data.DAYOUT | currency }}</td>
+                        <td class="tr">{{ data.DAYRAT }}</td>
+                        
+                        <td class="tr">{{ data.MONTOT  | currency }}</td>
+                        <td class="tr">{{ data.MONJASA | currency }}</td>
+                        <td class="tr">{{ data.MONOUT | currency }}</td>
+                        <td class="tr">{{ data.MONRAT }}</td>
+
+                        <td class="tr">{{ data.YEARTOT  | currency }}</td>
+                        <td class="tr">{{ data.YEARJASA | currency }}</td>
+                        <td class="tr">{{ data.YEAROUT | currency }}</td>
+                        <td class="tr">{{ data.YEARRAT }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-              </li>
-              </template>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- //scrolling card -->
-        <div class="list_box">
-          <ul class="list_card">
-            <li>
-              <!-- card_당일 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 ({{ month }}월 {{ toDay-1 }}일)</h4>
-                </div>
-                <div class="card_content">
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc"><h6>전체 매출</h6></div>
-                    <div class="w50 tc"><h6>온라인 매출</h6></div>
-                  </div>
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ current_BS.DAYTOT | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT) | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당일 매출 비율 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 매출 비율</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ current_BS.DAYRAT | nanToDot }} %
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당월 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당월 ({{ month }}월)</h4>
-                </div>
-                <div class="card_content" >
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc"><h6>전체 매출</h6></div>
-                    <div class="w50 tc"><h6>온라인 매출</h6></div>
-                  </div>
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ current_BS.MONTOT | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ Number(current_BS.MONJASA) + Number(current_BS.MONOUT) | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당월 매출 비율 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당월 매출 비율</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ current_BS.MONRAT | nanToDot }} %
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_연간누적 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">연간누적 ({{ year }}년)</h4>
-                </div>
-                <div class="card_content">
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc"><h6>전체 매출</h6></div>
-                    <div class="w50 tc"><h6>온라인 매출</h6></div>
-                  </div>
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ current_BS.YEARTOT | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ Number(current_BS.YEARJASA) + Number(current_BS.YEAROUT) | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_누적 매출 비율 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">연간 매출 비율</h4>
-                </div>
-                <div class="card_content" >
-                  <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ current_BS.YEARRAT | nanToDot }} %
-                  </strong>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
         <div class="row">
-          <div class="col_md_6">
-            <div class="cont_box h100">
+          <div class="col_md_12">
+            <div class="cont_box">
               <div class="tit">
-                <div class="tab">
-                  <ul>
-                    <li class="on">
-                      <a href="javascript:void(0);">온라인 매출추이</a>
-                    </li>
-                  </ul>
-                </div>
+                <strong class="tit_txt">월별 온라인 매출 실적</strong>
                 <div class="layout_spacer"></div>
-                <div class="groups">
-                  <div class="toggle_group tg_sty01">
-                    <label class="tg_btn" :class="{'is-checked': choice === 1}">
-                      <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="chageType(1)" />
-                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;" >일간</span>
-                    </label>
-                    <label class="tg_btn" :class="{'is-checked': choice === 2}">
-                      <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="chageType(2)" />
-                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;" >월간</span>
-                    </label>
-                    <label class="tg_btn" :class="{'is-checked': choice === 3}">
-                      <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="chageType(3)" />
-                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;" >누적</span>
-                    </label>
-                  </div>
+                <span class="txt">&lt; 단위: 백만원 &gt;</span>
+                <div style="margin-left: 10px; margin-right: 10px;">
+                  <button type="button" class="btn_n" style="height:40px; vertical-align: top;"  @click="showDaily()"><label>일별 매출 현황</label></button>
                 </div>
               </div>
               <div class="cont">
-                <div class="graph_area" >
+                <div class="tbl_sheet yellow np">
+                  <table id="exceldown_tbody" class="tbl tbl_center tbl_scroll_horizontally">
+                    <colgroup style="width: 1%">
+                      <col />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                      <col />
+                      <col />
+                      <col class="bg_point_col19" />
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>년도</th>
+                        <th colspan="3" v-for="s in 12" v-bind:key="s" v-bind:class="monthClass(s)" v-on:click="setChartData(s)" >{{s}} 월</th>
+                      </tr>
+                      <tr>
+                        <th>구분</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+
+                        <th>자사</th>
+                        <th>외부</th>
+                        <th>합계</th>
+                      </tr>
+                    </thead>
+
+                    <tbody id="sales_status" class="tbody_s">
+                      <tr v-for="(data , index) in brdSaleMslList" v-bind:key="index">
+                        <td style="font-weight: bold;">{{data.BRCD}}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT1 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT1 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT1 | currency }}</td>
+                        
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT2 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT2 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT2 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT3 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT3 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT3 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT4 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT4 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT4 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT5 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT5 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT5 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT6 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT6 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT6 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT7 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT7 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT7 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT8 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT8 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT8 | currency }}</td>
+                        
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT9 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT9 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT9 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT10 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT10 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT10 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT11 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT11 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT11 | currency }}</td>
+
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{ data.JASASILAMT12 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.OUTSILAMT12 | currency }}</td>
+                        <td class="tr" v-bind:style="{fontWeight:data.BRCD=='TOTAL'?'bold':''}">{{  data.TOTSILAMT12 | currency }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col_md_6 npr npl">
+            <div class="cont_box">
+              <div class="tit">
+                <strong class="tit_txt" >일별 온라인 매출 추이</strong>
+                <div class="layout_spacer"></div>
+                <span class="txt">&lt; 단위: 천원 &gt;</span>
+              </div>
+              <div class="cont">
+                <div class="graph_area mr30" >
                   <div class="graph_view">
                     <div class="graph" style="position:relative; width:100%; height:270px;">
-                      <div id="chartdiv1" style="position:relative; width:100%; height:100%; float:left;"></div>
+                      <div id="chartdiv" style="position:relative; width:100%; height:100%; float:left;"></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col_md_6">
-            <div class="cont_box h100">
+          <div class="col_md_6 npr npl">
+            <div class="cont_box">
               <div class="tit">
-                <div class="tab">
-                  <ul>
-                    <li class="on">
-                      <a href="javascript:void(0);">잇미샤 월별 온/오프 비중</a>
-                    </li>
-                  </ul>
-                </div>
+                <strong class="tit_txt" >월별 온라인 매출 추이</strong>
                 <div class="layout_spacer"></div>
+                <span class="txt">&lt; 단위: 백만원 &gt;</span>
               </div>
               <div class="cont">
-                <div class="graph_area" >
+                <div class="graph_area mr30" >
                   <div class="graph_view">
                     <div class="graph" style="position:relative; width:100%; height:270px;">
                       <div id="chartdiv2" style="position:relative; width:100%; height:100%; float:left;"></div>
@@ -332,7 +371,7 @@
           <div class="col_md_12">
             <div class="cont_box">
               <div class="tit">
-                <strong class="tit_txt" >판매 현황 캘린더</strong>
+                <strong class="tit_txt" >test table</strong>
                 <div class="layout_spacer"></div>
                 <div style="margin-right: 10px;" v-for="(mon , index1) in monthList" v-bind:key="index1">
                   <button type="button" v-if="mon == clickedMonth" class="btn_primary" @click="getCalendarData(mon)" style="padding: 15px; display: block;">{{mon}} 월</button>
@@ -407,7 +446,6 @@
 import moment from "moment"
 import req2svr from "./req2svr"
 import sideMenu from '@/components/sideMenu'
-import datePick from "vue-date-pick"
 
 // import DetailMslyPopup from '@/pages/online/ONL0104_1'
 import YearlyPopup from '@/pages/online/ONL0103_1'
@@ -417,7 +455,6 @@ export default {
   name: "ONL0103",
   components: {
     sideMenu,
-    datePick,
     // DetailMslyPopup,
     YearlyPopup,
     DailyPopup
@@ -429,22 +466,11 @@ export default {
     this.setLoadData();
   },
   created() {
-    this.getMakeDataDate();
-    this.selectDate = moment().subtract(1, "days").format("YYYY-MM-DD");
+
     // this.loadData()
   },
   computed: {
     req2svr: () => req2svr,
-    headerDate() {
-      return moment(this.selectDate).format("YYYY.MM.DD (ddd)");
-    },
-    today() {
-      return moment().format("YYYY.MM.DD (ddd)");
-    },
-    current_BS() {
-      let list = _.find(this.baseSaleList, {ITEM: this.selectedCODE})
-      return list
-    },
   },
   data() {
     return {
@@ -454,6 +480,13 @@ export default {
       month: new Date().getMonth()+1,
       toDay: new Date().getDate(),
       msg: 'This is OnLineSale page',
+      // brandSaleList: [
+      //   {"BRCD": "MI", "SUCD": "1",  "JASASILAMT4": "0", "OUTSILAMT4": "0", "TOTSILAMT4": "0", "JASASILAMT3": "301", "OUTSILAMT3": "0", "TOTSILAMT3": "301", "JASASILAMT2": "422", "OUTSILAMT2": "0", "TOTSILAMT2": "422", "JASASILAMT1": "776", "OUTSILAMT1": "0", "TOTSILAMT1": "776", "JASASILAMT": "0", "OUTSILAMT": "0", "TOTSILAMT": "0"},
+      //   {"BRCD": "MO", "SUCD": "12", "JASASILAMT4": "0", "OUTSILAMT4": "0", "TOTSILAMT4": "0", "JASASILAMT3": "1357", "OUTSILAMT3": "0", "TOTSILAMT3": "1357", "JASASILAMT2": "2126", "OUTSILAMT2": "0", "TOTSILAMT2": "2126", "JASASILAMT1": "2675", "OUTSILAMT1": "0", "TOTSILAMT1": "2675", "JASASILAMT": "0", "OUTSILAMT": "0", "TOTSILAMT": "0"},
+      //   {"BRCD": "IT", "SUCD": "14", "JASASILAMT4": "264", "OUTSILAMT4": "1482", "TOTSILAMT4": "1746", "JASASILAMT3": "1127", "OUTSILAMT3": "1932", "TOTSILAMT3": "3059", "JASASILAMT2": "2665", "OUTSILAMT2": "1985", "TOTSILAMT2": "4650", "JASASILAMT1": "4519", "OUTSILAMT1": "3503", "TOTSILAMT1": "8022", "JASASILAMT": "0", "OUTSILAMT": "0", "TOTSILAMT": "0"},
+      //   {"BRCD": "IN", "SUCD": "23", "JASASILAMT4": "671", "OUTSILAMT4": "2760", "TOTSILAMT4": "3431", "JASASILAMT3": "1400", "OUTSILAMT3": "593", "TOTSILAMT3": "1993", "JASASILAMT2": "846", "OUTSILAMT2": "73", "TOTSILAMT2": "919", "JASASILAMT1": "1441", "OUTSILAMT1": "682", "TOTSILAMT1": "2123", "JASASILAMT": "0", "OUTSILAMT": "0", "TOTSILAMT": "0"},
+      //   {"BRCD": "SO", "SUCD": "3",  "JASASILAMT4": "29", "OUTSILAMT4": "662", "TOTSILAMT4": "691", "JASASILAMT3": "129", "OUTSILAMT3": "956", "TOTSILAMT3": "1085", "JASASILAMT2": "", "OUTSILAMT2": "", "TOTSILAMT2": "", "JASASILAMT1": "", "OUTSILAMT1": "", "TOTSILAMT1": "", "JASASILAMT": "0", "OUTSILAMT": "0", "TOTSILAMT": "0"},
+      // ],
       itOnffImptList: [],
       month_start: 1,
       brdSaleMslList: [],
@@ -464,7 +497,7 @@ export default {
       baseSaleList: [],
       dailySaleList: [],
       monthlySaleList: [],
-      selectDate: null,
+
       weekNames: ["월요일", "화요일", "수요일","목요일", "금요일", "토요일", "일요일"],
       rootYear: 1904,
       rootDayOfWeekIndex: 4, // 2000년 1월 1일은 토요일
@@ -474,34 +507,11 @@ export default {
       memoDatas: [],
       clickedMonth: new Date().getMonth()+1,
       monthList: [],
-      makeDataDate: null,
-      selectedCODE: '00',
-      choice: 1,
     }
   },
   methods: {
-    getMakeDataDate(){
-      this.req2svr.getMakeDataDate().then(
-        res => {
-          if (res.MACHBASE_ERROR) {
-            console.log("res", res)
-          } else {
-            this.makeDataDate = res.CREATEDATE;
-          }
-        },
-        rej => {
-          console.log("rej", rej);
-        }
-      );
-    },
     toMain: function () {
       this.$router.replace("/");
-    },
-    changeDate() {
-      this.year = Number(moment(this.selectDate).format("YYYY"));
-      this.month = Number(moment(this.selectDate).format("MM"));
-      this.toDay = Number(moment(this.selectDate).format("DD"));
-      this.setLoadData()
     },
     setLoadData: function () {
       for(var i=0; i<this.month; i++) {
@@ -611,15 +621,12 @@ export default {
           if (res.MACHBASE_ERROR) {
             console.log("res", res);
           } else {
+            console.log("getBaseSaleList >>> ", JSON.parse("[" + res + "]"));
             this.baseSaleList = JSON.parse("[" + res + "]");
 
-            for(var i in this.baseSaleList) {
-              this.baseSaleList[i].ITEM = this.baseSaleList[i].BRCD
-            }
-
             let totObj = {
-              "BRCD": "전체",
-              "SORT": "0",
+              "BRCD": "합계",
+              "SORT": "999",
               "ITEM": "00",
               "DAYTOT": _.sumBy(this.baseSaleList, function(o) { return Number(o.DAYTOT); }),
               "DAYJASA": _.sumBy(this.baseSaleList, function(o) { return Number(o.DAYJASA); }),
@@ -635,8 +642,7 @@ export default {
               "YEARRAT": _.meanBy(this.baseSaleList, function(o) { return Number(o.YEARRAT); })
             }
 
-            this.baseSaleList.unshift(totObj);
-            console.log("baseSaleList >>> ", this.baseSaleList);
+            this.baseSaleList.push(totObj);
             
             //console.log(this.brandSaleList);
           }
@@ -743,6 +749,26 @@ export default {
       )
     },
     makeMonthlyChart: function (mon, source) {
+      /*
+      let data = [];
+      var set_day = new Date(this.year, mon, this.toDay);
+      var set_month = mon
+      for(var i = 0; i < 13; i++) {
+        var chartObj = new Object();
+        chartObj.MONTH = set_day.getFullYear()+"/"+set_month
+        data.push(chartObj);
+        for(let j in brandData) {
+          if(brandData[j].MAINGU != "TOTAL") {
+            // data[i][brandData[j].BRCD+"_AMT"] = Number(brandData[j]["TOTSILAMT"+(i+1)])
+            data[i][brandData[j].BRCD+"_AMT"] = this.getRandomArbitrary(20,900)
+          }
+        }
+        set_day.setMonth(set_day.getMonth()-(1))
+        // console.log("set_month >> ", set_month, " / " , set_day.getMonth(), " / ", i+1);
+        set_month = set_day.getMonth() == 0 ? 12: set_day.getMonth();
+      }
+      console.log("makeMonthlyChart >>> ", data)
+      */
       
       AmCharts.makeChart("chartdiv2", {
         type: "serial",
@@ -834,11 +860,81 @@ export default {
         titles: [],
         dataProvider: source
       });
+      /*
+      AmCharts.makeChart("chartdiv2", {
+        type: "serial",
+        theme: "none",
+        categoryField: "SALEDT",
+        categoryAxis: {
+          gridPosition: "start",
+          position: "left"
+        },
+        colors: ["#67B7DC", "#A367DC", "#6771DC", "#DC6788"],
+        chartCursor: {
+          enabled: true,
+          zoomable: false,
+          cursorPosition: "mouse"
+        },
+        graphs: [
+          {
+            balloonText: "MI:[[value]]",
+            labelText: "[[value]]",
+            fillAlphas: 0.8,
+            id: "MISILAMT-1",
+            lineAlpha: 0.2,
+            title: "MI(백만원)",
+            type: "column",
+            valueField: "MISILAMT"
+          }, {
+            balloonText: "MO:[[value]]",
+            labelText: "[[value]]",
+            fillAlphas: 0.8,
+            id: "MOSILAMT-2",
+            lineAlpha: 0.2,
+            title: "MO(백만원)",
+            type: "column",
+            valueField: "MOSILAMT"
+          }, {
+            balloonText: "IT:[[value]]",
+            labelText: "[[value]]",
+            fillAlphas: 0.8,
+            id: "ITSILAMT-3",
+            lineAlpha: 0.2,
+            title: "IT(백만원)",
+            type: "column",
+            valueField: "ITSILAMT"
+          }, {
+            balloonText: "IN:[[value]]",
+            labelText: "[[value]]",
+            fillAlphas: 0.8,
+            id: "INSILAMT-4",
+            lineAlpha: 0.3,
+            title: "IN(백만원)",
+            type: "column",
+            valueField: "INSILAMT"
+          }
+        ],
+        valueAxes: [
+          {
+            id: "ValueAxis-1",
+            position: "top",
+            axisAlpha: 0
+          }
+        ],
+        legend: {
+          enabled: true,
+          align: "center",
+          fontSize: 15,
+          position: "top",
+          markerSize: 10
+        },
+        dataProvider: source,
+      });
+      */
     },
     getDailySaleList: function (mon) {
-      //let startDate = this.year.toString() + this.twinNum(mon) + "01"
-      let startDate = moment(this.selectDate).format("YYYYMM") + "01"
-      let endDate = moment(this.selectDate).format("YYYYMMDD");
+      let startDate = this.year.toString() + this.twinNum(mon) + "01"
+      let endDate = this.year.toString() + this.twinNum(mon) + ( new Date(this.year, mon, 0) ).getDate().toString();
       console.log("!!DailyDate >>> ", startDate, " / ", endDate);
       this.req2svr.getDailySaleList(startDate, endDate).then(
         res => {
@@ -864,7 +960,7 @@ export default {
     makeDailyChart: function (mon, source) {
       //let data = source
 
-      AmCharts.makeChart("chartdiv1", {
+      AmCharts.makeChart("chartdiv", {
         type: "serial",
         startEffect: "easeOutSine",
         categoryField: "SALEDT",
@@ -1097,7 +1193,7 @@ export default {
           this.currentCalendarMatrix[lastIndex].push(tempObj)
         }
       }
-      console.log("!!!!!!????? >>>> ", this.currentCalendarMatrix)
+      // console.log("!!!!!!????? >>>> ", this.currentCalendarMatrix)
     },
     getEndOfDay: function(year, month){
         switch(month){
@@ -1183,48 +1279,7 @@ export default {
       this.endOfDay = this.getEndOfDay(this.year, mon);
       this.clickedMonth = mon
       this.initCalendar();
-    },
-    changeBusiness: function(code) {
-      console.log("code >>> " + code);
-      this.selectedCODE = code;
-    },
-    chageType: function(type) {
-      this.choice = type;
-      let source = [];
-      if(type == 1 || type == '1') {
-        source = this.dailySaleList
-      } else if(type == 2 || type == '2'){
-        source = this.monthlySaleList
-      } else {
-        let this_year = moment(this.selectDate).format("YYYY");
-        let PRE_MISILAMT=0, PRE_MOSILAMT=0, PRE_ITSILAMT=0, PRE_INSILAMT=0;
-        for(var i in this.monthlySaleList) {
-          let compare_year = moment(this.monthlySaleList[i].SALEDT, "YYYY/MM").format("YYYY");
-          if(this_year == compare_year) {
-            if(moment(this.monthlySaleList[i-1].SALEDT, "YYYY/MM").format("YYYY") != this_year) {
-              PRE_MISILAMT = 0;
-              PRE_MOSILAMT = 0;
-              PRE_ITSILAMT = 0;
-              PRE_INSILAMT = 0;
-            } else {
-              PRE_MISILAMT = PRE_MISILAMT+Number(this.monthlySaleList[i-1].MISILAMT);
-              PRE_MOSILAMT = PRE_MOSILAMT+Number(this.monthlySaleList[i-1].MOSILAMT);
-              PRE_ITSILAMT = PRE_ITSILAMT+Number(this.monthlySaleList[i-1].ITSILAMT);
-              PRE_INSILAMT = PRE_INSILAMT+Number(this.monthlySaleList[i-1].INSILAMT);
-            }
-            source.push({
-              SALEDT: this.monthlySaleList[i].SALEDT,
-              MISILAMT : PRE_MISILAMT + Number(this.monthlySaleList[i].MISILAMT),
-              MOSILAMT : PRE_MOSILAMT + Number(this.monthlySaleList[i].MOSILAMT),
-              ITSILAMT : PRE_ITSILAMT + Number(this.monthlySaleList[i].ITSILAMT),
-              INSILAMT : PRE_INSILAMT + Number(this.monthlySaleList[i].INSILAMT)
-            })
-          }
-        }
-        console.log("!!!!source >>> ",source)
-      }
-      this.makeDailyChart(this.month, source)
-    },
+    }
   },
   filters: {
     currency: function(value) {
@@ -1250,13 +1305,6 @@ export default {
         return "";
       }
       
-    },
-    nanToDot: function(value) {
-      let x = value ? value : 0;
-      if (x == Number.POSITIVE_INFINITY || x == Number.NEGATIVE_INFINITY || x == "NaN") {
-        x = 0
-      }
-      return x
     }
   }
 }

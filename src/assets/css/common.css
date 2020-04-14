@@ -3505,6 +3505,11 @@ origin code
   color: #3f4250;
   font-size: 48px;
 }
+.list_box .list_card > li .card .card_content .em_obj2 {
+  padding-top: 10px;
+  color: #3f4250;
+  font-size: 35px;
+}
 .list_box .list_card > li .card .card_content .em_obj .txt {
   font-size: 18px;
 }
