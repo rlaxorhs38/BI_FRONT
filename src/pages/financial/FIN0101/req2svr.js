@@ -59,6 +59,15 @@ export default {
       }
     }).then(x => x.data)
   },
+  getStoreMonthList(date, tabType, code) { 
+    return axios.get(apiUrl() + "fin/getStoreMonthList", {
+      params : { 
+        date : date,
+        tabType : tabType,
+        code : code
+      }
+    }).then(x => x.data)
+  },
   getSalesChartCount(tabType, code, date, searchType) { 
     return axios.get(apiUrl() + "fin/getSalesChartCount", {
       params : { 
@@ -90,6 +99,15 @@ export default {
   },
   getCumulativeSales(tabType, code, date) {
     return axios.get(apiUrl() + "fin/getCumulativeSales", {
+      params : { 
+        tabType : tabType,
+        code : code,
+        date : date
+      }
+    }).then(x => x.data)
+  },
+  getPerformanceList(tabType, code, date) {
+    return axios.get(apiUrl() + "fin/getPerformanceList", {
       params : { 
         tabType : tabType,
         code : code,

@@ -9,9 +9,11 @@
       <!-- header -->
       <header class="header">
         <div class="header_inner">
-          <h2 class="layout_title">{{dr_H.SUNM}}
-            <span v-if="orderType == 'desc'">매출 TOP</span>
-            <span v-else>매출 WORST</span>
+          <h2 class="layout_title">{{dr_H.SUNM}}&nbsp;
+            <span v-if="p_choice==1">일간</span>
+            <span v-else-if="p_choice==2">월간누적</span>
+            <span v-else>누적</span>
+            <span>매출 TOP</span>
             <small class="txt_date">
               <span v-show="headerDate == today" class="chip chip_m">
                 <span class="chip_text">TODAY</span>
@@ -400,6 +402,10 @@ export default {
     currentDate: {
       type: String,
       default: moment().format("YYYY-MM-DD")
+    },
+    select_p_choice: {
+      type: Number,
+      default: 0
     }
   },
   created() {
@@ -419,6 +425,8 @@ export default {
       this.monthList.push(String(cuerrentMonth - i));
     }
     this.selectMonth = this.monthList[0];
+    this.p_choice = this.select_p_choice
+    console.log("p_choice >>> ", this.select_p_choice)
 
     this.getMakeDataDate()
     this.getStoreList()
@@ -582,7 +590,11 @@ export default {
       sql += "WHERE SALEDT BETWEEN '"+ start_date +"' AND '"+ end_date +"' "
       sql += "AND CREATEDATE = (SELECT MAX(CREATEDATE) FROM BISL060) ";
       sql += "GROUP BY VDCD, VDSNM, SUCD "
-      sql += "HAVING " + this.tabType + " = '" + this.dr_H.MCODE + "' "
+      if(this.dr_H.MCODE == 'A') {
+        sql += "HAVING " + this.tabType + " IN ('1', '12', '23', '4', '3') "
+      } else {
+        sql += "HAVING " + this.tabType + " = '" + this.dr_H.MCODE + "' "
+      }
       sql += "ORDER BY SALE_TOT DESC "
       sql += ")"
 

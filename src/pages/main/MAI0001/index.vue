@@ -19,21 +19,14 @@
       <div class="content">
         <div class="main_btn_list">
           <ul class="list">
-            <!-- <li>
-              <div class="btns">
-                <a href="javascript:void(0);" @click="link('/NewDailyReport')" class="btn_main">
-                  <i class="material-icons">assessment</i>재무
-                </a>
-              </div>
-            </li> -->
             <li>
               <div class="btns">
                 <div class="sub_btns">
-                  <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_sub">일매출보고</a>
-                  <a href="javascript:void(0);" @click="link('/OnLineSale')" class="btn_sub">온라인매출현황</a>
+                  <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_sub">일일매출</a>
+                  <a href="javascript:void(0);" @click="link('/OnLineSale')" class="btn_sub">온라인매출</a>
                 </div>
                 <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_main">
-                  <i class="material-icons">today</i>일매출현황
+                  <i class="material-icons">today</i>매출현황
                 </a>                            
               </div>
             </li>
@@ -81,6 +74,13 @@
                   <a href="javascript:void(0);" @click="link('/OnLineMain')" class="btn_main">
                       <i class="material-icons">shopping_cart</i>온라인
                   </a>
+              </div>
+            </li>
+            <li>
+              <div class="btns">
+                <a href="javascript:void(0);" @click="link('/NewDailyReport')" class="btn_main">
+                  <i class="material-icons">assessment</i>재무
+                </a>
               </div>
             </li>
             <li>

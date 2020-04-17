@@ -1,11 +1,10 @@
 <template>
   <nav class="navigation">
-    <!-- <a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReport')"><i class="material-icons">assessment</i>재무</a> -->
-    <a class="navigation_link" href="javascript:void(0);" @click="link('/DailyReportDetail')"><i class="material-icons">today</i>일매출현황</a>
+    <a class="navigation_link" href="javascript:void(0);" @click="link('/DailyReportDetail')"><i class="material-icons">today</i>매출현황</a>
     <div class="sub_link">
       <ul class="sub_link_list">
-        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/DailyReportDetail')">일매출보고</a></li>
-        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineSale')">온라인매출현황</a></li>
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/DailyReportDetail')">일일매출</a></li>
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineSale')">온라인매출</a></li>
       </ul>
     </div>
     <a class="navigation_link" href="javascript:void(0);" @click="link('/SalesMain')"><i class="material-icons">business_center</i>영업</a>
@@ -20,6 +19,7 @@
     <!-- <a class="navigation_link" href="javascript:void(0);" @click="link('/ProductMain')"><i class="material-icons">list_alt</i>생산</a> -->
     <!-- <a class="navigation_link" href="javascript:void(0);" @click="link('/BuyMain')"><i class="material-icons">local_mall</i>구매</a> -->
     <a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineMain')"><i class="material-icons">shopping_cart</i>온라인</a>
+    <a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReport')"><i class="material-icons">assessment</i>재무</a>
     <a class="navigation_link" href="javascript:void(0);" @click="link('/HumMain')"><i class="material-icons">perm_contact_calendar</i>인재DB</a>
   </nav>
 </template>

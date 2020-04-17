@@ -22,7 +22,7 @@
           <i class="material-icons">arrow_back_ios</i>
         </button> -->
         <!-- Title -->
-        <h2 class="layout_title">일 매출보고
+        <h2 class="layout_title">일일매출
           <small class="txt_date">
             <span v-show="headerDate == today" class="chip chip_m">
               <span class="chip_text">TODAY</span>
@@ -68,7 +68,7 @@
                   :class="{on : selectedCODE == data.MCODE}"
                 >
                   <div class="card_title">
-                    <h4 class="card_title_text">{{ data.TEXT }} 사업부</h4>
+                    <h4 class="card_title_text">{{ data.TEXT }} 당일매출</h4>
                   </div>
                   <div class="card_content">
                     <strong class="em_obj" v-if="data.SALE_TOT">
@@ -216,7 +216,7 @@
                 </div>
                 <div class="card_content">
                   <strong class="em_obj" v-if="dr_C.length > 0">
-                    {{ Math.round(current_dr_C.MONTH_AMT/1000) | currency }}<small class="txt">천원</small>
+                    {{ Math.round(current_dr_C.MONTH_AMT/1000000) | currency }}<small class="txt">백만원</small>
                   </strong>
                 </div>
               </div>
@@ -229,7 +229,7 @@
                 </div>
                 <div class="card_content">
                   <strong class="em_obj" v-if="dr_C.length > 0">
-                    {{ Math.round(current_dr_C.SALE_MONTH_TOT/1000) | currency }}<small class="txt">천원</small>
+                    {{ Math.round(current_dr_C.SALE_MONTH_TOT/1000000) | currency }}<small class="txt">백만원</small>
                   </strong>
                 </div>
               </div>
@@ -338,7 +338,7 @@
                       class="chip round_chip danger"
                       v-else-if="Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) < 95"
                     >
-                      <span class="chip_text">주의</span>
+                    <span class="chip_text">주의</span>
                     </span>
                     <!-- 달성중 -->
                     <span class="chip round_chip primary" v-else>
@@ -366,14 +366,14 @@
                 </div>
                 <div class="layout_spacer"></div>
                 <div class="groups">
-                  <div class="toggle_group tg_sty01">
+                  <div class="toggle_group tg_sty01 mr10">
                     <label class="tg_btn" :class="{'is-checked': choice === 1}">
                       <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="chageType(1)" />
-                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;">일간</span>
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일간</span>
                     </label>
                     <label class="tg_btn" :class="{'is-checked': choice === 2}">
                       <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="chageType(2)" />
-                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;">월간</span>
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월간</span>
                     </label>
                     <!--
                     <label class="tg_btn" :class="{'is-checked': choice === 3}">
@@ -382,6 +382,9 @@
                     </label>
                     -->
                   </div>
+                  <button class="btn_icon btn_s btn_edge_sty01" @click="showPerformanceList()">
+                    <i class="material-icons">add</i>
+                  </button>
                 </div>
               </div>
               <div class="cont">
@@ -451,7 +454,7 @@
               <div class="tit">
                 <strong class="tit_txt">당일 매출 TOP 3</strong>
                 <div class="layout_spacer"></div>
-                <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('desc')">
+                <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('desc', 1)">
                   <i class="material-icons">add</i>
                 </button>
               </div>
@@ -473,22 +476,22 @@
             </div>
             <div class="cont_box">
               <div class="tit">
-                <strong class="tit_txt">당일 매출 WORST 3</strong>
+                <strong class="tit_txt">월 누적 매출 TOP 3</strong>
                 <div class="layout_spacer"></div>
-                <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('asc')">
+                <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('desc', 2)">
                   <i class="material-icons">add</i>
                 </button>
               </div>
               <div class="cont"> 
-                <div class="list_num list_h">
+                <div class="list_num list_h list_sty01">
                   <ul class="list">
-                    <li v-for="(data, index) in dr_W" :key="index" style="width:30%;">
+                    <li v-for="(data, index) in dr_BM" :key="index" style="width:30%;pointer-events:none">
                       <div class="num_box">{{ index+1 }}</div>
                       <strong class="txt_name">
                         {{ data.VDSNM }}
                         <em
                           class="txt_result"
-                        >({{ Math.round(data.SALE_TOT/1000) | currency }} 천원)</em>
+                        >({{ Math.round(data.SALE_TOT/1000000) | currency }} 백만원)</em>
                       </strong>
                     </li>
                   </ul>
@@ -506,6 +509,14 @@
         :dr_L="dr_L"
         :orderType="storeListOrderType"
         :currentDate="selectDate"
+        :select_p_choice="select_p_choice"
+      />
+    <performance-list-popup
+        v-if="isPerformanceListVisible"
+        @close="closePerformanceList"
+        :dr_H="current_dr_H"
+        :selectedCODE="selectedCODE"
+        :currentDate="selectDate"
       />
   </div>
 </template>
@@ -517,12 +528,14 @@ import sideMenu from '@/components/sideMenu'
 import datePick from "vue-date-pick"
 
 import storeListPopup from '@/pages/financial/FIN0102'
+import performanceListPopup from '@/pages/financial/FIN0103'
 
 export default {
   name: "FIN0101",
   components: {
     datePick,
     storeListPopup,
+    performanceListPopup,
     sideMenu
   },
   mounted() {
@@ -535,6 +548,7 @@ export default {
     this.getMakeDataDate()
     this.selectDate = moment().subtract(1, "days").format("YYYY-MM-DD")
     this.loadData()
+    this.choice = 1
   },
   data() {
     return {
@@ -558,13 +572,16 @@ export default {
       dr_LYP: [],
       // 당일 매장별 매출
       dr_L: [],
+      dr_LM: [],
       isStoreListVisible: false,
+      isPerformanceListVisible: false,
       storeListOrderType: 'desc',
       makeDataDate: null,
       sucdCodeList:[],
       SU_TOT_AMT: 0,
       SU_TOT_SALE_TOT: 0,
       choice: 1,
+      select_p_choice: 1,
     };
   },
   computed: {
@@ -591,6 +608,9 @@ export default {
         return []
       }
       return (_.orderBy(this.dr_L, function(o) { return Number(o.SALE_TOT); }, 'asc')).slice(0, 3)
+    },
+    dr_BM() {
+      return (_.orderBy(this.dr_LM, function(o) { return Number(o.SALE_TOT); }, 'desc')).slice(0, 3)
     },
     dr_S_TOT_TY() {
       return this.dr_S.JQTY+this.dr_S.DCQTY+this.dr_S.GQTY+this.dr_S.R_JQTY+this.dr_S.R_DCQTY+this.dr_S.R_GQTY
@@ -679,15 +699,26 @@ export default {
         }
       );
     },
-    showStoreList(orderType) {
+    showStoreList(orderType, p_choice) {
       if (moment(this.selectDate).diff(moment(this.recentDate)) > 0) {
         return
       }
       this.storeListOrderType = orderType
+      console.log("1. select_p_choice >>>", p_choice)
+      this.select_p_choice = p_choice
       this.isStoreListVisible = true;
+    },
+    showPerformanceList() {
+      if (moment(this.selectDate).diff(moment(this.recentDate)) > 0) {
+        return
+      }
+      this.isPerformanceListVisible = true;
     },
     closeStoreList() {
       this.isStoreListVisible = false;
+    },
+    closePerformanceList() {
+      this.isPerformanceListVisible = false;
     },
     currency(value) {
       if (Number.isNaN(value)) {
@@ -846,12 +877,13 @@ export default {
             } else {
               list = JSON.parse("[" + res + "]")
             }
-            for (i=0;i<this.authCodeList.length;i++) {
-              let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
-              if (data) {
-                this.dr_C[i] = _.assign(this.dr_C[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }));
-              }
-            }
+            // for (i=0;i<this.authCodeList.length;i++) {
+            //   let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
+            //   if (data) {
+            //     this.dr_C[i] = _.assign(this.dr_C[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }));
+            //   }
+            // }
+            this.dr_C = list
             var tot_obj = {
               MCODE: "A", SUNM: "전체",
               SALE_TOT: _.sumBy(this.dr_C, function(o) { return Number(o.SALE_TOT); }),
@@ -932,6 +964,7 @@ export default {
       this.getChartData1(code, date)
       this.getChartData2(code, date)
       this.getStoreList(code, date)
+      this.getStoreMonthList(code, date)
     },
     getChartData1(code, date) {
       // 초기화
@@ -1139,6 +1172,28 @@ export default {
               this.dr_L.push(res);
             } else {
               this.dr_L = JSON.parse("[" + res + "]");
+            }
+          }
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      )
+    },
+    getStoreMonthList(code, date) {
+      this.req2svr.getStoreMonthList(date, this.tabType, code).then(
+        res => {
+          this.dr_LM = []
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res)
+          } else {
+            this.dr_LM = []
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            if(count < 1) {
+            } else if(count == 1) {
+              this.dr_LM.push(res);
+            } else {
+              this.dr_LM = JSON.parse("[" + res + "]");
             }
           }
         },
@@ -1385,13 +1440,21 @@ export default {
     makeChart4() {
       let data = this.dr_P
       let colors = ["#E56464", "#FFB83C", "#3F93F5"];
-      var txt = "";
-      if(this.choice == 1) { txt = "일별"; }
-      else if(this.choice == 2) { txt = "월별" }
+      let txt = "", unit=0, unit_nm="";
+      if(this.choice == 1) { 
+        txt = "일별"; 
+        unit= 1000
+        unit_nm = "천원"
+      }
+      else if(this.choice == 2) { 
+        txt = "월별" 
+        unit= 1000000
+        unit_nm = "백만원"
+      }
       else { txt = "월별누적" }
       let graphs = [
         {
-          balloonText: "작년동기매출(천원) : [[value]]",
+          balloonText: "작년동기매출(" + unit_nm + ") : [[value]]",
           fillAlphas: 0,
           id: "AmGraph-1",
           lineAlpha: 1,
@@ -1404,7 +1467,7 @@ export default {
           //type: "column",
         },
         {
-          balloonText: txt+"매출목표(천원) : [[value]]",
+          balloonText: txt+"매출목표(" + unit_nm + ") : [[value]]",
           fillAlphas: 0.5,
           lineAlpha: 0,
           fontSize: 0,
@@ -1415,7 +1478,7 @@ export default {
           type: "column"
         },
         {
-          balloonText: txt+"매출실적(천원) : [[value]]",
+          balloonText: txt+"매출실적(" + unit_nm + ") : [[value]]",
           fillAlphas: 0,
           lineAlpha: 1,
           lineThickness: 2,
@@ -1499,7 +1562,7 @@ export default {
       } else {
         this.getCumulativeSales(code, date)
       }
-    },
+    }
   }
 };
 </script>
