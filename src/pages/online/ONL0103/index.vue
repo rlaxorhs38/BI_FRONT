@@ -254,7 +254,8 @@
     <daily-popup
         v-if="isDailyVisible"
         @close="closeDaily"
-        :year="year"
+        :selectedCODE="selectedCODE"
+        :currentDate="selectDate"
     />
   </div>
 </template>
@@ -624,6 +625,17 @@ export default {
         trendLines: [],
         graphs: [
           {
+            balloonText: "전체(백만원) : [[value]]",
+            id: "AmGraph-Tot",
+            valueField: "TOTSILAMT",
+            fillAlphas: 0,
+            lineAlpha: 0.99,
+            title: "전체(백만원)",
+            bulletSize: 1,
+            bullet: "diamond",
+            markerType: "diamond"
+          },
+          {
             balloonText: "MI(백만원) : [[value]]",
             id: "AmGraph-Mi",
             valueField: "MISILAMT",
@@ -742,6 +754,17 @@ export default {
         },
         trendLines: [],
         graphs: [
+          {
+            balloonText: "전체(백만원) : [[value]]",
+            id: "AmGraph-Tot",
+            valueField: "TOTSILAMT",
+            fillAlphas: 0,
+            lineAlpha: 1,
+            title: "전체(백만원)",
+            bulletSize: 1,
+            bullet: "diamond",
+            markerType: "diamond"
+          },
           {
             balloonText: "MI(백만원) : [[value]]",
             id: "AmGraph-Mi",
