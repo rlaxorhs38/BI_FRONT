@@ -19,9 +19,11 @@ export default {
       }
     }).then(x => x.data)
   },
-  getBaseSaleList() {
+  getBaseSaleList(selectDate) {
     return axios.get(apiUrl() + "online/getBaseSaleList", {
-      params : {}
+      params : {
+        selectDate : selectDate
+      }
     }).then(x => x.data)
   },
   getSaleByBrdDetailData(year) {

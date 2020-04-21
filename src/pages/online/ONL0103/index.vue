@@ -24,12 +24,14 @@
           </small>
         </h2>
         <div class="layout_spacer"></div>
+        <!--
         <div style="margin-right: 10px;">
           <button type="button" class="btn_n" style="height:55px;"  @click="showYearly()">년도별 매출 현황</button>
         </div>
         <div style="margin-left: 10px; margin-right: 10px;">
           <button type="button" class="btn_n" style="height:55px;"  @click="showDaily()"><label>일별 매출 현황</label></button>
         </div>
+        -->
         <div style="margin-right: 10px;"><small class="txt_s">데이터 기준일 : {{ makeDataDate }}</small></div>
         <!-- groups --> 
         <div class="groups">
@@ -67,11 +69,11 @@
                   :class="{on : selectedCODE == data.ITEM}"
                 >
                   <div class="card_title">
-                    <h4 class="card_title_text">{{ data.BRCD }} 사업부</h4>
+                    <h4 class="card_title_text">{{ data.BRCD }} 온라인 매출</h4>
                   </div>
                   <div class="card_content">
                     <strong class="em_obj" v-if="data.DAYTOT">
-                      {{ data.DAYTOT | currency }}<small class="txt">천원</small>
+                      {{ Number(data.DAYJASA) + Number(data.DAYOUT) | currency }}<small class="txt">천원</small>
                     </strong>
                     <strong class="em_obj" v-else>
                       0<small class="txt">천원</small>
@@ -96,118 +98,91 @@
         <div class="list_box">
           <ul class="list_card">
             <li>
-              <!-- card_당일 -->
+              <!-- card_당일 전체 매출 -->
               <div class="card card_mini">
                 <div class="card_title">
-                  <h4 class="card_title_text">당일 ({{ month }}월 {{ toDay-1 }}일)</h4>
+                  <h4 class="card_title_text">당일 전체 매출</h4>
                 </div>
                 <div class="card_content">
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc"><h6>전체 매출</h6></div>
-                    <div class="w50 tc"><h6>온라인 매출</h6></div>
-                  </div>
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ current_BS.DAYTOT | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT) | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당일 매출 비율 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 매출 비율</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ current_BS.DAYRAT | nanToDot }} %
+                  <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
+                    {{ current_BS.DAYTOT | currency }}<small class="txt">천원</small>
                   </strong>
                 </div>
               </div>
             </li>
             <li>
-              <!-- card_당월 -->
+              <!-- card_당일 온라인 매출 -->
               <div class="card card_mini">
                 <div class="card_title">
-                  <h4 class="card_title_text">당월 ({{ month }}월)</h4>
-                </div>
-                <div class="card_content" >
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc"><h6>전체 매출</h6></div>
-                    <div class="w50 tc"><h6>온라인 매출</h6></div>
-                  </div>
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ current_BS.MONTOT | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ Number(current_BS.MONJASA) + Number(current_BS.MONOUT) | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당월 매출 비율 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당월 매출 비율</h4>
+                  <h4 class="card_title_text">당일 온라인 매출</h4>
                 </div>
                 <div class="card_content">
                   <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ current_BS.MONRAT | nanToDot }} %
+                    {{ Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT) | currency }}<small class="txt">천원</small>
                   </strong>
                 </div>
               </div>
             </li>
             <li>
-              <!-- card_연간누적 -->
+              <!-- card_당일 온라인 매출 달성률 -->
               <div class="card card_mini">
                 <div class="card_title">
-                  <h4 class="card_title_text">연간누적 ({{ year }}년)</h4>
+                  <h4 class="card_title_text">당일 온라인 매출 비율</h4>
                 </div>
-                <div class="card_content">
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc"><h6>전체 매출</h6></div>
-                    <div class="w50 tc"><h6>온라인 매출</h6></div>
-                  </div>
-                  <div class="row mr10 ml10">
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ current_BS.YEARTOT | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                    <div class="w50 tc">
-                      <strong class="em_obj2" v-if="baseSaleList.length > 0">
-                        {{ Number(current_BS.YEARJASA) + Number(current_BS.YEAROUT) | currency }}<small class="txt"></small>
-                      </strong>
-                    </div>
-                  </div>
+                <div class="card_title">
+                  <small class="txt_box">(당일 온라인 매출/당일 전체 매출) * 100</small>
+                </div>
+                <div class="card_content" >
+                  <strong class="em_obj" v-if="baseSaleList.length > 0">
+                    {{ current_BS.DAYRAT | nanToDot }}
+                    <small
+                      class="txt2"
+                    >%</small>
+                  </strong>
                 </div>
               </div>
             </li>
             <li>
-              <!-- card_누적 매출 비율 -->
+              <!-- card_당월 전체 매출 -->
               <div class="card card_mini">
                 <div class="card_title">
-                  <h4 class="card_title_text">연간 매출 비율</h4>
+                  <h4 class="card_title_text">당월 전체 매출</h4>
+                </div>
+                <div class="card_content">
+                  <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
+                    {{ Math.round(current_BS.MONTOT/1000) | currency }}<small class="txt">백만원</small>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- card_당월 온라인 매출 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">당월 온라인 매출</h4>
+                </div>
+                <div class="card_content">
+                  <strong class="em_obj" v-if="baseSaleList.length > 0">
+                    {{ Math.round(Number(current_BS.MONJASA)/1000) + Math.round(Number(current_BS.MONOUT)/1000) | currency }}<small class="txt">백만원</small>
+                  </strong>
+                </div>
+              </div>
+            </li>
+            <li>
+              <!-- card_당월 온라인 매출 달성률 -->
+              <div class="card card_mini">
+                <div class="card_title">
+                  <h4 class="card_title_text">당월 온라인 매출 비율</h4>
+                </div>
+                <div class="card_title">
+                  <small class="txt_box">(당월 온라인 매출/당월 온라인 전체 매출) * 100</small>
                 </div>
                 <div class="card_content" >
                   <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ current_BS.YEARRAT | nanToDot }} %
+                    {{ current_BS.MONRAT | nanToDot }}
+                    <small
+                      class="txt2"
+                    >%</small>
                   </strong>
                 </div>
               </div>
@@ -221,27 +196,14 @@
                 <div class="tab">
                   <ul>
                     <li class="on">
-                      <a href="javascript:void(0);">온라인 매출추이</a>
+                      <a href="javascript:void(0);">온라인 일간 매출추이</a>
                     </li>
                   </ul>
                 </div>
                 <div class="layout_spacer"></div>
-                <div class="groups">
-                  <div class="toggle_group tg_sty01">
-                    <label class="tg_btn" :class="{'is-checked': choice === 1}">
-                      <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="chageType(1)" />
-                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;" >일간</span>
-                    </label>
-                    <label class="tg_btn" :class="{'is-checked': choice === 2}">
-                      <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="chageType(2)" />
-                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;" >월간</span>
-                    </label>
-                    <label class="tg_btn" :class="{'is-checked': choice === 3}">
-                      <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="chageType(3)" />
-                      <span class="btn_n txt_label" style="height: 45px; font-size: 23px;" >누적</span>
-                    </label>
-                  </div>
-                </div>
+                  <button class="btn_icon btn_s btn_edge_sty01" @click="showDaily()">
+                    <i class="material-icons">add</i>
+                  </button>
               </div>
               <div class="cont">
                 <div class="graph_area" >
@@ -260,11 +222,10 @@
                 <div class="tab">
                   <ul>
                     <li class="on">
-                      <a href="javascript:void(0);">잇미샤 월별 온/오프 비중</a>
+                      <a href="javascript:void(0);">온라인 월간 매출추이</a>
                     </li>
                   </ul>
                 </div>
-                <div class="layout_spacer"></div>
               </div>
               <div class="cont">
                 <div class="graph_area" >
@@ -273,111 +234,6 @@
                       <div id="chartdiv2" style="position:relative; width:100%; height:100%; float:left;"></div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col_md_12">
-            <div class="cont_box">
-              <div class="tit">
-                <strong class="tit_txt" >잇미샤 월별 온/오프 판매비중</strong>
-                <div class="layout_spacer"></div>
-                <span class="txt">&lt; 단위: 백만원 &gt;</span>
-              </div>
-              <div class="cont">
-                <div class="tbl_sheet tbl_hover_none np">
-                  <table class="tbl tbl_center">
-                      <colgroup>
-                        <col width="150px"/>
-                        <col class="bg_point_col19" />
-                        <col />
-                        <col />
-                      </colgroup>
-                      <thead>
-                        <tr>
-                          <th>구분</th>
-                          <th>{{year}} 년</th>
-                          <th v-for="(s, index) in 12" v-bind:key="index">{{s}} 월</th>
-                        </tr>
-                      </thead>
-
-                      <tbody class="tbody_s">
-                        <tr v-for="(data , index) in itOnffImptMslList" :key="index" v-bind:class="totalClass(data.ITEM)">
-                          <!-- <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" @click="addRow(data, index)">{{ data.ITEMNM }}</td> -->
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" >{{ data.ITEMNM }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT_TOT | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT1  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT2  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT3  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT4  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT5  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT6  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT7  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT8  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT9  | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT10 | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT11 | currency }}</td>
-                          <td v-bind:style="{fontWeight:data.ITEM=='00'?'bold':''}" class="tr">{{ data.AMT12 | currency }}</td>
-                        </tr>
-                      </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col_md_12">
-            <div class="cont_box">
-              <div class="tit">
-                <strong class="tit_txt" >판매 현황 캘린더</strong>
-                <div class="layout_spacer"></div>
-                <div style="margin-right: 10px;" v-for="(mon , index1) in monthList" v-bind:key="index1">
-                  <button type="button" v-if="mon == clickedMonth" class="btn_primary" @click="getCalendarData(mon)" style="padding: 15px; display: block;">{{mon}} 월</button>
-                  <button type="button" v-else class="btn_info" @click="getCalendarData(mon)" style="padding: 15px; display: block;">{{mon}} 월</button>
-                </div>
-                <span class="txt">&lt; 단위: 백만원 &gt;</span>
-              </div>
-              <div class="cont">
-                <div class="tbl_sheet tbl_hover_none np">
-                  <table class="tbl table_condensed tbl_center">
-                    <thead>
-                      <tr>
-                        <th v-for="(weekName, index) in weekNames" v-bind:key="index">
-                          {{weekName}}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(row, index) in currentCalendarMatrix" :key="index" style="height: 100px !important;">
-                        <td v-for="(date, index2) in row" :key="index2" style="padding:20px; ">
-                          <span v-if="isToday(year, clickedMonth, date.day)" class="w100 tl pl10t" style="display: inline-block;">
-                            <span class="rounded">{{date.day}}</span>
-                          </span>
-                          <span v-else class="w100 tl pl10" style="display: inline-block;">
-                            {{date.day}}
-                          </span>
-                          <br/>
-                          <span v-if="date.day != ''">
-                            자사: {{date.JASASILAMT | currency}}
-                          </span>
-                          <span v-else></span>
-                          <br/>
-                          <span v-if="date.day != ''">
-                            외부: {{date.OUTSILAMT | currency}}
-                          </span>
-                          <span v-else></span>
-                          <br/>
-                          <span v-if="date.day != ''">
-                            합계: {{date.TOTSILAMT | currency}}
-                          </span>
-                          <span v-else></span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
                 </div>
               </div>
             </div>
@@ -606,7 +462,8 @@ export default {
       )
     },
     getBaseSaleList: function () { 
-      this.req2svr.getBaseSaleList().then(
+      let selectDate = Number(moment(this.selectDate).format("YYYYMMDD"));
+      this.req2svr.getBaseSaleList(selectDate).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res);

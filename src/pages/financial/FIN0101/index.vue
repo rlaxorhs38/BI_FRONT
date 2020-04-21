@@ -1439,7 +1439,7 @@ export default {
     },
     makeChart4() {
       let data = this.dr_P
-      let colors = ["#E56464", "#FFB83C", "#3F93F5"];
+      let colors = ["#3F93F5", "#FFB83C", "#E56464"];
       let txt = "", unit=0, unit_nm="";
       if(this.choice == 1) { 
         txt = "일별"; 
