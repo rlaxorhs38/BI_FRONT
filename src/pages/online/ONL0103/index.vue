@@ -606,7 +606,7 @@ export default {
         type: "serial",
         startEffect: "easeOutSine",
         categoryField: "SALEDT",
-        colors: ["#67B7DC", "#A367DC", "#6771DC", "#DC6788"],
+        colors: ["#dc67ce","#67B7DC", "#A367DC", "#6771DC", "#DC6788"],
         sequencedAnimation: false,
         startEffect: "easeInSine",
         categoryAxis: {
@@ -737,7 +737,7 @@ export default {
         type: "serial",
         startEffect: "easeOutSine",
         categoryField: "SALEDT",
-        colors: ["#67B7DC", "#A367DC", "#6771DC", "#DC6788"],
+        colors: ["#dc67ce","#67B7DC", "#A367DC", "#6771DC", "#DC6788"],
         sequencedAnimation: false,
         categoryAxis: {
           axisAlpha: 0.1,
