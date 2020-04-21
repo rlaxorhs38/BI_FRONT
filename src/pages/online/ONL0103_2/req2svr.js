@@ -2,31 +2,11 @@ import axios from 'axios'
 import apiUrl from '@/config/apiUrl'
 
 export default {
-  getSaleByBrdDetailData(year) {
-    return axios.get(apiUrl() + "online/getSaleByBrdDetailData", {
+  getMonthlySaleList_POP(date, month) {
+    return axios.get(apiUrl() + "online/getMonthlySaleList_POP", {
       params : { 
-        year : year
-      }
-    }).then(x => x.data)
-  },
-  getITOnOffDetailData(year) {
-    return axios.get(apiUrl() + "online/getITOnOffDetailData", {
-      params : { 
-        year : year
-      }
-    }).then(x => x.data)
-  },
-  getSaleByBrandList(year) {
-    return axios.get(apiUrl() + "online/getSaleByBrandList", {
-      params : { 
-        year : year
-      }
-    }).then(x => x.data)
-  },
-  getITOnOffSaleList(year) {
-    return axios.get(apiUrl() + "online/getITOnOffSaleList", {
-      params : { 
-        year : year
+        date : date,
+        month : month,
       }
     }).then(x => x.data)
   }
