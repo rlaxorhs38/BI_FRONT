@@ -22,11 +22,11 @@
             <li>
               <div class="btns">
                 <div class="sub_btns">
-                  <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_sub">일일매출</a>
-                  <a href="javascript:void(0);" @click="link('/OnLineSale')" class="btn_sub">온라인매출</a>
+                  <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_sub">일매출</a>
+                  <a href="javascript:void(0);" @click="link('/OnLineSale')" class="btn_sub">온라인</a>
                 </div>
                 <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_main">
-                  <i class="material-icons">today</i>매출현황
+                  <i class="material-icons">today</i>매출
                 </a>                            
               </div>
             </li>

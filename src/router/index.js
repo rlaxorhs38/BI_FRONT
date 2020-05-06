@@ -858,6 +858,7 @@ const authCheckURL = function(next, isRoot, path) {
       || path == "/StoreSalesStatus"
       || path == "/OnLineSale"
       || path == "/OnLineSaleDetail"
+      || path == "/DailyReportDetail"
       || path == "/Error") {
         next()
       } else {

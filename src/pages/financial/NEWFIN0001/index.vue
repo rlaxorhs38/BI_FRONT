@@ -23,7 +23,7 @@
         </strong>
         <div class="layout_spacer"></div>
         <!-- daily report -->
-        <div class="card">
+        <!-- <div class="card">
           <div class="card_title">
             <div class="card_title_text teamSelector" @click="link('dailyReport')">
             <strong class="txt_date">{{today}} <i class="material-icons">play_circle_outline</i></strong>
@@ -56,7 +56,7 @@
               </template>
             </ul>
           </div>
-        </div>
+        </div> -->
       </div>
     </header>
 
@@ -859,6 +859,7 @@ export default {
           data[1]["value"+i] = 0
         }
       }
+      console.log("data >>> ", data, ", val >>>", val)
 
       AmCharts.makeChart(divName, {
         type: "serial",

@@ -1,10 +1,10 @@
 <template>
   <nav class="navigation">
-    <a class="navigation_link" href="javascript:void(0);" @click="link('/DailyReportDetail')"><i class="material-icons">today</i>매출현황</a>
+    <a class="navigation_link" href="javascript:void(0);" @click="link('/DailyReportDetail')"><i class="material-icons">today</i>매출</a>
     <div class="sub_link">
       <ul class="sub_link_list">
-        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/DailyReportDetail')">일일매출</a></li>
-        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineSale')">온라인매출</a></li>
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/DailyReportDetail')">일매출</a></li>
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineSale')">온라인</a></li>
       </ul>
     </div>
     <a class="navigation_link" href="javascript:void(0);" @click="link('/SalesMain')"><i class="material-icons">business_center</i>영업</a>

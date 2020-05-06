@@ -39,12 +39,12 @@ export default {
       }
     }).then(x => x.data)
   },
-  getCurrentYearData(tabType, code, last30day, date, searchType) { 
+  getCurrentYearData(tabType, code, start_date, date, searchType) { 
     return axios.get(apiUrl() + "fin/getCurrentYearData", {
       params : { 
         tabType : tabType,
         code : code,
-        last30day : last30day,
+        start_date : start_date,
         date : date,
         searchType : searchType,
       }
