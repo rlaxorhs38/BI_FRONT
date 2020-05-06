@@ -41,182 +41,263 @@
           </div>
         </div>
       </header>
-      <div class="container">
+      <div class="container" style="overflow-y: hidden;">
         <div class="content">
-          <div class="tbl_sheet" v-bind:style="{width:MCODE=='A'?'2650px':MCODE=='3'?'100%':'500px'}">
-            <table class="tbl tbl_center bb0" v-bind:style="{width:MCODE=='A'?'2650px':MCODE=='3'?'100%':'500px'}">
-              <colgroup>
-                <col style="width:90px;">
-                <col v-if="(MCODE == 'A')" style="width:100px;">
-                <col v-if="(MCODE == 'A')" style="width:100px;">
-                <col v-if="(MCODE == 'A')" style="width:60px;">
-                <col v-if="(MCODE == 'A')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:100px;">
-                <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:60px;">
-                <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:60px;">
-              </colgroup>
-              <thead>
-                <tr>
-                  <th scope="col">{{ thisMonth }} 월</th>
-                  <th scope="col" v-if="(MCODE == 'A')" colspan="4">전체</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')" colspan="4">MI</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')" colspan="4">IT</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">SO(합계)</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">SO(정상)</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">SO(동영)</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')" colspan="4">MO</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')" colspan="4">FO</th>
-                  <!-- <th scope="col" v-for="(data,index) in proDates" :key="index">{{ data }}</th> -->
-                </tr>
-                <tr>
-                  <th scope="col">월목표</th>
-                  <th scope="col" v-if="(MCODE == 'A')" colspan="4">{{ totalGoal.TOTAMT | currency }}</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')" colspan="4">{{ totalGoal.MIAMT  | currency }}</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')" colspan="4">{{ totalGoal.ITAMT  | currency }}</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.TSOAMT | currency }}</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.SOAMT  | currency }}</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.SOAMT1 | currency }}</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')" colspan="4">{{ totalGoal.MOAMT | currency }}</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')" colspan="4">{{ totalGoal.FOAMT | currency }}</th>
-                  <!-- <th scope="col" v-for="(data,index) in proDates" :key="index">{{ data }}</th> -->
-                </tr>
-                <tr>
-                  <th scope="col">일자 | 요일</th>
-                  <th scope="col" v-if="(MCODE == 'A')">일-목표</th>
-                  <th scope="col" v-if="(MCODE == 'A')">일-실적</th>
-                  <th scope="col" v-if="(MCODE == 'A')">달성율</th>
-                  <th scope="col" v-if="(MCODE == 'A')">진도율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')">일-목표</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')">일-실적</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')">달성율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')">진도율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')">일-목표</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')">일-실적</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')">달성율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')">진도율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-목표</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-실적</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">달성율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">진도율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-목표</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-실적</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">달성율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">진도율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-목표</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-실적</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">달성율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">진도율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')">일-목표</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')">일-실적</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')">달성율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')">진도율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')">일-목표</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')">일-실적</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')">달성율</th>
-                  <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')">진도율</th>
-                  <!-- <th scope="col" v-for="(data,index) in proDates" :key="index">{{ data }}</th> -->
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(data, index) in dr_LIST" :key="index">
-                  <td>{{ data.DAY }} | {{thisDay(thisYear, thisMonth, data.DAY)}}</td>
-                  <td v-if="(MCODE == 'A')">{{ Math.round(data.TOTTARGETAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A')">{{ Math.round(data.TOTSAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A')">{{ ((data.TOTSAMT/1000)/(data.TOTTARGETAMT/1000)*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A')">{{ ((data.CUMTOTAMT/1000)/totalGoal.TOTAMT*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '1')">{{ Math.round(data.MITARGETAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '1')">{{ Math.round(data.MISAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '1')">{{ ((data.MISAMT/1000)/(data.MITARGETAMT/1000)*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '1')">{{ ((data.CUMMIAMT/1000)/totalGoal.MIAMT*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '4')">{{ Math.round(data.ITTARGETAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '4')">{{ Math.round(data.ITSAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '4')">{{ ((data.ITSAMT/1000)/(data.ITTARGETAMT/1000)*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '4')">{{ ((data.CUMITAMT/1000)/totalGoal.ITAMT*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ Math.round(data.TSOTARGETAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ Math.round(data.TSOSAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ ((data.TSOSAMT/1000)/(data.TSOTARGETAMT/1000)*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ ((data.CUMTSOAMT/1000)/totalGoal.TSOAMT*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ Math.round(data.SOTARGETAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ Math.round(data.SOSAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ ((data.SOSAMT/1000)/(data.SOTARGETAMT/1000)*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ ((data.CUMSOAMT/1000)/totalGoal.SOAMT*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ Math.round(data.SOTARGETAMT1/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ Math.round(data.SOSAMT1/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ ((data.SOSAMT1/1000)/(data.SOTARGETAMT1/1000)*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')">{{ ((data.CUMSOAMT1/1000)/totalGoal.SOAMT1*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '12')">{{ Math.round(data.MOTARGETAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '12')">{{ Math.round(data.MOSAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '12')">{{ ((data.MOSAMT/1000)/(data.MOTARGETAMT/1000)*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '12')">{{ ((data.CUMMOAMT/1000)/totalGoal.MOAMT*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '21')">{{ Math.round(data.FOTARGETAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '21')">{{ Math.round(data.FOSAMT/1000) | currency }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '21')">{{ ((data.FOSAMT/1000)/(data.FOTARGETAMT/1000)*100).toFixed(1) }}</td>
-                  <td v-if="(MCODE == 'A' || MCODE == '21')">{{ ((data.CUMFOAMT/1000)/totalGoal.FOAMT*100).toFixed(1) }}</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr class="tbl_total">
-                  <th scope="col"><strong>합계</strong></th>
-                  <td v-if="(MCODE == 'A')"><strong>{{ totalGoal.TOTAMT | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A')"><strong>{{ Math.round(totalData.TOTSAMT/1000) | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A')"><small class="point_col1">{{((totalData.TOTSAMT/1000)/(totalData.TOTTARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A')"><small class="point_col1">{{((totalData.TOTSAMT/1000)/totalGoal.TOTAMT*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '1')"><strong>{{ totalGoal.MIAMT| currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '1')"><strong>{{ Math.round(totalData.MISAMT/1000) | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '1')"><small class="point_col1">{{((totalData.MISAMT/1000)/(totalData.MITARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '1')"><small class="point_col1">{{((totalData.MISAMT/1000)/totalGoal.MIAMT*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '4')"><strong>{{ totalGoal.ITAMT | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '4')"><strong>{{ Math.round(totalData.ITSAMT/1000) | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '4')"><small class="point_col1">{{((totalData.ITSAMT/1000)/(totalData.ITTARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '4')"><small class="point_col1">{{((totalData.ITSAMT/1000)/totalGoal.ITAMT*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ totalGoal.TSOAMT | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ Math.round(totalData.TSOSAMT/1000) | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.TSOSAMT/1000)/(totalData.TSOTARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.TSOSAMT/1000)/totalGoal.TSOAMT*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ totalGoal.SOAMT | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ Math.round(totalData.SOSAMT/1000) | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.SOSAMT/1000)/(totalData.SOTARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.SOSAMT/1000)/totalGoal.SOAMT*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ totalGoal.SOAMT1 | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ Math.round(totalData.SOSAMT1/1000) | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.SOSAMT1/1000)/(totalData.SOTARGETAMT1/1000)*100).toFixed(1)  | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.SOSAMT1/1000)/totalGoal.SOAMT1*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '12')"><strong>{{ totalGoal.MOAMT | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '12')"><strong>{{ Math.round(totalData.MOSAMT/1000) | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '12')"><small class="point_col1">{{((totalData.MOSAMT/1000)/(totalData.MOTARGETAMT/1000)*100).toFixed(1)  | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '12')"><small class="point_col1">{{((totalData.MOSAMT/1000)/totalGoal.MOAMT*100).toFixed(1) | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '21')"><strong>{{ totalGoal.FOAMT | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '21')"><strong>{{ Math.round(totalData.FOSAMT/1000) | currency}}</strong></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '21')"><small class="point_col1">{{((totalData.FOSAMT/1000)/(totalData.FOTARGETAMT/1000)*100).toFixed(1)  | nanToDot}}</small></td>
-                  <td v-if="(MCODE == 'A' || MCODE == '21')"><small class="point_col1">{{((totalData.FOSAMT/1000)/totalGoal.FOAMT*100).toFixed(1) | nanToDot}}</small></td>
-                </tr>
-              </tfoot>
-            </table>
+          <small>단위: 천원</small>
+          <div class="tbl_sheet sheet_scroll tbl_right sheet_scroll_sty01" v-bind:style="{width:MCODE=='A'?'2650px':MCODE=='3'?'100%':'fit-content'}" id="table_1">
+            <div class="thead_wrap" style="height:auto;">
+              <table class="tbl">
+                <colgroup>
+                  <col style="width:90px;">
+                  <col style="width:100px;">
+                  <col style="width:100px;">
+                  <col style="width:60px;">
+                  <col style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:60px;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ thisMonth }} 월</th>
+                    <th scope="col" colspan="4">전체</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')" colspan="4">MI</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')" colspan="4">IT</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">SO(합계)</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">SO(정상)</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">SO(동영)</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')" colspan="4">MO</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')" colspan="4">FO</th>
+                    <!-- <th scope="col" v-for="(data,index) in proDates" :key="index">{{ data }}</th> -->
+                  </tr>
+                  <tr>
+                    <th scope="col">월목표</th>
+                    <th scope="col" colspan="4">{{ totalGoal.TOTAMT | currency }}</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')" colspan="4">{{ totalGoal.MIAMT  | currency }}</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')" colspan="4">{{ totalGoal.ITAMT  | currency }}</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.TSOAMT | currency }}</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.SOAMT  | currency }}</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.SOAMT1 | currency }}</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')" colspan="4">{{ totalGoal.MOAMT | currency }}</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')" colspan="4">{{ totalGoal.FOAMT | currency }}</th>
+                    <!-- <th scope="col" v-for="(data,index) in proDates" :key="index">{{ data }}</th> -->
+                  </tr>
+                  <tr>
+                    <th scope="col">일자 | 요일</th>
+                    <th scope="col">일-목표</th>
+                    <th scope="col">일-실적</th>
+                    <th scope="col">달성율</th>
+                    <th scope="col">진도율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')">일-목표</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')">일-실적</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')">달성율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')">진도율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')">일-목표</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')">일-실적</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')">달성율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')">진도율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-목표</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-실적</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">달성율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">진도율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-목표</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-실적</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">달성율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">진도율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-목표</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">일-실적</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">달성율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')">진도율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')">일-목표</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')">일-실적</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')">달성율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')">진도율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')">일-목표</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')">일-실적</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')">달성율</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')">진도율</th>
+                    <!-- <th scope="col" v-for="(data,index) in proDates" :key="index">{{ data }}</th> -->
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <div class="tbody_wrap" v-bind:style="{width:MCODE=='A'?'2670px':MCODE=='3'?'100%':'fit-content', height:'600px'}" style="height:600px;">
+              <table class="tbl">
+                <colgroup>
+                  <col style="width:90px;">
+                  <col style="width:100px;">
+                  <col style="width:100px;">
+                  <col style="width:60px;">
+                  <col style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:60px;">
+                </colgroup>
+                <tbody>
+                  <tr v-for="(data, index) in dr_LIST" :key="index">
+                    <td class="tc" >{{ data.DAY }} | {{thisDay(thisYear, thisMonth, data.DAY)}}</td>
+                    <td class="tc">{{ Math.round(data.TOTTARGETAMT/1000) | currency }}</td>
+                    <td class="tc">{{ Math.round(data.TOTSAMT/1000) | currency }}</td>
+                    <td class="tc">{{ ((data.TOTSAMT/1000)/(data.TOTTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc">{{ ((data.CUMTOTAMT/1000)/totalGoal.TOTAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':''}">{{ Math.round(data.MITARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':''}">{{ Math.round(data.MISAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':''}">{{ ((data.MISAMT/1000)/(data.MITARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':''}">{{ ((data.CUMMIAMT/1000)/totalGoal.MIAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':''}">{{ Math.round(data.ITTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':''}">{{ Math.round(data.ITSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':''}">{{ ((data.ITSAMT/1000)/(data.ITTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':''}">{{ ((data.CUMITAMT/1000)/totalGoal.ITAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.TSOTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.TSOSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.TSOSAMT/1000)/(data.TSOTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.CUMTSOAMT/1000)/totalGoal.TSOAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.SOTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.SOSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.SOSAMT/1000)/(data.SOTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.CUMSOAMT/1000)/totalGoal.SOAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.SOTARGETAMT1/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.SOSAMT1/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.SOSAMT1/1000)/(data.SOTARGETAMT1/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.CUMSOAMT1/1000)/totalGoal.SOAMT1*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':''}">{{ Math.round(data.MOTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':''}">{{ Math.round(data.MOSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':''}">{{ ((data.MOSAMT/1000)/(data.MOTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':''}">{{ ((data.CUMMOAMT/1000)/totalGoal.MOAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':''}">{{ Math.round(data.FOTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':''}">{{ Math.round(data.FOSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':''}">{{ ((data.FOSAMT/1000)/(data.FOTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':''}">{{ ((data.CUMFOAMT/1000)/totalGoal.FOAMT*100).toFixed(1) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tfoot_wrap">
+              <table class="tbl">
+                <colgroup>
+                  <col style="width:90px;">
+                  <col style="width:100px;">
+                  <col style="width:100px;">
+                  <col style="width:60px;">
+                  <col style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '1')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '4')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '3')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '12')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:100px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:60px;">
+                  <col v-if="(MCODE == 'A' || MCODE == '21')" style="width:60px;">
+                </colgroup>
+                <tfoot>
+                  <tr class="tbl_total">
+                    <th scope="col"><strong>합계</strong></th>
+                    <td><strong>{{ totalGoal.TOTAMT | currency}}</strong></td>
+                    <td><strong>{{ Math.round(totalData.TOTSAMT/1000) | currency}}</strong></td>
+                    <td><small class="point_col1">{{((totalData.TOTSAMT/1000)/(totalData.TOTTARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
+                    <td><small class="point_col1">{{((totalData.TOTSAMT/1000)/totalGoal.TOTAMT*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '1')"><strong>{{ totalGoal.MIAMT| currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '1')"><strong>{{ Math.round(totalData.MISAMT/1000) | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '1')"><small class="point_col1">{{((totalData.MISAMT/1000)/(totalData.MITARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '1')"><small class="point_col1">{{((totalData.MISAMT/1000)/totalGoal.MIAMT*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '4')"><strong>{{ totalGoal.ITAMT | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '4')"><strong>{{ Math.round(totalData.ITSAMT/1000) | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '4')"><small class="point_col1">{{((totalData.ITSAMT/1000)/(totalData.ITTARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '4')"><small class="point_col1">{{((totalData.ITSAMT/1000)/totalGoal.ITAMT*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ totalGoal.TSOAMT | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ Math.round(totalData.TSOSAMT/1000) | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.TSOSAMT/1000)/(totalData.TSOTARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.TSOSAMT/1000)/totalGoal.TSOAMT*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ totalGoal.SOAMT | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ Math.round(totalData.SOSAMT/1000) | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.SOSAMT/1000)/(totalData.SOTARGETAMT/1000)*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.SOSAMT/1000)/totalGoal.SOAMT*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ totalGoal.SOAMT1 | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><strong>{{ Math.round(totalData.SOSAMT1/1000) | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.SOSAMT1/1000)/(totalData.SOTARGETAMT1/1000)*100).toFixed(1)  | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '3')"><small class="point_col1">{{((totalData.SOSAMT1/1000)/totalGoal.SOAMT1*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '12')"><strong>{{ totalGoal.MOAMT | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '12')"><strong>{{ Math.round(totalData.MOSAMT/1000) | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '12')"><small class="point_col1">{{((totalData.MOSAMT/1000)/(totalData.MOTARGETAMT/1000)*100).toFixed(1)  | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '12')"><small class="point_col1">{{((totalData.MOSAMT/1000)/totalGoal.MOAMT*100).toFixed(1) | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '21')"><strong>{{ totalGoal.FOAMT | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '21')"><strong>{{ Math.round(totalData.FOSAMT/1000) | currency}}</strong></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '21')"><small class="point_col1">{{((totalData.FOSAMT/1000)/(totalData.FOTARGETAMT/1000)*100).toFixed(1)  | nanToDot}}</small></td>
+                    <td v-if="(MCODE == 'A' || MCODE == '21')"><small class="point_col1">{{((totalData.FOSAMT/1000)/totalGoal.FOAMT*100).toFixed(1) | nanToDot}}</small></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -388,14 +469,12 @@ export default {
               let PRE_TOTTARGET = 0, PRE_TOTAMT = 0
               //ARATE 달성율 PRATE 진도율 CUMTARGETAMT CUMAMT 누적
               for(var i in this.dr_LIST) {
-                if(this.MCODE == "A") {
-                  if(i == 0) {
-                    this.dr_LIST[i]["CUMTOTTARGETAMT"] = Number(this.dr_LIST[0]["TOTTARGETAMT"]);
-                    this.dr_LIST[i]["CUMTOTAMT"] = Number(this.dr_LIST[0]["TOTSAMT"]);
-                  } else {
-                    this.dr_LIST[i]["CUMTOTTARGETAMT"] = Number(this.dr_LIST[i-1]["CUMTOTTARGETAMT"]) + Number(this.dr_LIST[i]["TOTTARGETAMT"])
-                    this.dr_LIST[i]["CUMTOTAMT"] = Number(this.dr_LIST[i-1]["CUMTOTAMT"]) + Number(this.dr_LIST[i]["TOTSAMT"])
-                  }
+                if(i == 0) {
+                  this.dr_LIST[i]["CUMTOTTARGETAMT"] = Number(this.dr_LIST[0]["TOTTARGETAMT"]);
+                  this.dr_LIST[i]["CUMTOTAMT"] = Number(this.dr_LIST[0]["TOTSAMT"]);
+                } else {
+                  this.dr_LIST[i]["CUMTOTTARGETAMT"] = Number(this.dr_LIST[i-1]["CUMTOTTARGETAMT"]) + Number(this.dr_LIST[i]["TOTTARGETAMT"])
+                  this.dr_LIST[i]["CUMTOTAMT"] = Number(this.dr_LIST[i-1]["CUMTOTAMT"]) + Number(this.dr_LIST[i]["TOTSAMT"])
                 }
                 if(this.MCODE == "A" || this.MCODE == "1") {
                   if(i == 0) {

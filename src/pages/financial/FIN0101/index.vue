@@ -22,7 +22,7 @@
           <i class="material-icons">arrow_back_ios</i>
         </button> -->
         <!-- Title -->
-        <h2 class="layout_title">일일매출
+        <h2 class="layout_title">일매출
           <small class="txt_date">
             <span v-show="headerDate == today" class="chip chip_m">
               <span class="chip_text">TODAY</span>
@@ -60,7 +60,7 @@
           <div class="inner">
             <ul class="list_card">
               <template v-for="data in dr_H">
-              <li :class="{'list_card_maxWidth': dr_H.length != CODECardsList.length}" :key="data.MCODE" v-if="data.TEXT != 'CO'">
+              <li :class="{'list_card_maxWidth': dr_H.length != CODECardsList.length}" :key="data.MCODE" >
                 <!-- card_MI 사업부 -->
                 <div
                   class="card card_mini"
@@ -68,7 +68,7 @@
                   :class="{on : selectedCODE == data.MCODE}"
                 >
                   <div class="card_title">
-                    <h4 class="card_title_text">{{ data.TEXT }} 당일매출</h4>
+                    <h4 class="card_title_text">{{ data.TEXT }}</h4>
                   </div>
                   <div class="card_content">
                     <strong class="em_obj" v-if="data.SALE_TOT">
@@ -238,7 +238,7 @@
               <!-- card_월 누적매출 달성률 -->
               <div class="card card_mini">
                 <div class="card_title">
-                  <h4 class="card_title_text">월 매출 달성률</h4>
+                  <h4 class="card_title_text">월 누적매출 달성률</h4>
                 </div>
                 <div class="card_title">
                   <small class="txt_box">(당월 매출/당월 매출 목표) * 100</small>
@@ -367,17 +367,31 @@
                 <div class="layout_spacer"></div>
                 <div class="groups">
                   <div class="toggle_group tg_sty01 mr10">
+                    <label class="tg_btn" :class="{'is-checked': comp_choice === 1}">
+                      <input type="radio" id="option-a" class="tg_radio" name="comp_select" :value="1" v-model="comp_choice" style="display:none" @click="changeGraph(1)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">전체</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': comp_choice === 2}">
+                      <input type="radio" id="option-b" class="tg_radio" name="comp_select" :value="2" v-model="comp_choice" style="display:none" @click="changeGraph(2)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">계획대비</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': comp_choice === 3}">
+                      <input type="radio" id="option-c" class="tg_radio" name="comp_select" :value="3" v-model="comp_choice" style="display:none" @click="changeGraph(3)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">전년대비</span>
+                    </label>
+                  </div>
+                  <div class="toggle_group tg_sty01 mr10">
                     <label class="tg_btn" :class="{'is-checked': choice === 1}">
-                      <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="chageType(1)" />
+                      <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="changeType(1)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일간</span>
                     </label>
                     <label class="tg_btn" :class="{'is-checked': choice === 2}">
-                      <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="chageType(2)" />
+                      <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="changeType(2)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월간</span>
                     </label>
                     <!--
                     <label class="tg_btn" :class="{'is-checked': choice === 3}">
-                      <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="chageType(3)" />
+                      <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="changeType(3)" />
                       <span class="btn_n txt_label" >누적</span>
                     </label>
                     -->
@@ -388,8 +402,12 @@
                 </div>
               </div>
               <div class="cont">
-                <div class="graph_area" v-show="gubun == 2">
-                  <div class="graph_view">
+                <div class="tr pr10 mt10"> 단위: 
+                  <span v-if="choice==1">천원</span>
+                  <span v-else>백만원</span>
+                </div>
+                <div class="graph_area" v-show="gubun == 2" style="height: auto;">
+                  <div class="graph_view" style="padding-top:0;">
                     <div class="graph" style="position:relative; width:100%; height:270px;">
                       <div id="chartdiv4" style="position:relative; width:100%; height:100%; float:left;"></div>
                     </div>
@@ -549,6 +567,7 @@ export default {
     this.selectDate = moment().subtract(1, "days").format("YYYY-MM-DD")
     this.loadData()
     this.choice = 1
+    this.comp_choice = 1
   },
   data() {
     return {
@@ -581,7 +600,9 @@ export default {
       SU_TOT_AMT: 0,
       SU_TOT_SALE_TOT: 0,
       choice: 1,
+      comp_choice: 1,
       select_p_choice: 1,
+      chart4: null,
     };
   },
   computed: {
@@ -744,6 +765,7 @@ export default {
       let monthStartDate = moment(date).startOf('month').format("YYYYMMDD")
 
       this.dr_H = []
+      /*
       for (i=0;i<this.authCodeList.length;i++) {
         let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
         if (data) {
@@ -751,6 +773,7 @@ export default {
         }
       }
       //this.dr_H.unshift({TEXT: "전체", MCODE: "A", SUNM: "전체", SALE_TOT: 0, AMT: 0, SALE_MONTH_TOT: 0});
+      */
 
       this.sucdCodeList = _.map(this.authCodeList, 'MCODE')
 
@@ -762,28 +785,38 @@ export default {
             let list = []
             let count = (JSON.stringify(res).match(/{/g) || []).length;
             if(count < 1) {
-            } else if(count == 1) {
-              list.push(res);
+              } else if(count == 1) {
+                list.push(res);
             } else {
               list = JSON.parse("[" + res + "]")
             }
+            console.log("0. authCodeList >>>", this.authCodeList)
             
+              /*
             for (i=0;i<this.authCodeList.length;i++) {
               let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
               if (data) {
                 this.dr_H[i] = _.assign(this.dr_H[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }))
               }
             }
+             */
+            for(i=0; i<list.length; i++) {
+              let data = _.find(this.CODECardsList, {MCODE: list[i].MCODE})
+              list[i].TEXT = data.CODNM;
+            }
+            
 
             let tot_obj = {
               TEXT: "전체", MCODE: "A",
               SUNM: "전체",
-              SALE_TOT: _.sumBy(this.dr_H, function(o) { return Number(o.SALE_TOT); }),
-              SALE_MONTH_TOT: _.sumBy(this.dr_H, function(o) { return o.SALE_MONTH_TOT?Number(o.SALE_MONTH_TOT):0; }),
-              AMT: _.sumBy(this.dr_H, function(o) { return Number(o.AMT); }),
+              SALE_TOT: _.sumBy(list, function(o) { return Number(o.SALE_TOT); }),
+              SALE_MONTH_TOT: _.sumBy(list, function(o) { return o.SALE_MONTH_TOT?Number(o.SALE_MONTH_TOT):0; }),
+              AMT: _.sumBy(list, function(o) { return Number(o.AMT); }),
             }
 
-            this.dr_H.unshift(tot_obj)
+            list.unshift(tot_obj)
+            this.dr_H = list
+            console.log("1. this.dr_H >>>", this.dr_H)
             //this.dr_H[0] = tot_obj;
           }
         },
@@ -791,8 +824,6 @@ export default {
           console.log("rej", rej);
         }
       );
-
-      console.log("1. dr_H >>> ", this.dr_H)
 
     },
     getDailySalesData() {
@@ -849,7 +880,7 @@ export default {
     },
     getCumulativeData() {
       this.dr_C = []
-      
+      /*
       for (i=0;i<this.authCodeList.length;i++) {
         let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
         if (data) {
@@ -857,6 +888,7 @@ export default {
         }
       }
       //this.dr_C.unshift({ MCODE: "A", SUNM: "", SALE_TOT: 0, SALE_MONTH_TOT: 0, AMT: 0 })
+      */
       
       let i
       let date = moment(this.selectDate).format("YYYYMMDD")
@@ -877,25 +909,19 @@ export default {
             } else {
               list = JSON.parse("[" + res + "]")
             }
-            // for (i=0;i<this.authCodeList.length;i++) {
-            //   let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
-            //   if (data) {
-            //     this.dr_C[i] = _.assign(this.dr_C[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }));
-            //   }
-            // }
-            this.dr_C = list
+
             var tot_obj = {
               MCODE: "A", SUNM: "전체",
-              SALE_TOT: _.sumBy(this.dr_C, function(o) { return Number(o.SALE_TOT); }),
-              SALE_MONTH_TOT: _.sumBy(this.dr_C, function(o) { return Number(o.SALE_MONTH_TOT); }),
-              AMT: _.sumBy(this.dr_C, function(o) { return Number(o.AMT); }),
-              SALE_YEAR_TOT: _.sumBy(this.dr_C, function(o) { return o.MCODE != "10"? Number(o.SALE_YEAR_TOT):0; }),
-              YEAR_AMT: _.sumBy(this.dr_C, function(o) { return o.MCODE != "10"? Number(o.YEAR_AMT):0; }),
-              MONTH_AMT: _.sumBy(this.dr_C, function(o) { return o.MCODE != "10"? Number(o.MONTH_AMT):0; })
+              SALE_TOT: _.sumBy(list, function(o) { return Number(o.SALE_TOT); }),
+              SALE_MONTH_TOT: _.sumBy(list, function(o) { return Number(o.SALE_MONTH_TOT); }),
+              AMT: _.sumBy(list, function(o) { return Number(o.AMT); }),
+              SALE_YEAR_TOT: _.sumBy(list, function(o) { return o.MCODE != "10"? Number(o.SALE_YEAR_TOT):0; }),
+              YEAR_AMT: _.sumBy(list, function(o) { return o.MCODE != "10"? Number(o.YEAR_AMT):0; }),
+              MONTH_AMT: _.sumBy(list, function(o) { return o.MCODE != "10"? Number(o.MONTH_AMT):0; })
             }
 
-            this.dr_C.unshift(tot_obj)
-            //this.dr_C[0] = tot_obj;
+            list.unshift(tot_obj)
+            this.dr_C = list
             console.log("dr_C >>> ", this.dr_C)
           }
         },
@@ -959,6 +985,7 @@ export default {
         return
       }
       this.choice = '1'
+      this.comp_choice = 1;
       this.selectedCODE = code
       let date = moment(this.selectDate).format("YYYYMMDD");
       this.getChartData1(code, date)
@@ -988,7 +1015,10 @@ export default {
       let lastYear30day = moment(date).subtract(30, 'days').subtract(1, 'year').format("YYYYMMDD")
       let lastYearSelectDay = moment(date).subtract(1, 'year').format("YYYYMMDD")
 
-      this.req2svr.getChartData2(this.tabType, code, lastYear30day, lastYearSelectDay, this.choice).then(
+      let lastYearMday = moment(date).subtract(1, 'year').format("YYYYMM") + "01"
+      let lastYearLastday = moment(date).subtract(1, 'year').endOf('month').format("YYYYMMDD")
+
+      this.req2svr.getChartData2(this.tabType, code, lastYearMday, lastYearLastday, this.choice).then(
         res => {
           this.dr_LYP = []
           if (res.MACHBASE_ERROR) {
@@ -1025,9 +1055,10 @@ export default {
       );
     },
     getCurrentYearData(code, date) {
-      let last30day = moment(date).subtract(30, 'days').format("YYYYMMDD")
+      //let last30day = moment(date).subtract(30, 'days').format("YYYYMMDD")
+      let firstMday = moment(date).format("YYYYMM") + "01"
 
-      this.req2svr.getCurrentYearData(this.tabType, code, last30day, date, this.choice).then(
+      this.req2svr.getCurrentYearData(this.tabType, code, firstMday, date, this.choice).then(
         res => {
           this.dr_P = [{ SUNM: 0, MCODE: 0, LY_SALE_TOT: 0, AMT: 0, SALE_TOT: 0 }]
           if (res.MACHBASE_ERROR) {
@@ -1036,17 +1067,13 @@ export default {
             this.dr_P = []
             let count = (JSON.stringify(res).match(/{/g) || []).length;
             if(count < 1) {
-            } else if(count == 1) {
-              let data = _.find(this.dr_LYP, function(o) { return o.SALEDT.slice(4, 8) == res.SALEDT.slice(4, 8)})
-              this.dr_P.push({
-                AMT: Number(res.AMT),
-                LY_SALE_TOT: data ? data.LY_SALE_TOT : 0,
-                SALEDT: Number(res.SALEDT.slice(4, 6)) + "/" + Number(res.SALEDT.slice(6, 8)),
-                SALE_TOT: Number(res.SALE_TOT),
-                SUNM: res.SUNM
-              })
             } else {
-              let currentlist = JSON.parse("[" + res + "]")
+              let currentlist = []
+              if(count == 1) {
+                currentlist.push(res);
+              } else {
+                currentlist = JSON.parse("[" + res + "]")
+              }
               let list = []
               for (let i=0;i<currentlist.length;i++) {
                 list.push({
@@ -1070,14 +1097,27 @@ export default {
                   let _AMT = Number(l1[i].AMT) != 0 ? Number(l1[i].AMT) : AMT2
                   let _LY_SALE_TOT = Number(l1[i].LY_SALE_TOT) != 0 ? Number(l1[i].LY_SALE_TOT) : LY_SALE_TOT2
                   let _SALE_TOT = Number(l1[i].SALE_TOT) != 0 ? Number(l1[i].SALE_TOT) : SALE_TOT2
-  
-                  this.dr_P.push({
-                    AMT: Math.round(_AMT/1000),
-                    LY_SALE_TOT: Math.round(_LY_SALE_TOT/1000),
-                    SALE_TOT: Math.round(_SALE_TOT/1000),
-                    SALEDT: Number(l1[i].SALEDT.slice(4, 6)) + "/" + Number(l1[i].SALEDT.slice(6, 8)),
-                    SUNM: l1[i].SUNM
-                  })
+
+                  let saleDt = Number(moment(l1[i].SALEDT).format("MMDD"))
+                  let toDt = Number(moment(date).format("MMDD"))
+
+                  if(saleDt <= toDt) {
+                    this.dr_P.push({
+                      AMT: Math.round(_AMT/1000),
+                      LY_SALE_TOT: Math.round(_LY_SALE_TOT/1000),
+                      SALE_TOT: Math.round(_SALE_TOT/1000),
+                      SALEDT: Number(l1[i].SALEDT.slice(4, 6)) + "/" + Number(l1[i].SALEDT.slice(6, 8)),
+                      SUNM: l1[i].SUNM
+                    })
+                  } else {
+                    this.dr_P.push({
+                      AMT: Math.round(_AMT/1000),
+                      LY_SALE_TOT: Math.round(_LY_SALE_TOT/1000),
+                      //SALE_TOT: Math.round(_SALE_TOT/1000),
+                      SALEDT: Number(l1[i].SALEDT.slice(4, 6)) + "/" + Number(l1[i].SALEDT.slice(6, 8)),
+                      SUNM: l1[i].SUNM
+                    })
+                  }
                 }
               } else {
                 this.dr_P = list;
@@ -1262,7 +1302,7 @@ export default {
       }
       if (val == "1") {
         this.gubun = 1;
-        //this.chageType(this.choice);
+        //this.changeType(this.choice);
         this.makeChart1();
         this.makeChart2();
       } else if (val == "2") {
@@ -1467,30 +1507,30 @@ export default {
           //type: "column",
         },
         {
-          balloonText: txt+"매출목표(" + unit_nm + ") : [[value]]",
+          balloonText: txt+"매출실적(" + unit_nm + ") : [[value]]",
           fillAlphas: 0.5,
           lineAlpha: 0,
           fontSize: 0,
           id: "AmGraph-2",
-          title: txt+"매출목표",
-          valueField: "AMT",
+          title: txt+"매출실적",
+          valueField: "SALE_TOT",
           //markerType: "circle"
           type: "column"
         },
         {
-          balloonText: txt+"매출실적(" + unit_nm + ") : [[value]]",
+          balloonText: txt+"매출목표(" + unit_nm + ") : [[value]]",
           fillAlphas: 0,
           lineAlpha: 1,
           lineThickness: 2,
           id: "AmGraph-3",
-          title: txt+"매출실적",
-          valueField: "SALE_TOT",
+          title: txt+"매출목표",
+          valueField: "AMT",
           markerType: "circle",
           bullet: "round",
           bulletSize: 5,
         }
       ];
-      AmCharts.makeChart("chartdiv4", {
+      this.chart4 = AmCharts.makeChart("chartdiv4", {
         type: "serial",
         //startEffect: "easeOutSine",
         categoryField: "SALEDT",
@@ -1528,9 +1568,9 @@ export default {
         balloon: {},
         legend: {
           enabled: true,
-          align: "left",
+          align: "center",
           fontSize: 12,
-          position: "right",
+          position: "top",
           //equalWidths: false,
           valueWidth: 0,
           //labelWidth: 50
@@ -1539,6 +1579,8 @@ export default {
         titles: [],
         dataProvider: data
       });
+      
+      this.changeGraph(this.comp_choice);
     },
     toMain() {
       this.$router.replace("/")
@@ -1552,15 +1594,34 @@ export default {
         return (v/t)*100
       }
     },
-    chageType(value) {
+    changeType(value) {
       this.choice = value
       let date = moment(this.selectDate).format("YYYYMMDD");
       let code = this.selectedCODE;
-      this.getChartData1(code, date)
+      this.getChartData1(code, date);
       if(value == 1) {
-        this.getChartData2(code, date)
+        this.getChartData2(code, date);
       } else {
-        this.getCumulativeSales(code, date)
+        this.getCumulativeSales(code, date);
+      }
+    },
+    changeGraph(value) {
+      this.comp_choice = value
+      console.log(value , " / ", typeof value)
+      switch(value) {
+        case 1: // 전체
+          if(this.chart4.graphs[0].hidden) this.chart4.showGraph(this.chart4.graphs[0])
+          if(this.chart4.graphs[2].hidden) this.chart4.showGraph(this.chart4.graphs[2])
+          break;
+        case 2: // 계획대비
+          if(!this.chart4.graphs[0].hidden) this.chart4.hideGraph(this.chart4.graphs[0])
+          if(this.chart4.graphs[2].hidden) this.chart4.showGraph(this.chart4.graphs[2])
+          break;
+        case 3: // 전년대비
+          if(this.chart4.graphs[0].hidden) this.chart4.showGraph(this.chart4.graphs[0])
+          if(!this.chart4.graphs[2].hidden) this.chart4.hideGraph(this.chart4.graphs[2])
+          break;
+        default: break;
       }
     }
   }

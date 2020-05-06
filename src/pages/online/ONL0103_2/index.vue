@@ -43,29 +43,29 @@
                       <colgroup>
                         <col class="bg_point_col20" style="fontWeight: bold; "/>
                         <col/>
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
-                        <col />
+                        <col/>
+                        <col/>
+                        <col v-if="(MCODE == '00' || MCODE == 'MI')"/>
+                        <col v-if="(MCODE == '00' || MCODE == 'MI')"/>
+                        <col v-if="(MCODE == '00' || MCODE == 'MI')"/>
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IT')" />
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IT')" />
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IT')" />
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'MO')" />
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'MO')" />
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'MO')" />
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IN')" />
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IN')" />
+                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IN')" />
                       </colgroup>
                       <thead>
                         <tr>
                           <th></th>
                           <th colspan="3">전체</th>
-                          <th colspan="3">MI</th>
-                          <th colspan="3">MO</th>
-                          <th colspan="3">IT</th>
-                          <th colspan="3">IN</th>
+                          <th v-if="(MCODE == '00' || MCODE == 'MI')" colspan="3">MI</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IT')" colspan="3">MO</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'MO')" colspan="3">IT</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IN')" colspan="3">IN</th>
                         </tr>
                         <tr>
                           <th>일자</th>
@@ -74,30 +74,30 @@
                           <th>온라인</th>
                           <th>비율(%)</th>
 
-                          <th>전체</th>
-                          <th>온라인</th>
-                          <th>비율(%)</th>
+                          <th v-if="(MCODE == '00' || MCODE == 'MI')">전체</th>
+                          <th v-if="(MCODE == '00' || MCODE == 'MI')">온라인</th>
+                          <th v-if="(MCODE == '00' || MCODE == 'MI')">비율(%)</th>
 
-                          <th>전체</th>
-                          <th>온라인</th>
-                          <th>비율(%)</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">전체</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">온라인</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">비율(%)</th>
                           
-                          <th>전체</th>
-                          <th>온라인</th>
-                          <th>비율(%)</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">전체</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">온라인</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">비율(%)</th>
 
-                          <th>전체</th>
-                          <th>온라인</th>
-                          <th>비율(%)</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">전체</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">온라인</th>
+                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">비율(%)</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr v-for="(data , index) in dr_DS" v-bind:key="index">
                           <td>{{ data.DAY }} 일</td>
 
-                          <td class="tr" v-if="(MCODE == '00')">{{ data.TDAYTOT | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00')">{{ data.TDAYON | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00')">{{ Number(data.TDAYRAT).toFixed(2) }}</td>
+                          <td class="tr">{{ data.TDAYTOT | currency }}</td>
+                          <td class="tr">{{ data.TDAYON | currency }}</td>
+                          <td class="tr">{{ Number(data.TDAYRAT).toFixed(2) }}</td>
 
                           <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYTOT | currency }}</td>
                           <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYON | currency }}</td>
@@ -119,9 +119,9 @@
                       <tfoot>
                         <tr class="tbl_total">
                           <th scope="col"><strong>합계</strong></th>
-                          <td class="tr" v-if="(MCODE == '00')"><strong>{{ totalData.TDAYTOT | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00')"><strong>{{ totalData.TDAYON | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00')"><small class="point_col1">{{ totalData.TDAYRAT.toFixed(2) }}</small></td>
+                          <td class="tr"><strong>{{ totalData.TDAYTOT | currency}}</strong></td>
+                          <td class="tr"><strong>{{ totalData.TDAYON | currency}}</strong></td>
+                          <td class="tr"><small class="point_col1">{{ totalData.TDAYRAT.toFixed(2) }}</small></td>
                           <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><strong>{{ totalData.MIDAYTOT| currency}}</strong></td>
                           <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><strong>{{ totalData.MIDAYON | currency}}</strong></td>
                           <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><small class="point_col1">{{ totalData.MIDAYRAT.toFixed(2) }}</small></td>
@@ -168,11 +168,8 @@ export default {
     }
   },
   created() {
-    this.MCODE = this.selectedCODE
-    this.selectDate = moment(this.currentDate).format("YYYYMMDD");
-    this.selectMonth = moment(this.currentDate).format("MM");
-    console.log("팝업 >>> ", this.MCODE, " / ", this.selectDate, " / ", this.selectMonth )
     this.loadData();
+    
   },
   computed: {
     req2svr: () => req2svr,
@@ -219,6 +216,10 @@ export default {
     loadData() {
       // this.getSaleByBrandList()
       // this.getITOnOffSaleList()
+      this.MCODE = this.selectedCODE
+      this.selectDate = moment(this.currentDate).format("YYYYMMDD");
+      this.selectMonth = moment(this.currentDate).format("MM");
+      console.log("팝업 >>> ", this.MCODE, " / ", this.selectDate, " / ", this.selectMonth )
       for(var i=0; i<this.selectMonth; i++) {
         this.monthFilters.push({
           NAME: (i+1) + " 월", ITEM: this.twinNum(i+1)
