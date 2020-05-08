@@ -15,7 +15,7 @@
     <header class="header">
         <div class="header_inner">
         <!-- Title -->
-        <h2 class="layout_title">온라인 매출현황
+        <h2 class="layout_title">온라인 매출
           <small class="txt_date">
             <span v-show="headerDate == today" class="chip chip_m">
               <span class="chip_text">TODAY</span>
@@ -69,7 +69,7 @@
                   :class="{on : selectedCODE == data.ITEM}"
                 >
                   <div class="card_title">
-                    <h4 class="card_title_text">{{ data.BRCD }} 온라인 매출</h4>
+                    <h4 class="card_title_text">{{ data.BRCD }}</h4>
                   </div>
                   <div class="card_content">
                     <strong class="em_obj" v-if="data.DAYTOT">
@@ -81,7 +81,7 @@
                     <dl class="list_obj">
                       <dt class="tit">비율</dt>
                       <dd class="txt" v-if="data.DAYRAT">
-                        {{ data.DAYRAT | nanToDot }} %
+                        {{ Math.round(data.DAYRAT) | nanToDot }} %
                       </dd>
                       <dd class="txt" v-else>
                         0 %
@@ -134,7 +134,7 @@
                 </div>
                 <div class="card_content" >
                   <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ current_BS.DAYRAT | nanToDot }}
+                    {{ Math.round(current_BS.DAYRAT) | nanToDot }}
                     <small
                       class="txt2"
                     >%</small>
@@ -179,7 +179,7 @@
                 </div>
                 <div class="card_content" >
                   <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ current_BS.MONRAT | nanToDot }}
+                    {{ Math.round(current_BS.MONRAT) | nanToDot }}
                     <small
                       class="txt2"
                     >%</small>
@@ -206,8 +206,9 @@
                   </button>
               </div>
               <div class="cont">
-                <div class="graph_area" >
-                  <div class="graph_view">
+                <div class="tr pr10 mt10"> 단위: 천원 </div>
+                <div class="graph_area" style="height: auto;">
+                  <div class="graph_view npt">
                     <div class="graph" style="position:relative; width:100%; height:270px;">
                       <div id="chartdiv1" style="position:relative; width:100%; height:100%; float:left;"></div>
                     </div>
@@ -221,17 +222,28 @@
               <div class="tit">
                 <div class="tab">
                   <ul>
-                    <li class="on">
-                      <a href="javascript:void(0);">온라인 월간 매출추이</a>
+                    <li :class="{'on': gubun == 1}">
+                      <a href="javascript:void(0);" @click="tabVal('1')">온라인 월간 매출추이</a>
+                    </li>
+                    <li :class="{'on': gubun == 2}" style="display:none;">
+                      <a href="javascript:void(0);" @click="tabVal('2')">온라인 월간 매출_막대</a>
                     </li>
                   </ul>
                 </div>
               </div>
               <div class="cont">
-                <div class="graph_area" >
-                  <div class="graph_view">
+                <div class="tr pr10 mt10"> 단위: 백만원 </div>
+                <div class="graph_area" style="height: auto;" v-show="gubun == 1">
+                  <div class="graph_view npt">
                     <div class="graph" style="position:relative; width:100%; height:270px;">
                       <div id="chartdiv2" style="position:relative; width:100%; height:100%; float:left;"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="graph_area" style="height: auto;" v-show="gubun == 2">
+                  <div class="graph_view npt">
+                    <div class="graph" style="position:relative; width:100%; height:270px;">
+                      <div id="chartdiv3" style="position:relative; width:100%; height:100%; float:left;"></div>
                     </div>
                   </div>
                 </div>
@@ -239,6 +251,51 @@
             </div>
           </div>
         </div>
+        <!-- <div class="row">
+          <div class="container">
+            <div class="cont_box h100">
+              <div class="tit">
+                <div class="tab">
+                  <ul>
+                    <li :class="{'on': gubun == 3}">
+                      <a href="javascript:void(0);" @click="tabVal(3)">온라인 일간 매출추이</a>
+                    </li>
+                    <li :class="{'on': gubun == 1}">
+                      <a href="javascript:void(0);" @click="tabVal(1)">온라인 월간 매출추이</a>
+                    </li>
+                    <li :class="{'on': gubun == 2}">
+                      <a href="javascript:void(0);" @click="tabVal(2)">온라인 월간 매출_막대</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="cont">
+                <div class="tr pr10 mt10"> 단위: 백만원 </div>
+                <div class="graph_area" style="height: auto;" v-show="gubun == 3">
+                  <div class="graph_view npt">
+                    <div class="graph" style="position:relative; width:100%; height:270px;">
+                      <div id="chartdiv1" style="position:relative; width:100%; height:100%; float:left;"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="graph_area" style="height: auto;" v-show="gubun == 1">
+                  <div class="graph_view npt">
+                    <div class="graph" style="position:relative; width:100%; height:270px;">
+                      <div id="chartdiv2" style="position:relative; width:100%; height:100%; float:left;"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="graph_area" style="height: auto;" v-show="gubun == 2">
+                  <div class="graph_view npt">
+                    <div class="graph" style="position:relative; width:100%; height:270px;">
+                      <div id="chartdiv3" style="position:relative; width:100%; height:100%; float:left;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
       </div>
     </div>
     <!-- <detail-msly-popup
@@ -307,12 +364,11 @@ export default {
     return {
       drawer: null,
       brand: 1,
-      year: new Date().getFullYear(),
-      month: new Date().getMonth()+1,
-      toDay: new Date().getDate(),
+      year: Number(moment(this.selectDate).format("YYYY")),
+      month: Number(moment(this.selectDate).format("MM")),
+      toDay: Number(moment(this.selectDate).format("DD")),
       msg: 'This is OnLineSale page',
       itOnffImptList: [],
-      month_start: 1,
       brdSaleMslList: [],
       itOnffImptMslList: [],
       // isDetailMslVisible: false,
@@ -322,18 +378,19 @@ export default {
       dailySaleList: [],
       monthlySaleList: [],
       selectDate: null,
-      weekNames: ["월요일", "화요일", "수요일","목요일", "금요일", "토요일", "일요일"],
       rootYear: 1904,
       rootDayOfWeekIndex: 4, // 2000년 1월 1일은 토요일
       currentMonthStartWeekIndex: null,
       currentCalendarMatrix: [],
       endOfDay: null,
-      memoDatas: [],
-      clickedMonth: new Date().getMonth()+1,
+      clickedMonth: Number(moment(this.selectDate).format("MM")),
       monthList: [],
       makeDataDate: null,
       selectedCODE: '00',
       choice: 1,
+      chart1: null,
+      chart2: null,
+      gubun: 1,
     }
   },
   methods: {
@@ -430,31 +487,6 @@ export default {
             let itYearData = JSON.parse("[" + res + "]");
             console.log("itYearData >>> ", itYearData);
             this.getITOnOffDetailData(itYearData)
-            // for(var i in this.itOnffImptList) {
-            //   for(var j in itYearData) {
-            //     if(this.itOnffImptList[i].ITEM == itYearData[j].ITEM) {
-            //       this.itOnffImptList[i].AMT = itYearData[j].AMT;
-            //     }
-            //   }
-            // }
-
-            // let offDataObj = {
-            //   ITEM: "44", ITEMNM: "오프라인", 
-            //   AMT_17: Number(_.find(this.itOnffImptList, {'ITEM': '00'}).AMT_17), 
-            //   AMT_18: Number(_.find(this.itOnffImptList, {'ITEM': '00'}).AMT_18), 
-            //   AMT_19: Number(_.find(this.itOnffImptList, {'ITEM': '00'}).AMT_19), 
-            //   AMT:    Number(_.find(this.itOnffImptList, {'ITEM': '00'}).AMT)
-            // };
-            // for(var i in this.itOnffImptList) {
-            //   if(this.itOnffImptList[i].ITEM != "00") {
-            //     offDataObj["AMT_17"]  -= Number(this.itOnffImptList[i]["AMT_17"]);
-            //     offDataObj["AMT_18"]  -= Number(this.itOnffImptList[i]["AMT_18"]);
-            //     offDataObj["AMT_19"]  -= Number(this.itOnffImptList[i]["AMT_19"]);
-            //     offDataObj["AMT"]     -= Number(this.itOnffImptList[i]["AMT"]);
-            //   }
-            // }
-            
-            // this.itOnffImptList.push(offDataObj);
           }
         },
         rej => {
@@ -523,7 +555,6 @@ export default {
             }
             this.brdSaleMslList.push(totObj);
             console.log("this.brdSaleMslList >>> ", this.brdSaleMslList);
-            //this.makeMonthlyChart(this.month, this.brdSaleMslList)
           }
         },
         rej => {
@@ -591,7 +622,8 @@ export default {
             } else if(count > 1) {
               this.monthlySaleList = JSON.parse("[" + res + "]")
             }
-            this.makeMonthlyChart(mon, this.monthlySaleList)
+            this.makeMonthlyChart(this.monthlySaleList)
+            this.makeMonthlyBarChart(this.monthlySaleList)
             console.log("monthlySaleList >>> ", this.monthlySaleList);
           }
         },
@@ -600,9 +632,9 @@ export default {
         }
       )
     },
-    makeMonthlyChart: function (mon, source) {
+    makeMonthlyChart: function (source) {
       
-      AmCharts.makeChart("chartdiv2", {
+      this.chart2 = AmCharts.makeChart("chartdiv2", {
         type: "serial",
         startEffect: "easeOutSine",
         categoryField: "SALEDT",
@@ -626,18 +658,19 @@ export default {
         graphs: [
           {
             balloonText: "전체(백만원) : [[value]]",
-            id: "AmGraph-Tot",
+            id: "AmGraph-TOT",
             valueField: "TOTSILAMT",
             fillAlphas: 0,
             lineAlpha: 0.99,
             title: "전체(백만원)",
             bulletSize: 1,
             bullet: "diamond",
-            markerType: "diamond"
+            markerType: "diamond",
+            fontSize: 10
           },
           {
             balloonText: "MI(백만원) : [[value]]",
-            id: "AmGraph-Mi",
+            id: "AmGraph-MI",
             valueField: "MISILAMT",
             fillAlphas: 0,
             lineAlpha: 0.99,
@@ -645,17 +678,6 @@ export default {
             bulletSize: 1,
             bullet: "diamond",
             markerType: "diamond"
-          },
-          {
-            balloonText: "MO(백만원) : [[value]]",
-            id: "AmGraph-MO",
-            valueField: "MOSILAMT",
-            fillAlphas: 0,
-            lineAlpha: 0.99,
-            title: "MO(백만원)",
-            bulletSize: 1,
-            bullet: "triangleUp",
-            markerType: "triangleUp"
           },
           {
             balloonText: "IT(백만원) : [[value]]",
@@ -667,6 +689,17 @@ export default {
             bulletSize: 1,
             bullet: "round",
             markerType: "round"
+          },
+          {
+            balloonText: "MO(백만원) : [[value]]",
+            id: "AmGraph-MO",
+            valueField: "MOSILAMT",
+            fillAlphas: 0,
+            lineAlpha: 0.99,
+            title: "MO(백만원)",
+            bulletSize: 1,
+            bullet: "triangleUp",
+            markerType: "triangleUp"
           },
           {
             balloonText: "IN(백만원) : [[value]]",
@@ -704,6 +737,79 @@ export default {
         dataProvider: source
       });
     },
+    makeMonthlyBarChart: function (source) {
+      let alpha = [1, 0.85, 0.70, 0.55, 0.40]
+
+      AmCharts.makeChart("chartdiv3", {
+        type: "serial",
+        theme: "none",
+        colors: ["#9879E8", "#B7D7E2", "#97BDD6", "#566F94", "#1D3373"],
+        legend: {
+          horizontalGap: 10,
+          useGraphSettings: true,
+          markerSize: 10
+        },
+        dataProvider: source,
+        valueAxes: [ {
+          stackType: "regular",
+          axisAlpha: 0,
+          gridAlpha: 0
+        } ],
+        graphs: [ {
+          balloonText: "<b>[[title]]</b><br><span style='font-size:14px'><b>[[value]]</b></span>",
+          fillAlphas: 0.8,
+          labelText: "[[title]]",
+          "title": "전체",
+          "type": "column",
+          "color": "#000000",
+          "valueField": "TOTSILAMT"
+        }, {
+          "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'><b>[[value]]</b></span>",
+          "fillAlphas": 0.8,
+          "labelText": "[[title]]",
+          "title": "MI",
+          "type": "column",
+          "color": "#000000",
+          "newStack": true,
+          "valueField": "MISILAMT"
+        }, {
+          "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'><b>[[value]]</b></span>",
+          "fillAlphas": 0.8,
+          "labelText": "[[title]]",
+          "title": "IT",
+          "type": "column",
+          "color": "#000000",
+          "valueField": "ITSILAMT"
+        }, {
+          "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'><b>[[value]]</b></span>",
+          "fillAlphas": 0.8,
+          "labelText": "[[title]]",
+          "title": "MO",
+          "type": "column",
+          "color": "#000000",
+          "valueField": "MOSILAMT"
+        }, {
+          "balloonText": "<b>[[title]]</b><br><span style='font-size:14px'><b>[[value]]</b></span>",
+          "fillAlphas": 0.8,
+          "labelText": "[[title]]",
+          "title": "IN",
+          "type": "column",
+          "color": "#000000",
+          "valueField": "INSILAMT"
+        } ],
+        "categoryField": "SALEDT",
+        "categoryAxis": {
+          "gridPosition": "start",
+          "axisAlpha": 0,
+          "gridAlpha": 0,
+          "position": "left"
+        },
+        "export": {
+          "enabled": true
+        }
+
+      });
+    },
     getDailySaleList: function (mon) {
       //let startDate = this.year.toString() + this.twinNum(mon) + "01"
       let startDate = moment(this.selectDate).format("YYYYMM") + "01"
@@ -715,11 +821,20 @@ export default {
             console.log("res", res);
           } else {
             this.dailySaleList = [];
+            let list = [];
             let count = (JSON.stringify(res).match(/{/g) || []).length;
             if(count == 1) {
               this.dailySaleList.push(res);
             } else if(count > 1) {
-              this.dailySaleList = JSON.parse("[" + res + "]")
+              this.dailySaleList = JSON.parse("[" + res + "]");
+              let entMonthDay = Number(moment(this.selectDate).endOf('month').format('DD'));
+              for(let i = Number(moment(this.selectDate).format('DD')); i < entMonthDay; i++) {
+                this.dailySaleList.push({
+                  SALEDT: this.month + "/" + this.twinNum(i+1),
+                  TOTSILAMT: 0, MISILAMT: 0, MOSILAMT: 0, INSILAMT: 0, ITSILAMT: 0
+                })
+              }
+
             }
             this.makeDailyChart(mon, this.dailySaleList)
             console.log("dailySaleList >>> ", this.dailySaleList);
@@ -733,7 +848,7 @@ export default {
     makeDailyChart: function (mon, source) {
       //let data = source
 
-      AmCharts.makeChart("chartdiv1", {
+      this.chart1 = AmCharts.makeChart("chartdiv1", {
         type: "serial",
         startEffect: "easeOutSine",
         categoryField: "SALEDT",
@@ -756,7 +871,7 @@ export default {
         graphs: [
           {
             balloonText: "전체(백만원) : [[value]]",
-            id: "AmGraph-Tot",
+            id: "AmGraph-TOT",
             valueField: "TOTSILAMT",
             fillAlphas: 0,
             lineAlpha: 1,
@@ -767,7 +882,7 @@ export default {
           },
           {
             balloonText: "MI(백만원) : [[value]]",
-            id: "AmGraph-Mi",
+            id: "AmGraph-MI",
             valueField: "MISILAMT",
             fillAlphas: 0,
             lineAlpha: 1,
@@ -775,17 +890,6 @@ export default {
             bulletSize: 1,
             bullet: "diamond",
             markerType: "diamond"
-          },
-          {
-            balloonText: "MO(백만원) : [[value]]",
-            id: "AmGraph-MO",
-            valueField: "MOSILAMT",
-            fillAlphas: 0,
-            lineAlpha: 1,
-            title: "MO(백만원)",
-            bulletSize: 1,
-            bullet: "triangleUp",
-            markerType: "triangleUp"
           },
           {
             balloonText: "IT(백만원) : [[value]]",
@@ -797,6 +901,17 @@ export default {
             bulletSize: 1,
             bullet: "round",
             markerType: "round"
+          },
+          {
+            balloonText: "MO(백만원) : [[value]]",
+            id: "AmGraph-MO",
+            valueField: "MOSILAMT",
+            fillAlphas: 0,
+            lineAlpha: 1,
+            title: "MO(백만원)",
+            bulletSize: 1,
+            bullet: "triangleUp",
+            markerType: "triangleUp"
           },
           {
             balloonText: "IN(백만원) : [[value]]",
@@ -832,6 +947,7 @@ export default {
         titles: [],
         dataProvider: source
       });
+      
     },
     getItemNm: function (item) {
       let returnNm = '';
@@ -894,13 +1010,6 @@ export default {
         }
       }
     },
-    // showDetailMsl(year) {
-    //   this.year = year
-    //   this.isDetailMslVisible = true;
-    // },
-    // closeDetailMsl() {
-    //   this.isDetailMslVisible = false;
-    // },
     showYearly() {
       this.isYearlyVisible = true;
     },
@@ -1065,8 +1174,29 @@ export default {
       this.initCalendar();
     },
     changeBusiness: function(code) {
-      console.log("code >>> " + code);
+      console.log("code >>> " + code, " / ", this.chart1.graphs);
+      this.changeGraph(code);
       this.selectedCODE = code;
+    },
+    changeGraph: function(code) {
+      if(code == "00") {
+        for(var i in this.chart1.graphs) {
+          if(this.chart1.graphs[i].hidden) this.chart1.showGraph(this.chart1.graphs[i])
+        }
+        for(var i in this.chart2.graphs) {
+          if(this.chart2.graphs[i].hidden) this.chart2.showGraph(this.chart2.graphs[i])
+        }
+      } else {
+        for(var i in this.chart1.graphs) {
+          if(this.chart1.graphs[i].hidden) this.chart1.showGraph(this.chart1.graphs[i])
+          if(this.chart2.graphs[i].hidden) this.chart2.showGraph(this.chart2.graphs[i])
+          if(this.chart1.graphs[i].id != "AmGraph-TOT" && this.chart1.graphs[i].id.indexOf(code) != 8) {
+            console.log(this.chart1.graphs[i].hidden)
+            this.chart1.hideGraph(this.chart1.graphs[i])
+            this.chart2.hideGraph(this.chart2.graphs[i])
+          }
+        }
+      }
     },
     chageType: function(type) {
       this.choice = type;
@@ -1092,6 +1222,7 @@ export default {
               PRE_ITSILAMT = PRE_ITSILAMT+Number(this.monthlySaleList[i-1].ITSILAMT);
               PRE_INSILAMT = PRE_INSILAMT+Number(this.monthlySaleList[i-1].INSILAMT);
             }
+            
             source.push({
               SALEDT: this.monthlySaleList[i].SALEDT,
               MISILAMT : PRE_MISILAMT + Number(this.monthlySaleList[i].MISILAMT),
@@ -1105,6 +1236,9 @@ export default {
       }
       this.makeDailyChart(this.month, source)
     },
+    tabVal: function(gbn) {
+      this.gubun = Number(gbn);
+    }
   },
   filters: {
     currency: function(value) {

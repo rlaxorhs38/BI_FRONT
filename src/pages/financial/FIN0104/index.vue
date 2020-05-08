@@ -10,10 +10,7 @@
       <header class="header">
         <div class="header_inner">
           <h2 class="layout_title">{{dr_STORE.BRCD}}&nbsp;{{dr_STORE.VDNM}}&nbsp;
-            <span v-if="p_choice==1">일간</span>
-            <span v-else-if="p_choice==2">월간누적</span>
-            <span v-else>누적</span>
-            <span>매출</span>
+            <span>일간 매출</span>
             <small class="txt_date">
               <span v-show="headerDate == today" class="chip chip_m">
                 <span class="chip_text">TODAY</span>
@@ -167,7 +164,7 @@
                       <!-- <span class="num_box">
                         <strong>{{index+1}}</strong>
                       </span> -->
-                      <label>{{data.SALEDT | formatDate}}</label>
+                      <span>{{data.SALEDT | formatDate}}</span>
                     </th>
                     <!-- 합계 -->
                     <td>{{ Math.round(data.SALE_TOT/1000) | currency}}</td>
@@ -283,7 +280,7 @@ import req2svr from "./req2svr"
 import datePick from "vue-date-pick"
 
 export default {
-  name: "FIN0102",
+  name: "FIN0104",
   components: {
     datePick
   },

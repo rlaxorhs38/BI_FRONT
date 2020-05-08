@@ -533,6 +533,7 @@
         v-if="isPerformanceListVisible"
         @close="closePerformanceList"
         :dr_H="current_dr_H"
+        :dr_L="dr_L"
         :selectedCODE="selectedCODE"
         :currentDate="selectDate"
       />
@@ -725,7 +726,7 @@ export default {
         return
       }
       this.storeListOrderType = orderType
-      console.log("1. select_p_choice >>>", p_choice)
+      console.log("selectDate >>>", this.selectDate)
       this.select_p_choice = p_choice
       this.isStoreListVisible = true;
     },
@@ -1607,7 +1608,6 @@ export default {
     },
     changeGraph(value) {
       this.comp_choice = value
-      console.log(value , " / ", typeof value)
       switch(value) {
         case 1: // 전체
           if(this.chart4.graphs[0].hidden) this.chart4.showGraph(this.chart4.graphs[0])

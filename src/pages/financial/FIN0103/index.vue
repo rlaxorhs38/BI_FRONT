@@ -185,7 +185,9 @@
                 </colgroup>
                 <tbody>
                   <tr v-for="(data, index) in dr_LIST" :key="index">
-                    <td class="tc" >{{ data.DAY }} | {{thisDay(thisYear, thisMonth, data.DAY)}}</td>
+                    <td scope="row" class="tc" @click="showStoreList(data.DAY)">
+                      <label>{{ data.DAY }} | {{thisDay(thisYear, thisMonth, data.DAY)}}</label>
+                    </td>
                     <td class="tc">{{ Math.round(data.TOTTARGETAMT/1000) | currency }}</td>
                     <td class="tc">{{ Math.round(data.TOTSAMT/1000) | currency }}</td>
                     <td class="tc">{{ ((data.TOTSAMT/1000)/(data.TOTTARGETAMT/1000)*100).toFixed(1) }}</td>
@@ -301,6 +303,15 @@
           </div>
         </div>
       </div>
+      <store-list-popup
+          v-if="isStoreListVisible"
+          @close="closeStoreList"
+          :dr_H="dr_H"
+          :dr_L="dr_L"
+          :orderType="'desc'"
+          :currentDate="pop_select_date"
+          :select_p_choice="1"
+        />
     </div>
   </transition>
 </template>
@@ -310,15 +321,22 @@ import moment from "moment"
 import req2svr from "./req2svr"
 import datePick from "vue-date-pick"
 
+import storeListPopup from '@/pages/financial/FIN0102'
+
 export default {
-  name: "FIN0102",
+  name: "FIN0103",
   components: {
-    datePick
+    datePick,
+    storeListPopup,
   },
   props: {
     dr_H: {
       type: Object,
       default: null
+    },
+    dr_L: {
+      type: Array,
+      default: []
     },
     selectedCODE: {
       type: String,
@@ -398,7 +416,9 @@ export default {
       makeDataDate: null,
       MCODE: '',
       dr_LIST: [],
-      dr_TOT: {}
+      dr_TOT: {},
+      isStoreListVisible: false,
+      pop_select_date: null,
     };
   },
   methods: {
@@ -539,6 +559,15 @@ export default {
         }
       )
     },
+    showStoreList(day) {
+      let date = this.thisYear + "-" + this.thisMonth + "-" + day;
+      this.pop_select_date = moment(date, "YYYY-MM-DD").format("YYYY-MM-DD");
+      console.log("pop_select_date >>>", this.pop_select_date)
+      this.isStoreListVisible = true;
+    },
+    closeStoreList() {
+      this.isStoreListVisible = false;
+    }
   },
   filters: {
     currency: function(value) {
