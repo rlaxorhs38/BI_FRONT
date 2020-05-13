@@ -1035,7 +1035,15 @@ export default {
               this.salesResultData.push(res);
             } else {
               this.salesResultData = JSON.parse("[" + res + "]")
+              for(var i in this.salesResultData) {
+                if(this.salesResultData[i].YCD == 'ZZ'){
+                  this.salesResultData[i].YCD = '합계';
+                }
+              }
             }
+
+            
+            /*
             //합계 행 추가 로직 끝
             let resultTotal = {}
             resultTotal.YCD = "합계"
@@ -1051,6 +1059,7 @@ export default {
             })
             this.salesResultData.push(resultTotal)
             //합계 행 추가 로직 끝
+            */
           }
         },
         rej => {
