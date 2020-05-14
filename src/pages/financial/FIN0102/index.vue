@@ -12,7 +12,7 @@
           <h2 class="layout_title">{{dr_H.TEXT}}&nbsp;
             <span v-if="p_choice==1">일간</span>
             <span v-else-if="p_choice==2">월간누적</span>
-            <span v-else>누적</span>
+            <span v-else>연간누적</span>
             <span>매출 TOP</span>
             <small class="txt_date">
               <span v-show="headerDate == today" class="chip chip_m">
@@ -22,7 +22,7 @@
             </small>
           </h2>
           <div class="layout_spacer"></div>
-          <div class="groups pr20">
+          <div class="groups pr20" style="display: none">
             <div class="toggle_group tg_sty01">
               <label class="tg_btn" :class="{'is-checked': p_tb_choice === 1}">
                 <input type="radio" id="option-s" class="tg_radio" name="select_table" :value="1" v-model="p_tb_choice" style="display:none" @click="p_chageTable(1)" />
@@ -46,7 +46,7 @@
               </label>
               <label class="tg_btn" :class="{'is-checked': p_choice === 3}">
                 <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="p_choice" style="display:none" @click="p_chageType(3)" />
-                <span class="btn_n txt_label">누적</span>
+                <span class="btn_n txt_label">연간</span>
               </label>
             </div>
           </div>
@@ -546,12 +546,13 @@ export default {
         this.p_choice = 1;
         document.getElementById("table_1").style.display = "block";
         document.getElementById("table_2").style.display = "none";
+        this.getStoreList();
       } else {
         this.p_choice = 2;
         document.getElementById("table_1").style.display = "none";
         document.getElementById("table_2").style.display = "block";
+        this.getsalesRanking();
       }
-      this.getsalesRanking();
     },
     getsalesRanking() {
       this.req2svr.getsalesRanking(this.orderType, this.tabType, this.dr_H.MCODE, this.p_choice, this.selectDate).then(
@@ -560,13 +561,12 @@ export default {
             console.log("res", res)
           } else {
             let count = (JSON.stringify(res).match(/{/g) || []).length;
-            console.log("count >>> ", count, " / ", res)
             if(count < 1) {
             } else if(count == 1) {
               list.push(res);
             } else {
               this.listData2 = JSON.parse("[" + res + "]");
-              console.log("listData2 >>> ", listData2)
+              console.log("listData2 >>> ", this.listData2)
             }
           }
         },
