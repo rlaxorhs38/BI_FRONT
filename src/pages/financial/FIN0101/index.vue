@@ -184,14 +184,14 @@
                         <!-- 초과-->
                         <span
                           class="chip round_chip success"
-                          v-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) >= 100"
+                          v-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) > 100"
                         >
                           <span class="chip_text">초과</span>
                         </span>
                         <!-- 정상-->
                         <span
                           class="chip round_chip warning"
-                          v-else-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) <= 99"
+                          v-else-if="Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_TOT, current_dr_C.AMT)) <= 100"
                         >
                           <span class="chip_text">정상</span>
                         </span>
@@ -254,14 +254,14 @@
                         <!-- 초과-->
                         <span
                           class="chip round_chip success"
-                          v-if="Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) >= 100"
+                          v-if="Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) > 100"
                         >
                           <span class="chip_text">초과</span>
                         </span>
                         <!-- 정상-->
                         <span
                           class="chip round_chip warning"
-                          v-else-if="Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) <= 99"
+                          v-else-if="Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_YEAR_TOT, current_dr_C.YEAR_AMT)) <= 100"
                         >
                           <span class="chip_text">정상</span>
                         </span>
@@ -330,14 +330,14 @@
                         <!-- 초과-->
                         <span
                           class="chip round_chip success"
-                          v-if="Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) >= 100"
+                          v-if="Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) > 100"
                         >
                           <span class="chip_text">초과</span>
                         </span>
                         <!-- 정상-->
                         <span
                           class="chip round_chip warning"
-                          v-else-if="Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) <= 99"
+                          v-else-if="Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) >= 95 && Math.round(rate(current_dr_C.SALE_MONTH_TOT, current_dr_C.MONTH_AMT)) <= 100"
                         >
                           <span class="chip_text">정상</span>
                         </span>
@@ -376,7 +376,7 @@
                 </div>
                 <div class="layout_spacer"></div>
                 <div class="groups">
-                  <div class="toggle_group tg_sty01 mr10">
+                  <div class="toggle_group tg_sty01 mr10" id="comp_choice_div">
                     <!-- <label class="tg_btn" :class="{'is-checked': comp_choice === 1}">
                       <input type="radio" id="option-a" class="tg_radio" name="comp_select" :value="1" v-model="comp_choice" style="display:none" @click="changeGraph(1)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">전체</span>
@@ -399,11 +399,11 @@
                       <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="changeType(2)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월간</span>
                     </label>
-                    <label class="tg_btn" :class="{'is-checked': choice === 3}">
+                    <label class="tg_btn" :class="{'is-checked': choice === 3}" id="rdo_daily_cmlt">
                       <input type="radio" id="option-da" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="changeType(3)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일간누적</span>
                     </label>
-                    <label class="tg_btn" :class="{'is-checked': choice === 4}">
+                    <label class="tg_btn" :class="{'is-checked': choice === 4}" id="rdo_monthly_cmlt">
                       <input type="radio" id="option-ma" class="tg_radio" name="select" :value="4" v-model="choice" style="display:none" @click="changeType(4)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월간누적</span>
                     </label>
@@ -418,7 +418,7 @@
                 </div>
               </div>
               <div class="cont">
-                <div class="tr pr10 mt10"> 단위: 
+                <div class="tr pr10 mt10" v-if="gubun==2"> 단위: 
                   <span v-if="choice_copy==1">천원</span>
                   <span v-else>백만원</span>
                 </div>
@@ -454,7 +454,8 @@
                     <!-- 텍스트 값 -->
                     <div class="graph_result">
                       <dl>
-                        <dt class="tit">금액 (천원)</dt>
+                        <dt class="tit" v-if="choice_copy==1">금액 (천원)</dt>
+                        <dt class="tit" v-if="choice_copy==2">금액 (백만원)</dt>
                         <dd class="txt_result txt_s">{{ dr_S_SALE_TOT + dr_S_ADVDEPAMT | currency }}</dd>
                         <dd class="txt_etc" v-if="(selectedCODE == '1') || (selectedCODE == 'MI')">
                           <span class="chip chip_m box_chip chip_sty01">
@@ -1293,7 +1294,7 @@ export default {
       )
     },
     getSalesChartCount(code, date) {
-      this.req2svr.getSalesChartCount(this.tabType, code, date, this.choice_copy).then(
+      this.req2svr.getSalesChartCount(this.tabType, code, date, this.choice).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
@@ -1318,7 +1319,7 @@ export default {
       )
     },
     getSalesChartAMT(code, date) {
-      this.req2svr.getSalesChartAMT(this.tabType, code, date, this.choice_copy).then(
+      this.req2svr.getSalesChartAMT(this.tabType, code, date, this.choice).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
@@ -1350,19 +1351,26 @@ export default {
         this.gubun = 1;
         return
       }
-      if (val == "1") {
+      if (val == "1" || val == 1) {
         this.gubun = 1;
         //this.changeType(this.choice);
         this.makeChart1();
         this.makeChart2();
-      } else if (val == "2") {
+        document.getElementById("comp_choice_div").style.display = "none";
+        document.getElementById("rdo_daily_cmlt").style.display = "none";
+        document.getElementById("rdo_monthly_cmlt").style.display = "none";
+        
+      } else if (val == "2" || val == 2) {
         this.gubun = 2;
         this.makeChart4();
+        document.getElementById("comp_choice_div").style.display = "block";
+        document.getElementById("rdo_daily_cmlt").style.display = "block";
+        document.getElementById("rdo_monthly_cmlt").style.display = "block";
       } 
     },
     makeChart1() {
       let txt = '당일'
-      if(this.choice_copy == 1) { txt = '당일'; } else if(this.choice_copy_copy == 2) { txt = '당월'; } else { txt = '당년'; }
+      if(this.choice_copy == 1) { txt = '당일'; } else if(this.choice_copy == 2) { txt = '당월'; } else { txt = '당년'; }
       let title = ["정상", "할인", "균일"]
       let data = [
         { category: txt + "판매", 
@@ -1669,10 +1677,10 @@ export default {
       let date = moment(this.selectDate).format("YYYYMMDD");
       let code = this.selectedCODE;
       this.getChartData1(code, date);
-      if(value == 1 || value == 3) {
+      if(value == 1) {
         this.choice_copy = 1;
         this.getChartData2(code, date);
-      } else if(value == 2 || value == 4) {
+      } else if(value == 2) {
         this.choice_copy = 2
         this.getCumulativeSales(code, date);
       }

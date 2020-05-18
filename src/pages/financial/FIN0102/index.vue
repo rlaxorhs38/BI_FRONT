@@ -587,11 +587,11 @@ export default {
       let end_date = moment(this.selectDate).format("YYYYMMDD");
       // 매장 매출순위 팝업 리스트 개수
       // 당일매출 순위
-      let sql = "SELECT ROWNUM() RN, VDCD, VDSNM, SUCD, BRCD, SALE_TOT, QTY_TOT, "
+      let sql = "SELECT ROWNUM() RN, VDCD, VDSNM, SUCD, SALE_TOT, QTY_TOT, "
       sql += "JAMT, JQTY, DCAMT, DCQTY, GAMT, GQTY, "
       sql += "R_JAMT, R_JQTY, R_DCAMT, R_DCQTY, R_GAMT, R_GQTY, "
       sql += "ADVDEPAMT FROM ( "
-      sql += "SELECT VDCD, VDSNM, SUCD, BRCD, SUM(JAMT+DCAMT+GAMT+ADVDEPAMT) AS SALE_TOT, SUM(JQTY+DCQTY+GQTY) AS QTY_TOT, "
+      sql += "SELECT VDCD, VDSNM, SUCD, SUM(JAMT+DCAMT+GAMT+ADVDEPAMT) AS SALE_TOT, SUM(JQTY+DCQTY+GQTY) AS QTY_TOT, "
       sql += "SUM(JSAMT) JAMT, SUM(JSQTY) JQTY, SUM(DCSAMT) DCAMT, SUM(DCSQTY) DCQTY, SUM(GSAMT) GAMT, SUM(GSQTY) GQTY, "
       sql += "SUM(JRAMT) R_JAMT, SUM(JRQTY) R_JQTY, SUM(DCRAMT) R_DCAMT, SUM(DCRQTY) R_DCQTY, SUM(GRAMT) R_GAMT, SUM(GRQTY) R_GQTY, "
       sql += "SUM(ADVDEPAMT) ADVDEPAMT "
@@ -599,7 +599,7 @@ export default {
       // sql += "WHERE " + this.tabType + " = '" + this.dr_H.MCODE + "' "
       sql += "WHERE SALEDT BETWEEN '"+ start_date +"' AND '"+ end_date +"' "
       sql += "AND CREATEDATE = (SELECT MAX(CREATEDATE) FROM BISL060) ";
-      sql += "GROUP BY VDCD, VDSNM, SUCD, BRCD "
+      sql += "GROUP BY VDCD, VDSNM, SUCD "
       if(this.dr_H.MCODE == 'A') {
         sql += "HAVING " + this.tabType + " IN ('1', '12', '23', '4', '3', '5') "
       } else if(this.dr_H.MCODE == '3') {
