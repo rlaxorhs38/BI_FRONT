@@ -38,15 +38,15 @@
             <div class="toggle_group tg_sty01">
               <label class="tg_btn" :class="{'is-checked': p_choice === 1}" id="select_day">
                 <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="p_choice" style="display:none" @click="p_chageType(1)" :disabled="p_tb_choice == 2"/>
-                <span class="btn_n txt_label">일간</span>
+                <span class="btn_n txt_label">당일</span>
               </label>
               <label class="tg_btn" :class="{'is-checked': p_choice === 2}">
                 <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="p_choice" style="display:none" @click="p_chageType(2)" />
-                <span class="btn_n txt_label">월간</span>
+                <span class="btn_n txt_label">당월</span>
               </label>
               <label class="tg_btn" :class="{'is-checked': p_choice === 3}">
                 <input type="radio" id="option-a" class="tg_radio" name="select" :value="3" v-model="p_choice" style="display:none" @click="p_chageType(3)" />
-                <span class="btn_n txt_label">연간</span>
+                <span class="btn_n txt_label">당년</span>
               </label>
             </div>
           </div>

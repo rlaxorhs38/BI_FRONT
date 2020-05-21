@@ -86,7 +86,7 @@
                     </strong>
                     -->
                     <dl class="list_obj">
-                      <dt class="tit">월 누적매출 달성률</dt>
+                      <dt class="tit">당월 매출 달성률</dt>
                       <dd class="txt" v-if="data.SALE_MONTH_TOT">
                         {{ Math.round(rate(data.SALE_MONTH_TOT, data.AMT)) | nanToDot }} %
                       </dd>
@@ -290,7 +290,7 @@
                   <!-- card_월 누적매출 -->
                   <div class="card card_mini">
                     <div class="card_title">
-                      <h4 class="card_title_text">월 누적매출 목표</h4>
+                      <h4 class="card_title_text">당월 매출 목표</h4>
                     </div>
                     <div class="card_content">
                       <strong class="em_obj" v-if="dr_C.length > 0">
@@ -303,7 +303,7 @@
                   <!-- card_당월 현금 증감 -->
                   <div class="card card_mini">
                     <div class="card_title">
-                      <h4 class="card_title_text">월 누적매출</h4>
+                      <h4 class="card_title_text">당월 매출</h4>
                     </div>
                     <div class="card_content">
                       <strong class="em_obj" v-if="dr_C.length > 0">
@@ -316,7 +316,7 @@
                   <!-- card_월 누적매출 달성률 -->
                   <div class="card card_mini">
                     <div class="card_title">
-                      <h4 class="card_title_text">월 누적매출 달성률</h4>
+                      <h4 class="card_title_text">당월 매출 달성률</h4>
                     </div>
                     <div class="card_title">
                       <small class="txt_box">(당월 매출/당월 매출 목표) * 100</small>
@@ -383,7 +383,7 @@
                     </label> -->
                     <label class="tg_btn" :class="{'is-checked': comp_choice === 2}">
                       <input type="radio" id="option-b" class="tg_radio" name="comp_select" :value="2" v-model="comp_choice" style="display:none" @click="changeGraph(2)" />
-                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">계획대비</span>
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">목표대비</span>
                     </label>
                     <label class="tg_btn" :class="{'is-checked': comp_choice === 3}">
                       <input type="radio" id="option-c" class="tg_radio" name="comp_select" :value="3" v-model="comp_choice" style="display:none" @click="changeGraph(3)" />
@@ -393,19 +393,19 @@
                   <div class="toggle_group tg_sty01 mr10">
                     <label class="tg_btn" :class="{'is-checked': choice === 1}">
                       <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="changeType(1)" />
-                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일간</span>
-                    </label>
-                    <label class="tg_btn" :class="{'is-checked': choice === 2}">
-                      <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="changeType(2)" />
-                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월간</span>
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일별</span>
                     </label>
                     <label class="tg_btn" :class="{'is-checked': choice === 3}" id="rdo_daily_cmlt">
                       <input type="radio" id="option-da" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="changeType(3)" />
-                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일간누적</span>
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일누적</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': choice === 2}">
+                      <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="changeType(2)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월별</span>
                     </label>
                     <label class="tg_btn" :class="{'is-checked': choice === 4}" id="rdo_monthly_cmlt">
                       <input type="radio" id="option-ma" class="tg_radio" name="select" :value="4" v-model="choice" style="display:none" @click="changeType(4)" />
-                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월간누적</span>
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월누적</span>
                     </label>
                   </div>
                   <button class="btn_icon btn_s btn_edge_sty01 mr10" @click="showPerformanceList()">
@@ -456,7 +456,8 @@
                       <dl>
                         <dt class="tit" v-if="choice_copy==1">금액 (천원)</dt>
                         <dt class="tit" v-if="choice_copy==2">금액 (백만원)</dt>
-                        <dd class="txt_result txt_s">{{ dr_S_SALE_TOT + dr_S_ADVDEPAMT | currency }}</dd>
+                        <dd class="txt_result txt_s" v-if="choice_copy==1">{{ dr_S_SALE_TOT + dr_S_ADVDEPAMT | currency }}</dd>
+                        <dd class="txt_result txt_s" v-if="choice_copy==2">{{ Math.round((dr_S_SALE_TOT + dr_S_ADVDEPAMT)/1000) | currency }}</dd>
                         <dd class="txt_etc" v-if="(selectedCODE == '1') || (selectedCODE == 'MI')">
                           <span class="chip chip_m box_chip chip_sty01">
                             <span class="chip_text">선수금</span>
@@ -487,7 +488,7 @@
           <div class="col_md_5" id="salesTopDiv">
             <div class="cont_box">
               <div class="tit">
-                <strong class="tit_txt">당일 매출 TOP 3</strong>
+                <strong class="tit_txt">당일 매출 상위</strong>
                 <div class="layout_spacer"></div>
                 <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('desc', 1)">
                   <i class="material-icons">add</i>
@@ -511,7 +512,7 @@
             </div>
             <div class="cont_box">
               <div class="tit">
-                <strong class="tit_txt">월 누적 매출 TOP 3</strong>
+                <strong class="tit_txt">당월 매출 상위</strong>
                 <div class="layout_spacer"></div>
                 <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('desc', 2)">
                   <i class="material-icons">add</i>
@@ -597,7 +598,7 @@ export default {
       selectedCODE: "",
       // 사업부별 일매출
       dr_H: [],
-      // 당일 매출, 월 누적매출, 월 누적매출 목표, 월 누적매출 달성률
+      // 당일 매출, 당월 매출, 당월 매출 목표, 당월 매출 달성률
       dr_C: [],
       // 매출유형
       dr_S: {
@@ -965,7 +966,7 @@ export default {
           }
         }
         this.dr_H.unshift({TEXT: "전체", MCODE: "A", SUNM: "전체", SALE_TOT: 0, AMT: 0});
-        // 당일 매출, 월 누적매출, 월 누적매출 목표, 월 누적매출 달성률
+        // 당일 매출, 당월 매출, 당월 매출 목표, 당월 매출 달성률
         this.dr_C = []
         for (let i=0;i<this.authCodeList.length;i++) {
           let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
@@ -1151,6 +1152,12 @@ export default {
               } else {
                 this.dr_P = list;
               }
+              for(let i in this.dr_P) {
+                if(this.dr_P[i].SALE_TOT) {
+                  this.dr_P[i]["RATE"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["AMT"]*100)
+                  this.dr_P[i]["RATE2"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["LY_SALE_TOT"]*100)
+                }
+              }
               console.log("dr_P >>> ", this.dr_P)
             }
           }
@@ -1199,6 +1206,12 @@ export default {
               } else if(this.choice == 4) {
                 this.makeCumulativeData(list);
               }
+              for(let i in this.dr_P) {
+                if(this.dr_P[i].SALE_TOT) {
+                  this.dr_P[i]["RATE"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["AMT"]*100)
+                  this.dr_P[i]["RATE2"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["LY_SALE_TOT"]*100)
+                }
+              }
               console.log("dr_P >>> ", this.dr_P)
             }
           }
@@ -1227,13 +1240,16 @@ export default {
           toDt = moment(this.selectDate).format("MM")
           compDt = Number(list[i].SALEDT)
           let tempObj = new Object();
+          tempObj["LY_SALE_TOT"] = PRE_LY_SALE_TOT + Number(list[i].LY_SALE_TOT)
           if(compDt <= toDt) { 
             tempObj["AMT"] = PRE_AMT + Number(list[i].AMT) 
             tempObj["SALE_TOT"] = PRE_SALE_TOT + Number(list[i].SALE_TOT)
+            tempObj["RATE"] = tempObj["SALE_TOT"]/tempObj["AMT"]*100
+            tempObj["RATE2"] = tempObj["SALE_TOT"]/tempObj["LY_SALE_TOT"]*100
           }
-          tempObj["LY_SALE_TOT"] = PRE_LY_SALE_TOT + Number(list[i].LY_SALE_TOT)
           tempObj["SALEDT"] = list[i].SALEDT
           tempObj["SUNM"] = list[i].SUNM
+
           this.dr_P.push(tempObj);
         } else {
           console.log("일간누적 >>> ", Number(list[i].SALEDT))
@@ -1452,21 +1468,38 @@ export default {
       })
     },
     makeChart2() {
-      let txt = '당일'
-      if(this.choice_copy == 1) { txt = '당일'; } else if(this.choice_copy == 2) { txt = '당월'; } else { txt = '당년'; }
+      let txt = '당일';
+      let data = [];
+      if(this.choice_copy == 1) { 
+        txt = '당일'; 
+        data = [
+          { category: txt + "판매", 
+            JAMT_T: "정상", JAMT: Math.round(this.dr_S.JAMT/1000),
+            DCAMT_T: "할인", DCAMT: Math.round(this.dr_S.DCAMT/1000),
+            GAMT_T: "균일", GAMT: Math.round(this.dr_S.GAMT/1000)
+          },
+          { category: txt + "반품", 
+            JAMT_T: "정상", JAMT: Math.round(Math.abs(this.dr_S.R_JAMT/1000)),
+            DCAMT_T: "할인", DCAMT: Math.round(Math.abs(this.dr_S.R_DCAMT/1000)),
+            GAMT_T: "균일", GAMT: Math.round(Math.abs(this.dr_S.R_GAMT/1000))
+          }
+        ]
+      } else if(this.choice_copy == 2) { 
+        txt = '당월';
+        data = [
+          { category: txt + "판매", 
+            JAMT_T: "정상", JAMT: Math.round(this.dr_S.JAMT/1000000),
+            DCAMT_T: "할인", DCAMT: Math.round(this.dr_S.DCAMT/1000000),
+            GAMT_T: "균일", GAMT: Math.round(this.dr_S.GAMT/1000000)
+          },
+          { category: txt + "반품", 
+            JAMT_T: "정상", JAMT: Math.round(Math.abs(this.dr_S.R_JAMT/1000000)),
+            DCAMT_T: "할인", DCAMT: Math.round(Math.abs(this.dr_S.R_DCAMT/1000000)),
+            GAMT_T: "균일", GAMT: Math.round(Math.abs(this.dr_S.R_GAMT/1000000))
+          }
+        ] 
+      }
       let title = ["정상", "할인", "균일"]
-      let data = [
-        { category: txt + "판매", 
-          JAMT_T: "정상", JAMT: Math.round(this.dr_S.JAMT/1000),
-          DCAMT_T: "할인", DCAMT: Math.round(this.dr_S.DCAMT/1000),
-          GAMT_T: "균일", GAMT: Math.round(this.dr_S.GAMT/1000)
-        },
-        { category: txt + "반품", 
-          JAMT_T: "정상", JAMT: Math.round(Math.abs(this.dr_S.R_JAMT/1000)),
-          DCAMT_T: "할인", DCAMT: Math.round(Math.abs(this.dr_S.R_DCAMT/1000)),
-          GAMT_T: "균일", GAMT: Math.round(Math.abs(this.dr_S.R_GAMT/1000))
-        },
-      ];
 
       AmCharts.makeChart("chartdiv2", {
         type: "serial",
@@ -1538,16 +1571,12 @@ export default {
     makeChart4() {
       let data = this.dr_P
       let colors = ["#3F93F5", "#E56464"];
-      let txt = "", unit=0, unit_nm="";
+      let txt = "", legend_txt = "", balloon_txt = "", rate_txt="";
       if(this.choice_copy == 1) { 
         txt = "일별"; 
-        unit= 1000
-        unit_nm = "천원"
       } else if(this.choice_copy == 2) { 
-        txt = "월별" 
-        unit= 1000000
-        unit_nm = "백만원"
-      } else { txt = "월별누적" }
+        txt = "월별";
+      } 
 
       let graph1, columnWidth;
       if(this.hide_sales == 0) {
@@ -1556,14 +1585,17 @@ export default {
         columnWidth = 40
       }
       if(this.comp_choice == 2) {
-        graph1 = function(txt, unit) {
+        legend_txt = "실적";
+        balloon_txt = "실적";
+        rate_txt = "RATE"
+        graph1 = function(txt) {
           return {
-            balloonText: txt+"매출목표(" + unit + ") : [[value]]",
+            balloonText: "목표: [[value]]",
             fillAlphas: 0,
             id: "AmGraph-1",
             lineAlpha: 1,
             lineThickness: 2,
-            title: txt+"매출목표",
+            title: txt+"매출 목표",
             valueField: "AMT",
             markerType: "circle",
             bullet: "circle",
@@ -1572,14 +1604,17 @@ export default {
           }
         }
       } else {
-        graph1 = function(txt, unit) {
+        legend_txt = "당년";
+        balloon_txt = "당년";
+        rate_txt = "RATE2"
+        graph1 = function(txt) {
           return {
-            balloonText: "작년동기매출(" + unit + ") : [[value]]",
+            balloonText: "전년: [[value]]",
             fillAlphas: 0,
             id: "AmGraph-1",
             lineAlpha: 1,
             lineThickness: 2,
-            title: "작년동기매출",
+            title: txt+"매출 전년",
             valueField: "LY_SALE_TOT",
             markerType: "circle",
             bullet: "circle",
@@ -1590,17 +1625,17 @@ export default {
       } 
       let graphs = [ 
         {
-          balloonText: txt+"매출실적(" + unit_nm + ") : [[value]]",
+          balloonText: balloon_txt+": [[value]], ([["+rate_txt+"]]%)",
           fillAlphas: 0.7,
           lineAlpha: 0,
           fontSize: 0,
           id: "AmGraph-2",
-          title: txt+"매출실적",
+          title: txt+"매출 "+legend_txt,
           valueField: "SALE_TOT",
           //markerType: "circle"
           type: "column",
           fixedColumnWidth: columnWidth
-        }, graph1(txt, unit_nm)
+        }, graph1(txt)
       ];
       this.chart4 = AmCharts.makeChart("chartdiv4", {
         type: "serial",
@@ -1693,7 +1728,7 @@ export default {
       //     if(this.chart4.graphs[0].hidden) this.chart4.showGraph(this.chart4.graphs[0])
       //     if(this.chart4.graphs[2].hidden) this.chart4.showGraph(this.chart4.graphs[2])
       //     break;
-      //   case 2: // 계획대비
+      //   case 2: // 목표대비
       //     if(!this.chart4.graphs[0].hidden) this.chart4.hideGraph(this.chart4.graphs[0])
       //     if(this.chart4.graphs[2].hidden) this.chart4.showGraph(this.chart4.graphs[2])
       //     break;

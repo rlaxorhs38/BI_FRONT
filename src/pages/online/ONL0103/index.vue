@@ -15,7 +15,7 @@
     <header class="header">
         <div class="header_inner">
         <!-- Title -->
-        <h2 class="layout_title">온라인 매출
+        <h2 class="layout_title">온라인 일매출
           <small class="txt_date">
             <span v-show="headerDate == today" class="chip chip_m">
               <span class="chip_text">TODAY</span>
@@ -79,9 +79,9 @@
                       0<small class="txt">천원</small>
                     </strong>
                     <dl class="list_obj">
-                      <dt class="tit">비율</dt>
+                      <dt class="tit">당월 온라인 매출 비중</dt>
                       <dd class="txt" v-if="data.DAYRAT">
-                        {{ Math.round((Number(data.DAYJASA) + Number(data.DAYOUT))/data.DAYTOT*100) | nanToDot }} %
+                        {{ ((Number(data.MONJASA) + Number(data.MONOUT))/data.MONTOT*100).toFixed(1) }} %
                       </dd>
                       <dd class="txt" v-else>
                         0 %
@@ -129,14 +129,14 @@
                   <!-- card_당일 온라인 매출 달성률 -->
                   <div class="card card_mini">
                     <div class="card_title">
-                      <h4 class="card_title_text">당일 온라인 매출 비율</h4>
+                      <h4 class="card_title_text">당일 온라인 매출 비중</h4>
                     </div>
                     <div class="card_title">
                       <small class="txt_box">(당일 온라인 매출/당일 전체 매출) * 100</small>
                     </div>
                     <div class="card_content" >
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
-                        {{ Math.round((Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT))/current_BS.DAYTOT*100) | nanToDot }}
+                        {{((Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT))/current_BS.DAYTOT*100).toFixed(1) }}
                         <small
                           class="txt2"
                         >%</small>
@@ -158,7 +158,7 @@
                     </div>
                     <div class="card_content">
                       <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
-                        {{ Math.round(current_BS.MONTOT/1000) | nanToDot }}<small class="txt">백만원</small>
+                        {{ Math.round(current_BS.MONTOT/1000) | currency }}<small class="txt">백만원</small>
                       </strong>
                     </div>
                   </div>
@@ -180,14 +180,14 @@
                   <!-- card_당월 온라인 매출 달성률 -->
                   <div class="card card_mini">
                     <div class="card_title">
-                      <h4 class="card_title_text">당월 온라인 매출 비율</h4>
+                      <h4 class="card_title_text">당월 온라인 매출 비중</h4>
                     </div>
                     <div class="card_title">
                       <small class="txt_box">(당월 온라인 매출/당월 온라인 전체 매출) * 100</small>
                     </div>
                     <div class="card_content" >
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
-                        {{ Math.round(((Number(current_BS.MONJASA) + (Number(current_BS.MONOUT)))/1000)/(current_BS.MONTOT/1000)*100) | nanToDot }}
+                        {{ (((Number(current_BS.MONJASA) + (Number(current_BS.MONOUT)))/1000)/(current_BS.MONTOT/1000)*100).toFixed(1) }}
                         <small
                           class="txt2"
                         >%</small>
@@ -1214,7 +1214,6 @@ export default {
           if(this.chart1.graphs[i].hidden) this.chart1.showGraph(this.chart1.graphs[i])
           if(this.chart2.graphs[i].hidden) this.chart2.showGraph(this.chart2.graphs[i])
           if(this.chart1.graphs[i].id != "AmGraph-TOT" && this.chart1.graphs[i].id.indexOf(code) != 8) {
-            console.log(this.chart1.graphs[i].hidden)
             this.chart1.hideGraph(this.chart1.graphs[i])
             this.chart2.hideGraph(this.chart2.graphs[i])
           }
