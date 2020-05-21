@@ -81,7 +81,7 @@
                     <dl class="list_obj">
                       <dt class="tit">비율</dt>
                       <dd class="txt" v-if="data.DAYRAT">
-                        {{ Math.round(data.DAYRAT) | nanToDot }} %
+                        {{ Math.round((Number(data.DAYJASA) + Number(data.DAYOUT))/data.DAYTOT*100) | nanToDot }} %
                       </dd>
                       <dd class="txt" v-else>
                         0 %
@@ -95,102 +95,112 @@
           </div>
         </div>
         <!-- //scrolling card -->
-        <div class="list_box">
-          <ul class="list_card">
-            <li>
-              <!-- card_당일 전체 매출 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 전체 매출</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
-                    {{ current_BS.DAYTOT | currency }}<small class="txt">천원</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당일 온라인 매출 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 온라인 매출</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT) | currency }}<small class="txt">천원</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당일 온라인 매출 달성률 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당일 온라인 매출 비율</h4>
-                </div>
-                <div class="card_title">
-                  <small class="txt_box">(당일 온라인 매출/당일 전체 매출) * 100</small>
-                </div>
-                <div class="card_content" >
-                  <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ Math.round(current_BS.DAYRAT) | nanToDot }}
-                    <small
-                      class="txt2"
-                    >%</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당월 전체 매출 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당월 전체 매출</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
-                    {{ Math.round(current_BS.MONTOT/1000) | currency }}<small class="txt">백만원</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당월 온라인 매출 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당월 온라인 매출</h4>
-                </div>
-                <div class="card_content">
-                  <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ Math.round(Number(current_BS.MONJASA)/1000) + Math.round(Number(current_BS.MONOUT)/1000) | currency }}<small class="txt">백만원</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-            <li>
-              <!-- card_당월 온라인 매출 달성률 -->
-              <div class="card card_mini">
-                <div class="card_title">
-                  <h4 class="card_title_text">당월 온라인 매출 비율</h4>
-                </div>
-                <div class="card_title">
-                  <small class="txt_box">(당월 온라인 매출/당월 온라인 전체 매출) * 100</small>
-                </div>
-                <div class="card_content" >
-                  <strong class="em_obj" v-if="baseSaleList.length > 0">
-                    {{ Math.round(current_BS.MONRAT) | nanToDot }}
-                    <small
-                      class="txt2"
-                    >%</small>
-                  </strong>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
         <div class="row">
           <div class="col_md_6">
+            <div class="list_box">
+              <ul class="list_card">
+                <li>
+                  <!-- card_당일 전체 매출 -->
+                  <div class="card card_mini">
+                    <div class="card_title">
+                      <h4 class="card_title_text">당일 전체 매출</h4>
+                    </div>
+                    <div class="card_content">
+                      <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
+                        {{ current_BS.DAYTOT | currency }}<small class="txt">천원</small>
+                      </strong>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <!-- card_당일 온라인 매출 -->
+                  <div class="card card_mini">
+                    <div class="card_title">
+                      <h4 class="card_title_text">당일 온라인 매출</h4>
+                    </div>
+                    <div class="card_content">
+                      <strong class="em_obj" v-if="baseSaleList.length > 0">
+                        {{ Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT) | currency }}<small class="txt">천원</small>
+                      </strong>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <!-- card_당일 온라인 매출 달성률 -->
+                  <div class="card card_mini">
+                    <div class="card_title">
+                      <h4 class="card_title_text">당일 온라인 매출 비율</h4>
+                    </div>
+                    <div class="card_title">
+                      <small class="txt_box">(당일 온라인 매출/당일 전체 매출) * 100</small>
+                    </div>
+                    <div class="card_content" >
+                      <strong class="em_obj" v-if="baseSaleList.length > 0">
+                        {{ Math.round((Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT))/current_BS.DAYTOT*100) | nanToDot }}
+                        <small
+                          class="txt2"
+                        >%</small>
+                      </strong>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col_md_6 npl">
+            <div class="list_box">
+              <ul class="list_card">
+                <li>
+                  <!-- card_당월 전체 매출 -->
+                  <div class="card card_mini">
+                    <div class="card_title">
+                      <h4 class="card_title_text">당월 전체 매출</h4>
+                    </div>
+                    <div class="card_content">
+                      <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
+                        {{ Math.round(current_BS.MONTOT/1000) | nanToDot }}<small class="txt">백만원</small>
+                      </strong>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <!-- card_당월 온라인 매출 -->
+                  <div class="card card_mini">
+                    <div class="card_title">
+                      <h4 class="card_title_text">당월 온라인 매출</h4>
+                    </div>
+                    <div class="card_content">
+                      <strong class="em_obj" v-if="baseSaleList.length > 0">
+                        {{ Math.round((Number(current_BS.MONJASA) + (Number(current_BS.MONOUT)))/1000) | currency }}<small class="txt">백만원</small>
+                      </strong>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <!-- card_당월 온라인 매출 달성률 -->
+                  <div class="card card_mini">
+                    <div class="card_title">
+                      <h4 class="card_title_text">당월 온라인 매출 비율</h4>
+                    </div>
+                    <div class="card_title">
+                      <small class="txt_box">(당월 온라인 매출/당월 온라인 전체 매출) * 100</small>
+                    </div>
+                    <div class="card_content" >
+                      <strong class="em_obj" v-if="baseSaleList.length > 0">
+                        {{ Math.round(((Number(current_BS.MONJASA) + (Number(current_BS.MONOUT)))/1000)/(current_BS.MONTOT/1000)*100) | nanToDot }}
+                        <small
+                          class="txt2"
+                        >%</small>
+                      </strong>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col_md_6" id="salesDailyDiv">
             <div class="cont_box h100">
               <div class="tit">
                 <div class="tab">
@@ -201,8 +211,12 @@
                   </ul>
                 </div>
                 <div class="layout_spacer"></div>
-                  <button class="btn_icon btn_s btn_edge_sty01" @click="showDaily()">
+                  <button class="btn_icon btn_s btn_edge_sty01 mr10" @click="showDaily()">
                     <i class="material-icons">add</i>
+                  </button>
+                  <button class="btn_icon btn_s btn_edge_sty01" @click="hideSalesTop()">
+                    <i class="material-icons" v-if="hide_sales == 0" style="font-size:30px;">arrow_right</i>
+                    <i class="material-icons" v-if="hide_sales == 1" style="font-size:30px;">arrow_left</i>
                   </button>
               </div>
               <div class="cont">
@@ -217,7 +231,7 @@
               </div>
             </div>
           </div>
-          <div class="col_md_6">
+          <div class="col_md_6 npl" id="salesMonthlyDiv">
             <div class="cont_box h100">
               <div class="tit">
                 <div class="tab">
@@ -313,6 +327,7 @@
         @close="closeDaily"
         :selectedCODE="selectedCODE"
         :currentDate="selectDate"
+        :codeText="codeText"
     />
   </div>
 </template>
@@ -391,6 +406,8 @@ export default {
       chart1: null,
       chart2: null,
       gubun: 1,
+      hide_sales: 0,
+      codeText: '전체'
     }
   },
   methods: {
@@ -730,8 +747,8 @@ export default {
         legend: {
           enabled: true,
           align: "center",
-          fontSize: 15,
-          position: "top"
+          fontSize: 13,
+          position: "bottom"
         },
         titles: [],
         dataProvider: source
@@ -852,7 +869,7 @@ export default {
         type: "serial",
         startEffect: "easeOutSine",
         categoryField: "SALEDT",
-        colors: ["#dc67ce","#67B7DC", "#A367DC", "#6771DC", "#DC6788"],
+        colors: ["#FFEB3B","#0336FF", "#6A1B9A", "#2E7D32", "#FF0266"],
         sequencedAnimation: false,
         categoryAxis: {
           axisAlpha: 0.1,
@@ -873,12 +890,13 @@ export default {
             balloonText: "전체(백만원) : [[value]]",
             id: "AmGraph-TOT",
             valueField: "TOTSILAMT",
-            fillAlphas: 0,
-            lineAlpha: 1,
+            fillAlphas: 0.7,
+            lineAlpha: 0,
             title: "전체(백만원)",
-            bulletSize: 1,
-            bullet: "diamond",
-            markerType: "diamond"
+            type: "column",
+            //bulletSize: 1,
+            //bullet: "diamond",
+            //markerType: "diamond"
           },
           {
             balloonText: "MI(백만원) : [[value]]",
@@ -941,8 +959,8 @@ export default {
         legend: {
           enabled: true,
           align: "center",
-          fontSize: 15,
-          position: "top"
+          fontSize: 13,
+          position: "bottom"
         },
         titles: [],
         dataProvider: source
@@ -1175,6 +1193,11 @@ export default {
     },
     changeBusiness: function(code) {
       console.log("code >>> " + code, " / ", this.chart1.graphs);
+      if(code == '00') {
+        this.codeText = '전체'
+      } else {
+        this.codeText = code
+      }
       this.changeGraph(code);
       this.selectedCODE = code;
     },
@@ -1238,6 +1261,18 @@ export default {
     },
     tabVal: function(gbn) {
       this.gubun = Number(gbn);
+    },
+    hideSalesTop() {
+      if(this.hide_sales == 0) {
+        this.hide_sales = 1;
+        document.getElementById("salesMonthlyDiv").style.display = "none";
+        document.getElementById("salesDailyDiv").setAttribute('class', 'col_md_12')
+      } else {
+        this.hide_sales = 0;
+        document.getElementById("salesMonthlyDiv").style.display = "block";
+        document.getElementById("salesDailyDiv").setAttribute('class', 'col_md_6')
+      }
+      this.makeDailyChart(this.month, this.dailySaleList);
     }
   },
   filters: {

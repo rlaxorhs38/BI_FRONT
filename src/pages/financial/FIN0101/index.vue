@@ -1677,10 +1677,10 @@ export default {
       let date = moment(this.selectDate).format("YYYYMMDD");
       let code = this.selectedCODE;
       this.getChartData1(code, date);
-      if(value == 1) {
+      if(value == 1 || value == 3) {
         this.choice_copy = 1;
         this.getChartData2(code, date);
-      } else if(value == 2) {
+      } else if(value == 2 || value == 4) {
         this.choice_copy = 2
         this.getCumulativeSales(code, date);
       }

@@ -20,6 +20,13 @@
     <!-- <a class="navigation_link" href="javascript:void(0);" @click="link('/BuyMain')"><i class="material-icons">local_mall</i>구매</a> -->
     <a class="navigation_link" href="javascript:void(0);" @click="link('/OnLineMain')"><i class="material-icons">shopping_cart</i>온라인</a>
     <a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReport')"><i class="material-icons">assessment</i>재무</a>
+    <div class="sub_link">
+      <ul class="sub_link_list">
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReportSales')">매출</a></li>
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReportCash')">현금</a></li>
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReportProfit')">영업이익B</a></li>
+      </ul>
+    </div>
     <a class="navigation_link" href="javascript:void(0);" @click="link('/HumMain')"><i class="material-icons">perm_contact_calendar</i>인재DB</a>
   </nav>
 </template>

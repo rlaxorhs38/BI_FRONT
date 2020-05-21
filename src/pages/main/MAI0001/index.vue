@@ -85,6 +85,18 @@
             </li>
             <li>
               <div class="btns">
+                <div class="sub_btns">
+                  <a href="javascript:void(0);" @click="link('/NewDailyReportSales')" class="btn_sub">매출</a>
+                  <a href="javascript:void(0);" @click="link('/NewDailyReportCash')" class="btn_sub">현금</a>
+                  <a href="javascript:void(0);" @click="link('/NewDailyReportProfit')" class="btn_sub">영업이익B</a>
+                </div>
+                <a href="javascript:void(0);" @click="link('/NewDailyReport')" class="btn_main">
+                  <i class="material-icons">assessment</i>재무
+                </a>                            
+              </div>
+            </li>
+            <li>
+              <div class="btns">
                 <a href="javascript:void(0);" @click="link('/HumMain')" class="btn_main">
                   <i class="material-icons">perm_contact_calendar</i>인재DB
                 </a>

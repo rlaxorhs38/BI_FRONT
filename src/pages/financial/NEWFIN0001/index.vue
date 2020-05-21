@@ -23,7 +23,7 @@
         </strong>
         <div class="layout_spacer"></div>
         <!-- daily report -->
-        <!-- <div class="card">
+        <div class="card">
           <div class="card_title">
             <div class="card_title_text teamSelector" @click="link('dailyReport')">
             <strong class="txt_date">{{today}} <i class="material-icons">play_circle_outline</i></strong>
@@ -56,10 +56,9 @@
               </template>
             </ul>
           </div>
-        </div> -->
+        </div>
       </div>
     </header>
-
     <div class="container">
       <div class="content">
         <div class="toggle_group tg_sty03">
@@ -499,12 +498,23 @@ export default {
             } else {
               list = JSON.parse("[" + res + "]")
             }
+            console.log("dr_H1 >>>", this.authCodeList)
             for (i=0;i<this.authCodeList.length;i++) {
               let data = _.find(this.CODECardsList, {MCODE: this.authCodeList[i].MCODE})
               if (data) {
                 this.dr_H[i] = _.assign(this.dr_H[i], _.find(list, { MCODE: this.authCodeList[i].MCODE }));
               }
             }
+            console.log("dr_H1 >>>", list)
+            console.log("dr_H2 >>>", this.dr_H)
+
+            _.forEach(this.dr_H, function(value, key) {
+              if(value["MCODE"] == 3) {
+                let map = _.find(list, {MCODE: '5'})
+                value["AMT"] = Number(value["AMT"]) + Number(map["AMT"]);
+                value["SALE_TOT"] = Number(value["SALE_TOT"]) + Number(map["SALE_TOT"]);
+              }
+            });
 
             for(let k=0;k<this.dr_H.length;k++){
               this.SU_TOT_AMT += Number(this.dr_H[k].AMT)

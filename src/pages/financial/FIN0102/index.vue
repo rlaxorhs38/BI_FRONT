@@ -601,7 +601,7 @@ export default {
       sql += "AND CREATEDATE = (SELECT MAX(CREATEDATE) FROM BISL060) ";
       sql += "GROUP BY VDCD, VDSNM, SUCD "
       if(this.dr_H.MCODE == 'A') {
-        sql += "HAVING " + this.tabType + " IN ('1', '12', '23', '4', '3', '5') "
+        sql += "HAVING " + this.tabType + " IN ('1', '12', '21', '4', '3', '5') "
       } else if(this.dr_H.MCODE == '3') {
         sql += "HAVING " + this.tabType + " IN ('" + this.dr_H.MCODE + "', '5') "
       } else {

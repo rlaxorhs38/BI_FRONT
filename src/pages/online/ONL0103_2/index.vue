@@ -9,7 +9,7 @@
       <!-- header -->
       <header class="header">
         <div class="header_inner">
-          <h2 class="layout_title">일별 매출현황
+          <h2 class="layout_title">{{codeText}}&nbsp;일별 매출현황
             <span class="txt_date">
               <!-- <strong class="point_col1">{{ headSubTitle-4 }} ~ {{ headSubTitle }}</strong> -->
             </span>
@@ -25,122 +25,105 @@
       </header>
       <div class="container">
         <div class="content">
-          <div class="row">
-            <div class="col_md_12">
-              <div class="cont_box">
-                <div class="tit">
-                  <strong class="tit_txt"> 전체 매출현황
-                  </strong>
-                  <div class="layout_spacer"></div>
-                  <!-- <div class="ml20 mr20">
-                    <button type="button" class="btn_n" @click="fnExcelReport()" style="display: block;">다운로드</button>
-                  </div> -->
-                  <span class="txt">&lt; 단위: 천원 &gt;</span>
-                </div>
-                <div class="cont">
-                  <div class="tbl_sheet yellow np">
-                    <table class="tbl table_condensed tbl_center" id="tbl_excel">
-                      <colgroup>
-                        <col class="bg_point_col20" style="fontWeight: bold; "/>
-                        <col/>
-                        <col/>
-                        <col/>
-                        <col v-if="(MCODE == '00' || MCODE == 'MI')"/>
-                        <col v-if="(MCODE == '00' || MCODE == 'MI')"/>
-                        <col v-if="(MCODE == '00' || MCODE == 'MI')"/>
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IT')" />
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IT')" />
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IT')" />
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'MO')" />
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'MO')" />
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'MO')" />
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IN')" />
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IN')" />
-                        <col class="tr" v-if="(MCODE == '00' || MCODE == 'IN')" />
-                      </colgroup>
-                      <thead>
-                        <tr>
-                          <th></th>
-                          <th colspan="3">전체</th>
-                          <th v-if="(MCODE == '00' || MCODE == 'MI')" colspan="3">MI</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IT')" colspan="3">MO</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'MO')" colspan="3">IT</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IN')" colspan="3">IN</th>
-                        </tr>
-                        <tr>
-                          <th>일자</th>
+          <div class="tbl_sheet yellow np">
+            <table class="tbl table_condensed tbl_center" id="tbl_excel" style="width: 1775px;">
+              <colgroup>
+                <col class="bg_point_col20" v-bind:style="{width:MCODE=='00'?'150px':'151px', fontWeight: bold}"/>
+                <col v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'MI')" v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'MI')" v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'MI')" v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'IT')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'IT')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'IT')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'MO')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'MO')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'MO')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'IN')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'IN')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+                <col v-if="(MCODE == '00' || MCODE == 'IN')"  v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
+              </colgroup>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th colspan="3">전체</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'MI')" colspan="3">MI</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'IT')" colspan="3">IT</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'MO')" colspan="3">MO</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'IN')" colspan="3">IN</th>
+                </tr>
+                <tr>
+                  <th>일자</th>
 
-                          <th>전체</th>
-                          <th>온라인</th>
-                          <th>비율(%)</th>
+                  <th>전체</th>
+                  <th>온라인</th>
+                  <th>비율(%)</th>
 
-                          <th v-if="(MCODE == '00' || MCODE == 'MI')">전체</th>
-                          <th v-if="(MCODE == '00' || MCODE == 'MI')">온라인</th>
-                          <th v-if="(MCODE == '00' || MCODE == 'MI')">비율(%)</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'MI')">전체</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'MI')">온라인</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'MI')">비율(%)</th>
 
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">전체</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">온라인</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">비율(%)</th>
-                          
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">전체</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">온라인</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">비율(%)</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'IT')">전체</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'IT')">온라인</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'IT')">비율(%)</th>
+                  
+                  <th v-if="(MCODE == '00' || MCODE == 'MO')">전체</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'MO')">온라인</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'MO')">비율(%)</th>
 
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">전체</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">온라인</th>
-                          <th class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">비율(%)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(data , index) in dr_DS" v-bind:key="index">
-                          <td>{{ data.DAY }} 일</td>
+                  <th v-if="(MCODE == '00' || MCODE == 'IN')">전체</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'IN')">온라인</th>
+                  <th v-if="(MCODE == '00' || MCODE == 'IN')">비율(%)</th>
+                </tr>
+              </thead>
+              <tbody style="display: block; height: 700px; overflow: hidden auto; width: 1805px;">
+                <tr v-for="(data , index) in dr_DS" v-bind:key="index">
+                  <td v-bind:style="{width:MCODE=='00'?'150px':'152px'}">{{ data.DAY }} 일</td>
 
-                          <td class="tr">{{ data.TDAYTOT | currency }}</td>
-                          <td class="tr">{{ data.TDAYON | currency }}</td>
-                          <td class="tr">{{ Number(data.TDAYRAT).toFixed(2) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'271px'}">{{ data.TDAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'271px'}">{{ data.TDAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}">{{ Math.round(Number(data.TDAYON)/Number(data.TDAYTOT)*100) }}</td>
 
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYTOT | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYON | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')">{{ Number(data.MIDAYRAT).toFixed(2) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ Math.round(Number(data.MIDAYON)/Number(data.MIDAYTOT)*100) }}</td>
 
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYTOT | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYON | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')">{{ Number(data.ITDAYRAT).toFixed(2) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ Math.round(Number(data.ITDAYON)/Number(data.ITDAYTOT)*100) }}</td>
 
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYTOT | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYON | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')">{{ Number(data.MODAYRAT).toFixed(2) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ Math.round(Number(data.MODAYON)/Number(data.MODAYTOT)*100) }}</td>
 
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYTOT | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYON | currency }}</td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')">{{ Number(data.INDAYRAT).toFixed(2) }}</td>
-                        </tr>
-                      </tbody>
-                      <tfoot>
-                        <tr class="tbl_total">
-                          <th scope="col"><strong>합계</strong></th>
-                          <td class="tr"><strong>{{ totalData.TDAYTOT | currency}}</strong></td>
-                          <td class="tr"><strong>{{ totalData.TDAYON | currency}}</strong></td>
-                          <td class="tr"><small class="point_col1">{{ totalData.TDAYRAT.toFixed(2) }}</small></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><strong>{{ totalData.MIDAYTOT| currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><strong>{{ totalData.MIDAYON | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><small class="point_col1">{{ totalData.MIDAYRAT.toFixed(2) }}</small></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><strong>{{ totalData.ITDAYTOT | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><strong>{{ totalData.ITDAYON | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><small class="point_col1">{{ totalData.ITDAYRAT.toFixed(2) }}</small></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><strong>{{ totalData.MODAYTOT | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><strong>{{ totalData.MODAYON | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><small class="point_col1">{{ totalData.MODAYRAT.toFixed(2) }}</small></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><strong>{{ totalData.INDAYTOT | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><strong>{{ totalData.INDAYON | currency}}</strong></td>
-                          <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><small class="point_col1">{{ totalData.INDAYRAT.toFixed(2) }}</small></td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ Math.round(Number(data.INDAYON)/Number(data.INDAYTOT)*100) }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="tbl_total" style="border-top: 1px solid #ced4da;">
+                  <th scope="col"><strong>합계</strong></th>
+                  <td class="tr"><strong>{{ totalData.TDAYTOT | currency}}</strong></td>
+                  <td class="tr"><strong>{{ totalData.TDAYON | currency}}</strong></td>
+                  <td class="tr"><small class="point_col1">{{ Math.round(Number(totalData.TDAYON)/Number(totalData.TDAYTOT)*100) }}</small></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><strong>{{ totalData.MIDAYTOT| currency}}</strong></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><strong>{{ totalData.MIDAYON | currency}}</strong></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><small class="point_col1">{{ Math.round(Number(totalData.MIDAYON)/Number(totalData.MIDAYTOT)*100) }}</small></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><strong>{{ totalData.ITDAYTOT | currency}}</strong></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><strong>{{ totalData.ITDAYON | currency}}</strong></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><small class="point_col1">{{ Math.round(Number(totalData.ITDAYON)/Number(totalData.ITDAYTOT)*100) }}</small></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><strong>{{ totalData.MODAYTOT | currency}}</strong></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><strong>{{ totalData.MODAYON | currency}}</strong></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><small class="point_col1">{{ Math.round(Number(totalData.MODAYON)/Number(totalData.MODAYTOT)*100) }}</small></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><strong>{{ totalData.INDAYTOT | currency}}</strong></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><strong>{{ totalData.INDAYON | currency}}</strong></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><small class="point_col1">{{ Math.round(Number(totalData.INDAYON)/Number(totalData.INDAYTOT)*100) }}</small></td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
       </div>
@@ -165,6 +148,10 @@ export default {
     currentDate: {
       type: String,
       default: moment().format("YYYY-MM-DD")
+    },
+    codeText: {
+      type: String,
+      default: null
     }
   },
   created() {
@@ -198,7 +185,7 @@ export default {
       drawer: null,
       monthList: [],
       originalTestList: [],
-      brandList: ["MI", "MO", "IT", "IN"],
+      //brandList: ["MI", "MO", "IT", "IN"],
       testList: [],
       testList2: [],
       testList3: [],
@@ -274,7 +261,7 @@ export default {
       if(browser.indexOf('trident') != -1){
         // IE인 경우
         // excel 다운로드 시 파일명
-        var saveFileName = "일별매출현황.xls";
+        var saveFileName = this.codeText + " 일별매출현황.xls";
         var oWin = window.open("about:blank", "_blank",  "width=150px; height=150px;");
         // oWin.document.write(styles);
         oWin.document.write(table.outerHTML);
@@ -290,7 +277,7 @@ export default {
         var ctx = {worksheet : 'DAILY' || 'Worksheet', table : table.outerHTML.split('₩').join('')}
         var a = document.createElement('a');
         a.href = uri + base64(format(template, ctx))
-        a.download = '일별매출현황.xls';
+        a.download = this.codeText + ' 일별매출현황.xls';
         a.click();
       }
 
