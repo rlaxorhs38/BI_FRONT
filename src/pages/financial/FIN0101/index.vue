@@ -1625,7 +1625,7 @@ export default {
       } 
       let graphs = [ 
         {
-          balloonText: balloon_txt+": [[value]], ([["+rate_txt+"]]%)",
+          balloonText: balloon_txt+": [[value]] ([["+rate_txt+"]]%)",
           fillAlphas: 0.7,
           lineAlpha: 0,
           fontSize: 0,
