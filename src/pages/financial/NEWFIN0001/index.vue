@@ -138,7 +138,7 @@
                           {{ Number(data.RSLTAMT) - Number(data.LMRSLTAMT) > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}
                         </i>
                         <strong>
-                          {{ Number(data.RSLTAMT) - Number(data.LMRSLTAMT) > 0 ? '+' : '' }}{{ Number(data.RSLTAMT) - Number(data.LMRSLTAMT) | currency }}
+                          {{ Math.abs(Number(data.RSLTAMT) - Number(data.LMRSLTAMT)) | currency }}
                         </strong>
                         <span class="txt_t">(백만원)</span>
                       </dd>
@@ -176,7 +176,7 @@
                           {{ Number(data.TOT_RSLTAMT) - Number(data.TOT_LMRSLTAMT) > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}
                         </i>
                         <strong>
-                          {{ Number(data.TOT_RSLTAMT) - Number(data.TOT_LMRSLTAMT) > 0 ? '+' : '' }}{{ Number(data.TOT_RSLTAMT) - Number(data.TOT_LMRSLTAMT) | currency }}
+                          {{ Math.abs(Number(data.TOT_RSLTAMT) - Number(data.TOT_LMRSLTAMT)) | currency }}
                         </strong>
                         <span class="txt_t">(백만원)</span>
                       </dd>

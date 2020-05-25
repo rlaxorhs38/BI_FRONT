@@ -157,7 +157,7 @@
                       class="material-icons"
                       :class="[Number(dr_H.RSLTAMT) - Number(dr_H.LMRSLTAMT) > 0 ? 'col_primary' : 'col_danger']"
                     >{{ Number(dr_H.RSLTAMT) - Number(dr_H.LMRSLTAMT) > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                    {{ Number(dr_H.RSLTAMT) - Number(dr_H.LMRSLTAMT) > 0 ? '+' : '' }}{{ Number(dr_H.RSLTAMT) - Number(dr_H.LMRSLTAMT) | currency }}<small class="txt">백만원</small>
+                    {{ Math.abs(Number(dr_H.RSLTAMT) - Number(dr_H.LMRSLTAMT)) | currency }}<small class="txt">백만원</small>
                   </strong>
                   <dl class="list_obj">
                     <dt class="tit" v-if="choice == 1">전월실적</dt>

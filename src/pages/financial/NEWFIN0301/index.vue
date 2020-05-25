@@ -101,7 +101,7 @@
                     <i class="material-icons"
                       :class="[Number(dr_H.CASH_RSLTAMT) - Number(dr_H.CASH_LMRSLTAMT) > 0 ? 'col_primary' : 'col_danger']"
                     >{{ Number(dr_H.CASH_RSLTAMT) - Number(dr_H.CASH_LMRSLTAMT) > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                    {{ Number(dr_H.CASH_RSLTAMT) - Number(dr_H.CASH_LMRSLTAMT) > 0 ? '+' : '' }}{{ Number(dr_H.CASH_RSLTAMT) - Number(dr_H.CASH_LMRSLTAMT) | currency }}
+                    {{ Math.abs(Number(dr_H.CASH_RSLTAMT) - Number(dr_H.CASH_LMRSLTAMT)) | currency }}
                     <small class="txt">백만원</small>
                   </strong>
                   <dl class="list_obj">
@@ -195,8 +195,7 @@
                             {{ (Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT)) > 0 ? 'arrow_drop_up' : 'arrow_drop_down'}}
                           </i>
                           <strong>
-                            {{ (Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT)) > 0 ? '+' : ''}}
-                            {{ (Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT)) | currency }}
+                            {{ Math.abs((Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT))) | currency }}
                           </strong>
                         </dd>
                       </dl>
@@ -278,7 +277,7 @@
                           <i class="material-icons"
                             :class="[ (Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT)) > 0 ? 'col_primary' : 'col_danger']"
                           >{{ (Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT)) > 0 ? 'arrow_drop_up' : 'arrow_drop_down'}}</i>
-                          <strong>{{ (Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT)) > 0 ? '+' : ''}}{{ (Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT)) | currency }}</strong>
+                          <strong>{{ Math.abs((Number(data.NORSTAMT) - Number(data.LMNORSTAMT)) + (Number(data.FOWSTAMT) - Number(data.LMFOWSTAMT))) | currency }}</strong>
                         </dd>
                       </dl>
                     </div>

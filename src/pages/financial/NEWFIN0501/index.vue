@@ -63,7 +63,7 @@
                       class="material-icons"
                       :class="[dr_H.TOT1 - dr_H.TOT2 > 0 ? 'col_primary' : 'col_danger']"
                     >{{ dr_H.TOT1 - dr_H.TOT2 > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                    {{ dr_H.TOT1 - dr_H.TOT2 > 0 ? '+' : '' }}{{ dr_H.TOT1 - dr_H.TOT2 | currency }}<small class="txt">백만원</small>
+                    {{ Math.abs(dr_H.TOT1 - dr_H.TOT2) | currency }}<small class="txt">백만원</small>
                   </strong>
                   <strong v-else class="em_obj">
                     {{ dr_H.TOT1 - dr_H.TOT2 | currency }}<small class="txt">백만원</small>
@@ -91,7 +91,7 @@
                       class="material-icons"
                       :class="[dr_H.TOT1 - dr_H.TOT3 > 0 ? 'col_primary' : 'col_danger']"
                     >{{ dr_H.TOT1 - dr_H.TOT3 > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                    {{ dr_H.TOT1 - dr_H.TOT3 > 0 ? '+' : '' }}{{ dr_H.TOT1 - dr_H.TOT3 | currency }}<small class="txt">백만원</small>
+                    {{ Math.abs(dr_H.TOT1 - dr_H.TOT3) | currency }}<small class="txt">백만원</small>
                   </strong>
                   <strong v-else class="em_obj">
                     {{ dr_H.TOT1 - dr_H.TOT3 | currency }}<small class="txt">백만원</small>
@@ -115,11 +115,10 @@
                 </div>
                 <div class="card_content">
                   <strong v-if="dr_H.TOT1 - dr_H.TOT4 != 0" class="em_obj">
-                    <i 
-                      class="material-icons"
-                      :class="[dr_H.TOT1 - dr_H.TOT4 > 0 ? 'col_primary' : 'col_danger']"
-                    >{{ dr_H.TOT1 - dr_H.TOT4 > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                    {{ dr_H.TOT1 - dr_H.TOT4 > 0 ? '+' : '' }}{{ dr_H.TOT1 - dr_H.TOT4 | currency }}<small class="txt">백만원</small>
+                    <i class="material-icons" :class="[dr_H.TOT1 - dr_H.TOT4 > 0 ? 'col_primary' : 'col_danger']">
+                      {{ dr_H.TOT1 - dr_H.TOT4 > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}
+                    </i>
+                    {{ Math.abs(dr_H.TOT1 - dr_H.TOT4) | currency }}<small class="txt">백만원</small>
                   </strong>
                   <strong v-else class="em_obj">
                     {{ dr_H.TOT1 - dr_H.TOT4 | currency }}<small class="txt">백만원</small>
@@ -195,7 +194,7 @@
                             <i class="material-icons"
                               :class="[data.TOT1 - data.TOT2 >= 0 ? 'col_primary' : 'col_danger']"
                             >{{ data.TOT1 - data.TOT2 >= 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                            <strong>{{ data.TOT1 - data.TOT2 >= 0 ? '+' : '' }}{{ data.TOT1 - data.TOT2 | currency }}</strong>
+                            <strong>{{ Math.abs(data.TOT1 - data.TOT2) | currency }}</strong>
                           </dd>
                           <dd v-else class="txt">
                             <strong>{{ data.TOT1 - data.TOT2 | currency }}</strong>
@@ -210,7 +209,7 @@
                               class="material-icons"
                               :class="[data.TOT1 - data.TOT3 >= 0 ? 'col_primary' : 'col_danger']"
                             >{{ data.TOT1 - data.TOT3 >= 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                            <strong>{{ data.TOT1 - data.TOT3 > 0 ? '+' : '' }}{{ data.TOT1 - data.TOT3 | currency }}</strong>
+                            <strong>{{ Math.abs(data.TOT1 - data.TOT3) | currency }}</strong>
                           </dd>
                           <dd v-else class="txt">
                             <strong>{{ data.TOT1 - data.TOT3 | currency }}</strong>
@@ -226,7 +225,7 @@
                               class="material-icons"
                               :class="[data.TOT1 - data.TOT4 >= 0 ? 'col_primary' : 'col_danger']"
                             >{{ data.TOT1 - data.TOT4 >= 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                            <strong>{{ data.TOT1 - data.TOT4 > 0 ? '+' : '' }}{{ data.TOT1 - data.TOT4 | currency }}</strong>
+                            <strong>{{ Math.abs(data.TOT1 - data.TOT4) | currency }}</strong>
                           </dd>
                           <dd v-else class="txt">
                             <strong>{{ data.TOT1 - data.TOT4 | currency }}</strong>
