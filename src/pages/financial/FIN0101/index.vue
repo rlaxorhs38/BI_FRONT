@@ -367,10 +367,13 @@
                 <div class="tab">
                   <ul>
                     <li :class="{'on': gubun == 2}">
-                      <a href="javascript:void(0);" @click="tabVal('2')">매출추이</a>
+                      <a href="javascript:void(0);" @click="tabVal(2)">매출추이</a>
                     </li>
                     <li :class="{'on': gubun == 1}">
-                      <a href="javascript:void(0);" @click="tabVal('1')">매출유형</a>
+                      <a href="javascript:void(0);" @click="tabVal(1)">매출유형</a>
+                    </li>
+                    <li>
+                      <a href="javascript:void(0);" @click="showPerformanceList()">매출실적</a>
                     </li>
                   </ul>
                 </div>
@@ -408,9 +411,6 @@
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월누적</span>
                     </label>
                   </div>
-                  <button class="btn_icon btn_s btn_edge_sty01 mr10" @click="showPerformanceList()">
-                    <i class="material-icons">add</i>
-                  </button>
                   <button class="btn_icon btn_s btn_edge_sty01" @click="hideSalesTop()">
                     <i class="material-icons" v-if="hide_sales == 0" style="font-size:30px;">arrow_right</i>
                     <i class="material-icons" v-if="hide_sales == 1" style="font-size:30px;">arrow_left</i>
@@ -486,48 +486,35 @@
             </div>
           </div>
           <div class="col_md_5" id="salesTopDiv">
-            <div class="cont_box">
+            <div class="cont_box h100">
               <div class="tit">
-                <strong class="tit_txt">당일 매출 상위</strong>
+                <div class="tab">
+                  <ul>
+                    <li :class="{'on': gubun2 == 1}">
+                      <a href="javascript:void(0);" @click="tabVal2(1)">당일 매출 상위</a>
+                    </li>
+                    <li :class="{'on': gubun2 == 2}">
+                      <a href="javascript:void(0);" @click="tabVal2(2)">당월 매출 상위</a>
+                    </li>
+                    <li :class="{'on': gubun2 == 3}">
+                      <a href="javascript:void(0);" @click="tabVal2(3)">당년 매출 상위</a>
+                    </li>
+                  </ul>
+                </div>
                 <div class="layout_spacer"></div>
-                <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('desc', 1)">
+                <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('desc')">
                   <i class="material-icons">add</i>
                 </button>
               </div>
               <div class="cont">
                 <div class="list_num list_h list_sty01">
-                  <ul class="list">
-                    <li v-for="(data, index) in dr_B" :key="index" style="width:30%;pointer-events:none">
+                  <ul class="list" style="display: block;">
+                    <li v-for="(data, index) in dr_B" :key="index" style="width:30%;pointer-events:none; display: -webkit-inline-box; margin-top: 25px;">
                       <div class="num_box">{{ index+1 }}</div>
                       <strong class="txt_name">
                         {{ data.VDSNM }}
-                        <em
-                          class="txt_result"
-                        >({{ Math.round(data.SALE_TOT/1000) | currency }} 천원)</em>
-                      </strong>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="cont_box">
-              <div class="tit">
-                <strong class="tit_txt">당월 매출 상위</strong>
-                <div class="layout_spacer"></div>
-                <button class="btn_icon btn_s btn_edge_sty01" @click="showStoreList('desc', 2)">
-                  <i class="material-icons">add</i>
-                </button>
-              </div>
-              <div class="cont"> 
-                <div class="list_num list_h list_sty01">
-                  <ul class="list">
-                    <li v-for="(data, index) in dr_BM" :key="index" style="width:30%;pointer-events:none">
-                      <div class="num_box">{{ index+1 }}</div>
-                      <strong class="txt_name">
-                        {{ data.VDSNM }}
-                        <em
-                          class="txt_result"
-                        >({{ Math.round(data.SALE_TOT/1000000) | currency }} 백만원)</em>
+                        <em class="txt_result" v-if="gubun2==1" >({{ Math.round(data.SALE_TOT/1000) | currency }} 천원)</em>
+                        <em class="txt_result" v-else>({{ Math.round(data.SALE_TOT/1000000) | currency }} 백만원)</em>
                       </strong>
                     </li>
                   </ul>
@@ -624,7 +611,10 @@ export default {
       comp_choice: 2,
       select_p_choice: 1,
       chart4: null,
-      hide_sales: 0
+      hide_sales: 0,
+      gubun2: 1,
+      dr_TP: [],
+      dr_LYTP: []
     };
   },
   computed: {
@@ -644,7 +634,7 @@ export default {
       return list
     },
     dr_B() {
-      return (_.orderBy(this.dr_L, function(o) { return Number(o.SALE_TOT); }, 'desc')).slice(0, 3)
+      return (_.orderBy(this.dr_L, function(o) { return Number(o.SALE_TOT); }, 'desc')).slice(0, 9)
     },
     dr_W() {
       if (this.dr_L.length < 3) {
@@ -742,13 +732,13 @@ export default {
         }
       );
     },
-    showStoreList(orderType, p_choice) {
+    showStoreList(orderType) {
       if (moment(this.selectDate).diff(moment(this.recentDate)) > 0) {
         return
       }
       this.storeListOrderType = orderType
       console.log("selectDate >>>", this.selectDate)
-      this.select_p_choice = p_choice
+      this.select_p_choice = this.gubun2;
       this.isStoreListVisible = true;
     },
     showPerformanceList() {
@@ -996,7 +986,7 @@ export default {
         return
       }
 
-      this.getData()
+      this.getData();
 
       if (this.authCodeList.length > 0) {
         this.changeBusiness("A");
@@ -1014,7 +1004,6 @@ export default {
       this.getChartData1(code, date)
       this.getChartData2(code, date)
       this.getStoreList(code, date)
-      this.getStoreMonthList(code, date)
     },
     getChartData1(code, date) {
       // 초기화
@@ -1035,13 +1024,41 @@ export default {
       this.dr_P = [{ SUNM: 0, MCODE: 0, LY_SALE_TOT: 0, AMT: 0, SALE_TOT: 0, SALEDT: "" }]
       this.makeChart4()
 
+      /*
       let lastYear30day = moment(date).subtract(30, 'days').subtract(1, 'year').format("YYYYMMDD")
       let lastYearSelectDay = moment(date).subtract(1, 'year').format("YYYYMMDD")
 
       let lastYearMday = moment(date).subtract(1, 'year').format("YYYYMM") + "01"
       let lastYearLastday = moment(date).subtract(1, 'year').endOf('month').format("YYYYMMDD")
+      */
+     let monthStDt  = moment(this.selectDate, "YYYY-MM-DD").format("YYYYMM") + "01"
+      let startDy = moment(monthStDt, "YYYYMMDD").format("d")
 
-      this.req2svr.getChartData2(this.tabType, code, lastYearMday, lastYearLastday, this.choice_copy).then(
+      let week = moment(monthStDt, "YYYYMMDD").format('WW')
+      let lastYearFirstDay = moment(this.selectDate).subtract(1, 'year').format("YYYY") + "0101"
+      let lastDayForWeek = lastYearFirstDay
+
+      for(let i = 0; i < Number(week)-1; i++) {
+        lastDayForWeek = moment(lastDayForWeek, "YYYYMMDD").add(7,'days').format('YYYYMMDD')
+      }
+      let lastYearWeekDy = moment(lastDayForWeek, "YYYYMMDD").format("d")
+
+      let paramStartDt = "";
+
+      if(startDy == lastYearWeekDy) {
+        paramStartDt = lastDayForWeek
+      } else if(startDy > lastYearWeekDy) {
+        paramStartDt = moment(lastDayForWeek, "YYYYMMDD").add(startDy-lastYearWeekDy,'days').format('YYYYMMDD')
+      } else {
+        paramStartDt = moment(lastDayForWeek, "YYYYMMDD").add(startDy+lastYearWeekDy,'days').format('YYYYMMDD')
+      }
+
+      let endDate = Number(moment(this.selectDate).endOf('month').format("DD"))
+      let lastYearLastday = moment(paramStartDt, "YYYYMMDD").add(endDate-1,'days').format('YYYYMMDD')
+      console.log("작년 첫번째 ", moment(monthStDt, "YYYYMMDD").format("ddd"), "요일: "+ paramStartDt + ", 더하기" + endDate + ", 마지막:", lastYearLastday)
+      console.log("작년 주차 ", moment(paramStartDt, "YYYYMMDD").format('WW'))
+
+      this.req2svr.getChartData2(this.tabType, code, paramStartDt, lastYearLastday, this.choice_copy).then(
         res => {
           this.dr_LYP = []
           if (res.MACHBASE_ERROR) {
@@ -1070,18 +1087,18 @@ export default {
               }
             }
           }
-          this.getCurrentYearData(code, date)
+          this.getCurrentData(code, date)
         },
         rej => {
           console.log("rej", rej);
         }
       );
     },
-    getCurrentYearData(code, date) {
+    getCurrentData(code, date) {
       //let last30day = moment(date).subtract(30, 'days').format("YYYYMMDD")
       let firstMday = moment(date).format("YYYYMM") + "01"
 
-      this.req2svr.getCurrentYearData(this.tabType, code, firstMday, date, this.choice_copy).then(
+      this.req2svr.getCurrentData(this.tabType, code, firstMday, date, this.choice_copy).then(
         res => {
           this.dr_P = [{ SUNM: 0, MCODE: 0, LY_SALE_TOT: 0, AMT: 0, SALE_TOT: 0 }]
           if (res.MACHBASE_ERROR) {
@@ -1107,11 +1124,13 @@ export default {
                   SUNM: currentlist[i].SUNM
                 })
               }
+              
               if(this.choice_copy == 1) {
                 let count = Math.max(list.length, this.dr_LYP.length)
                 let l1 = list.length > this.dr_LYP.length ? list : this.dr_LYP
                 let l2 = list.length > this.dr_LYP.length ? this.dr_LYP : list
                 let list2 = [];
+                console.log("this.dr_LYP.length >>> ", this.dr_LYP.length)
                 for (let i=0;i<count;i++) {
                   let data = _.find(l2, function(o) { return o.SALEDT.slice(4, 8) == l1[i].SALEDT.slice(4, 8)})
                   let AMT2 = data ? Number(data.AMT) : 0
@@ -1122,7 +1141,7 @@ export default {
                   let _LY_SALE_TOT = Number(l1[i].LY_SALE_TOT) != 0 ? Number(l1[i].LY_SALE_TOT) : LY_SALE_TOT2
                   let _SALE_TOT = Number(l1[i].SALE_TOT) != 0 ? Number(l1[i].SALE_TOT) : SALE_TOT2
 
-                  let saleDt = Number(moment(l1[i].SALEDT).format("MMDD"))
+                  let saleDt = Number(moment(l2[i].SALEDT).format("MMDD"))
                   let toDt = Number(moment(date).format("MMDD"))
 
 
@@ -1131,7 +1150,7 @@ export default {
                       AMT: Math.round(_AMT/1000),
                       LY_SALE_TOT: Math.round(_LY_SALE_TOT/1000),
                       SALE_TOT: Math.round(_SALE_TOT/1000),
-                      SALEDT: Number(l1[i].SALEDT.slice(6, 8)),
+                      SALEDT: Number(l2[i].SALEDT.slice(6, 8)),
                       SUNM: l1[i].SUNM
                     })
                   } else {
@@ -1139,7 +1158,7 @@ export default {
                       AMT: Math.round(_AMT/1000),
                       LY_SALE_TOT: Math.round(_LY_SALE_TOT/1000),
                       //SALE_TOT: 0,
-                      SALEDT: Number(l1[i].SALEDT.slice(6, 8)),
+                      SALEDT: Number(l2[i].SALEDT.slice(6, 8)),
                       SUNM: l1[i].SUNM
                     })
                   }
@@ -1157,7 +1176,16 @@ export default {
                   this.dr_P[i]["RATE"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["AMT"]*100)
                   this.dr_P[i]["RATE2"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["LY_SALE_TOT"]*100)
                 }
+                this.dr_P[i]["SALEDT2"] = moment(this.selectDate).format("YYYYMM") + this.twinNum(this.dr_P[i]["SALEDT"])
+                if(moment(this.dr_P[i]["SALEDT2"]).format("d") == "6") {
+                  this.dr_P[i]["COLOR"] = "#2962FF"
+                } else if(moment(this.dr_P[i]["SALEDT2"]).format("d") == "0") {
+                  this.dr_P[i]["COLOR"] = "#B71C1C"
+                } else {
+                  this.dr_P[i]["COLOR"] = "#000000"
+                }
               }
+              //this.getTempData(this.dr_P)
               console.log("dr_P >>> ", this.dr_P)
             }
           }
@@ -1212,6 +1240,7 @@ export default {
                   this.dr_P[i]["RATE2"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["LY_SALE_TOT"]*100)
                 }
               }
+              //this.getTempData(this.dr_P)
               console.log("dr_P >>> ", this.dr_P)
             }
           }
@@ -1236,7 +1265,6 @@ export default {
           PRE_AMT = Number(this.dr_P[i-1].AMT);
         }
         if(this.choice == 4) {
-          console.log("월간누적 >>> ", Number(list[i].SALEDT))
           toDt = moment(this.selectDate).format("MM")
           compDt = Number(list[i].SALEDT)
           let tempObj = new Object();
@@ -1252,7 +1280,6 @@ export default {
 
           this.dr_P.push(tempObj);
         } else {
-          console.log("일간누적 >>> ", Number(list[i].SALEDT))
           toDt = moment(this.selectDate).format("DD")
           compDt = Number(list[i].SALEDT)
           this.dr_P.push({
@@ -1263,10 +1290,12 @@ export default {
             SUNM: list[i].SUNM
           })
         }
+        //this.getTempData(this.dr_P)
       }
+      
     },
     getStoreList(code, date) {
-      this.req2svr.getStoreList(date, this.tabType, code).then(
+      this.req2svr.getStoreList(date, this.tabType, code, this.gubun2).then(
         res => {
           this.dr_L = []
           if (res.MACHBASE_ERROR) {
@@ -1279,28 +1308,6 @@ export default {
               this.dr_L.push(res);
             } else {
               this.dr_L = JSON.parse("[" + res + "]");
-            }
-          }
-        },
-        rej => {
-          console.log("rej", rej);
-        }
-      )
-    },
-    getStoreMonthList(code, date) {
-      this.req2svr.getStoreMonthList(date, this.tabType, code).then(
-        res => {
-          this.dr_LM = []
-          if (res.MACHBASE_ERROR) {
-            console.log("res", res)
-          } else {
-            this.dr_LM = []
-            let count = (JSON.stringify(res).match(/{/g) || []).length;
-            if(count < 1) {
-            } else if(count == 1) {
-              this.dr_LM.push(res);
-            } else {
-              this.dr_LM = JSON.parse("[" + res + "]");
             }
           }
         },
@@ -1383,6 +1390,10 @@ export default {
         document.getElementById("rdo_daily_cmlt").style.display = "block";
         document.getElementById("rdo_monthly_cmlt").style.display = "block";
       } 
+    },
+    tabVal2(value) {
+      this.gubun2 = value;
+      this.getStoreList(this.selectedCODE, moment(this.selectDate).format("YYYYMMDD"));
     },
     makeChart1() {
       let txt = '당일'
@@ -1653,14 +1664,14 @@ export default {
           startOnAxis: false,
           fontSize: 13,
           autoWrap: false, 
-          minHorizontalGap: 0
+          minHorizontalGap: 0,
+          labelColorField: "COLOR",
+          boldLabels: true
         },
         chartCursor: {
-          enabled: true,
-          //categoryBalloonEnabled: false,
+          categoryBalloonEnabled: false,
           cursorAlpha: 0,
-          zoomable: false,
-          cursorPosition: "mouse"
+          zoomable: false
         },
         trendLines: [],
         graphs: graphs,
@@ -1750,6 +1761,100 @@ export default {
         document.getElementById("salesGraphDiv").setAttribute('class', 'col_md_7')
       }
       this.makeChart4();
+    },
+    twinNum: function (num) {
+      if(num.toString().length == 1) {
+        return "0"+num.toString();
+      } else {
+        return num.toString();
+      }
+    },
+    getWeekOfMonth: function (value) {
+      let date = new Date(value);
+      let _date = date.getDate()
+	    let _dayOfWeek = date.getDay();
+	     
+      return parseInt((6 + _date - _dayOfWeek) / 7) + 1;
+    }, getTempData: function(list) {
+      this.dr_LYTP = [], this.dr_TP = []
+      this.dr_TP = list
+
+      let monthStDt  = moment(this.selectDate, "YYYY-MM-DD").format("YYYYMM") + "01"
+      let startDy = moment(monthStDt, "YYYYMMDD").format("d")
+
+      let week = moment(monthStDt, "YYYYMMDD").format('WW')
+      let lastYearFirstDay = moment(this.selectDate).subtract(1, 'year').format("YYYY") + "0101"
+      let lastDayForWeek = lastYearFirstDay
+
+      for(let i = 0; i < Number(week)-1; i++) {
+        lastDayForWeek = moment(lastDayForWeek, "YYYYMMDD").add(7,'days').format('YYYYMMDD')
+      }
+      let lastYearWeekDy = moment(lastDayForWeek, "YYYYMMDD").format("d")
+
+      let paramStartDt = "";
+
+      if(startDy == lastYearWeekDy) {
+        paramStartDt = lastDayForWeek
+      } else if(startDy > lastYearWeekDy) {
+        paramStartDt = moment(lastDayForWeek, "YYYYMMDD").add(startDy-lastYearWeekDy,'days').format('YYYYMMDD')
+      } else {
+        paramStartDt = moment(lastDayForWeek, "YYYYMMDD").add(startDy+lastYearWeekDy,'days').format('YYYYMMDD')
+      }
+
+      let endDate = Number(moment(this.selectDate).endOf('month').format("DD"))
+      let lastYearLastday = moment(paramStartDt, "YYYYMMDD").add(endDate-1,'days').format('YYYYMMDD')
+      console.log("작년 첫번째 ", moment(monthStDt, "YYYYMMDD").format("ddd"), "요일: "+ paramStartDt + ", 더하기" + endDate + ", 마지막:", lastYearLastday)
+      console.log("작년 주차 ", moment(paramStartDt, "YYYYMMDD").format('WW'))
+
+      this.req2svr.getChartData2_1(this.tabType, this.selectedCODE, paramStartDt, lastYearLastday, this.choice_copy).then(
+        res => {
+          this.dr_dr_LYTPLYP = []
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res)
+          } else {
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            if(count < 1) {
+            } else if(count == 1) {
+              this.dr_LYTP.push({
+                AMT: 0,
+                LY_SALE_TOT: Number(res.LY_SALE_TOT),
+                SALEDT: res.SALEDT,
+                SALE_TOT: 0,
+                SUNM: res.SUNM
+              })
+            } else {
+              let list = JSON.parse("[" + res + "]")
+              for (let i=0;i<list.length;i++) {
+                this.dr_LYTP.push({
+                  AMT: 0,
+                  LY_SALE_TOT: Number(list[i].LY_SALE_TOT),
+                  SALEDT: list[i].SALEDT,
+                  SALE_TOT: 0,
+                  SUNM: list[i].SUNM
+                })
+              }
+            }
+          }
+          this.getTempData2()
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      );
+    }, getTempData2: function() {
+      console.log("this.dr_LYTP >>>", this.dr_LYTP)
+      let unit = 0;
+      if(this.choice_copy == 1) {
+        unit = 1000
+      } else {
+        unit = 1000000
+      }
+      for(let i in this.dr_TP) {
+        this.dr_TP[i]["LY_SALE_TOT"] = this.dr_LYTP[i]["LY_SALE_TOT"]/unit
+        this.dr_TP[i]["SUNM"] = this.dr_LYTP[i]["SUNM"]
+      }
+      console.log("this.dr_TP >>>", this.dr_TP)
+      
     }
   }
 };

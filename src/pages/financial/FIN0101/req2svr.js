@@ -39,7 +39,18 @@ export default {
       }
     }).then(x => x.data)
   },
-  getCurrentYearData(tabType, code, start_date, date, searchType) { 
+  getChartData2_1(tabType, code, lastYear30day, lastYearSelectDay, searchType) { 
+    return axios.get(apiUrl() + "fin/getChartData2_1", {
+      params : { 
+        tabType : tabType,
+        code : code,
+        lastYear30day : lastYear30day,
+        lastYearSelectDay : lastYearSelectDay,
+        searchType : searchType,
+      }
+    }).then(x => x.data)
+  },
+  getCurrentData (tabType, code, start_date, date, searchType) { 
     return axios.get(apiUrl() + "fin/getCurrentYearData", {
       params : { 
         tabType : tabType,
@@ -50,12 +61,13 @@ export default {
       }
     }).then(x => x.data)
   },
-  getStoreList(date, tabType, code) { 
+  getStoreList(date, tabType, code, gubun) { 
     return axios.get(apiUrl() + "fin/getStoreList", {
       params : { 
         date : date,
         tabType : tabType,
-        code : code
+        code : code,
+        gubun: gubun
       }
     }).then(x => x.data)
   },

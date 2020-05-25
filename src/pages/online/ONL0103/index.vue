@@ -119,7 +119,7 @@
                       <h4 class="card_title_text">당일 온라인 매출</h4>
                     </div>
                     <div class="card_content">
-                      <strong class="em_obj" v-if="baseSaleList.length > 0">
+                      <strong class="em_obj"  v-if="baseSaleList.length > 0">
                         {{ Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT) | currency }}<small class="txt">천원</small>
                       </strong>
                     </div>
@@ -136,10 +136,8 @@
                     </div>
                     <div class="card_content" >
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
-                        {{((Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT))/current_BS.DAYTOT*100).toFixed(1) }}
-                        <small
-                          class="txt2"
-                        >%</small>
+                        {{ getMakeRate(current_BS.DAYJASA, current_BS.DAYOUT,current_BS.DAYTOT, true) }}
+                        <small class="txt2" >%</small>
                       </strong>
                     </div>
                   </div>
@@ -187,10 +185,8 @@
                     </div>
                     <div class="card_content" >
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
-                        {{ (((Number(current_BS.MONJASA) + (Number(current_BS.MONOUT)))/1000)/(current_BS.MONTOT/1000)*100).toFixed(1) }}
-                        <small
-                          class="txt2"
-                        >%</small>
+                        {{ getMakeRate(current_BS.MONJASA, current_BS.MONOUT,current_BS.MONTOT, true) }}
+                        <small class="txt2" >%</small>
                       </strong>
                     </div>
                   </div>
@@ -200,7 +196,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col_md_6" id="salesDailyDiv">
+          <div class="col_md_7" id="salesDailyDiv">
             <div class="cont_box h100">
               <div class="tit">
                 <div class="tab">
@@ -208,19 +204,38 @@
                     <li class="on">
                       <a href="javascript:void(0);">온라인 일간 매출추이</a>
                     </li>
+                    <li @click="showDaily()">
+                      <a href="javascript:void(0);">온라인 일별 매출현황</a>
+                    </li>
                   </ul>
                 </div>
                 <div class="layout_spacer"></div>
-                  <button class="btn_icon btn_s btn_edge_sty01 mr10" @click="showDaily()">
-                    <i class="material-icons">add</i>
-                  </button>
+                  <div class="toggle_group tg_sty01 mr10">
+                    <label class="tg_btn" :class="{'is-checked': choice === 1}">
+                      <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="changeType(1)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일별</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': choice === 3}" id="rdo_daily_cmlt">
+                      <input type="radio" id="option-da" class="tg_radio" name="select" :value="3" v-model="choice" style="display:none" @click="changeType(3)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일누적</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': choice === 2}">
+                      <input type="radio" id="option-m" class="tg_radio" name="select" :value="2" v-model="choice" style="display:none" @click="changeType(2)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월별</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': choice === 4}" id="rdo_monthly_cmlt">
+                      <input type="radio" id="option-ma" class="tg_radio" name="select" :value="4" v-model="choice" style="display:none" @click="changeType(4)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월누적</span>
+                    </label>
+                  </div>
                   <button class="btn_icon btn_s btn_edge_sty01" @click="hideSalesTop()">
                     <i class="material-icons" v-if="hide_sales == 0" style="font-size:30px;">arrow_right</i>
                     <i class="material-icons" v-if="hide_sales == 1" style="font-size:30px;">arrow_left</i>
                   </button>
               </div>
               <div class="cont">
-                <div class="tr pr10 mt10"> 단위: 천원 </div>
+                <div class="tr pr10 mt10" v-if="choice_copy==1"> 단위: 천원 </div>
+                <div class="tr pr10 mt10" v-else> 단위: 백만원 </div>
                 <div class="graph_area" style="height: auto;">
                   <div class="graph_view npt">
                     <div class="graph" style="position:relative; width:100%; height:270px;">
@@ -228,12 +243,20 @@
                     </div>
                   </div>
                 </div>
+                <!-- <div class="graph_area" style="height: auto;" v-show="tab_gubun == 2">
+                  <div class="graph_view npt">
+                    <div class="graph" style="position:relative; width:100%; height:270px;">
+                      <div id="chartdiv2" style="position:relative; width:100%; height:100%; float:left;"></div>
+                    </div>
+                  </div>
+                </div> -->
               </div>
             </div>
           </div>
-          <div class="col_md_6 npl" id="salesMonthlyDiv">
+          <div class="col_md_5 npl" id="salesMonthlyDiv">
             <div class="cont_box h100">
               <div class="tit">
+                <!--
                 <div class="tab">
                   <ul>
                     <li :class="{'on': gubun == 1}">
@@ -244,8 +267,10 @@
                     </li>
                   </ul>
                 </div>
+                -->
               </div>
               <div class="cont">
+                <!--
                 <div class="tr pr10 mt10"> 단위: 백만원 </div>
                 <div class="graph_area" style="height: auto;" v-show="gubun == 1">
                   <div class="graph_view npt">
@@ -261,6 +286,7 @@
                     </div>
                   </div>
                 </div>
+                -->
               </div>
             </div>
           </div>
@@ -403,6 +429,7 @@ export default {
       makeDataDate: null,
       selectedCODE: '00',
       choice: 1,
+      choice_copy: 1,
       chart1: null,
       chart2: null,
       gubun: 1,
@@ -411,6 +438,18 @@ export default {
     }
   },
   methods: {
+    getMakeRate(jasa, out, tot, gu) {
+      if(Number(jasa)+Number(out)  == 0 || Number(tot) == 0 ) {
+        return "0.0"
+      } else {
+        if(gu) {
+          return (((Number(jasa) + (Number(out)))/1000)/(Number(tot)/1000)*100).toFixed(1)
+        } else {
+          return ((Number(jasa) + Number(out))/Number(tot)*100).toFixed(1)
+        }
+      }
+      return 0;
+    },
     getMakeDataDate(){
       this.req2svr.getMakeDataDate().then(
         res => {
@@ -502,7 +541,6 @@ export default {
           } else {
             //console.log(res);
             let itYearData = JSON.parse("[" + res + "]");
-            console.log("itYearData >>> ", itYearData);
             this.getITOnOffDetailData(itYearData)
           }
         },
@@ -617,15 +655,16 @@ export default {
     setChartData: function (mon) {
       if(mon <= this.month) {
         this.clickedMonth = mon
-        this.getMonthlySaleList(mon)
+        //this.getMonthlySaleList(mon)
         this.getDailySaleList(mon)
         this.getCalendarData(mon)
       }
     },
     getMonthlySaleList: function (mon) {
-      // let startDate = this.year.toString() + "0101"
-      let startDate = (this.year-1).toString() + this.twinNum(mon) + "01"
-      let endDate = this.year.toString() + this.twinNum(mon) + ( new Date(this.year, mon, 0) ).getDate().toString();
+      let startDate = this.year.toString() + "0101"
+      //let startDate = (this.year).toString() + this.twinNum(mon) + "01"
+      let endDate = this.year.toString() + "1231";
+      // let endDate = this.year.toString() + this.twinNum(mon) + ( new Date(this.year, mon, 0) ).getDate().toString();
       console.log("!!MonthlyDate >>> ", startDate, " / ", endDate);
       this.req2svr.getMonthlySaleList(startDate, endDate).then(
         res => {
@@ -638,9 +677,28 @@ export default {
               this.monthlySaleList.push(res);
             } else if(count > 1) {
               this.monthlySaleList = JSON.parse("[" + res + "]")
+              for(let i = Number(mon); i < 12; i++) {
+                this.monthlySaleList.push({
+                  SALEDT: i+1,
+                  TOTSILAMT: 0, MISILAMT: 0, MOSILAMT: 0, INSILAMT: 0, ITSILAMT: 0
+                })
+              }
             }
-            this.makeMonthlyChart(this.monthlySaleList)
-            this.makeMonthlyBarChart(this.monthlySaleList)
+
+            if(this.choice == 4) {
+              this.monthlySaleList = this.changeCumulativeData();
+            }
+            for(let i in this.monthlySaleList) {
+              this.monthlySaleList[i].SALEDT = Number(this.monthlySaleList[i].SALEDT)
+              this.monthlySaleList[i]["TOTRATE"] = Number(this.monthlySaleList[i]["TOTDAYTOT"])==0?0:(Number(this.monthlySaleList[i]["TOTSILAMT"])/Number(this.monthlySaleList[i]["TOTDAYTOT"])*100).toFixed(1)
+              this.monthlySaleList[i]["MIRATE"]  = Number(this.monthlySaleList[i]["MIDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["MISILAMT"])/Number(this.monthlySaleList[i]["MIDAYTOT"])*100).toFixed(1)
+              this.monthlySaleList[i]["MORATE"]  = Number(this.monthlySaleList[i]["MODAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["MOSILAMT"])/Number(this.monthlySaleList[i]["MODAYTOT"])*100).toFixed(1)
+              this.monthlySaleList[i]["INRATE"]  = Number(this.monthlySaleList[i]["INDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["INSILAMT"])/Number(this.monthlySaleList[i]["INDAYTOT"])*100).toFixed(1)
+              this.monthlySaleList[i]["ITRATE"]  = Number(this.monthlySaleList[i]["ITDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["ITSILAMT"])/Number(this.monthlySaleList[i]["ITDAYTOT"])*100).toFixed(1)
+            }
+            this.makeDailyChart(mon, this.monthlySaleList)
+            //this.makeMonthlyChart(this.monthlySaleList)
+            //this.makeMonthlyBarChart(this.monthlySaleList)
             console.log("monthlySaleList >>> ", this.monthlySaleList);
           }
         },
@@ -664,12 +722,14 @@ export default {
           gridAlpha: 0.05,
           tickLength: 0,
           startOnAxis: false,
-          fontSize: 12
+          fontSize: 12,
+          autoWrap: false, 
+          minHorizontalGap: 0,
         },
         chartCursor: {
-          enabled: true,
-          zoomable: false,
-          cursorPosition: "mouse"
+          categoryBalloonEnabled: false,
+          cursorAlpha: 0,
+          zoomable: false
         },
         trendLines: [],
         graphs: [
@@ -847,11 +907,23 @@ export default {
               let entMonthDay = Number(moment(this.selectDate).endOf('month').format('DD'));
               for(let i = Number(moment(this.selectDate).format('DD')); i < entMonthDay; i++) {
                 this.dailySaleList.push({
-                  SALEDT: this.month + "/" + this.twinNum(i+1),
+                  SALEDT: i+1,
                   TOTSILAMT: 0, MISILAMT: 0, MOSILAMT: 0, INSILAMT: 0, ITSILAMT: 0
                 })
               }
 
+            }
+
+            if(this.choice == 3) {
+              this.dailySaleList = this.changeCumulativeData();
+            }
+            for(let i in this.dailySaleList) {
+              this.dailySaleList[i].SALEDT = Number(this.dailySaleList[i].SALEDT)
+              this.dailySaleList[i]["TOTRATE"]=  Number(this.dailySaleList[i]["TOTDAYTOT"])==0||Number(this.dailySaleList[i]["TOTSILAMT"])==0?0:(Number(this.dailySaleList[i]["TOTSILAMT"])/Number(this.dailySaleList[i]["TOTDAYTOT"])*100).toFixed(1)
+              this.dailySaleList[i]["MIRATE"] =  Number(this.dailySaleList[i]["MIDAYTOT"])==0 ||Number(this.dailySaleList[i]["MISILAMT"]) ==0?0:(Number(this.dailySaleList[i]["MISILAMT"]) /Number(this.dailySaleList[i]["MIDAYTOT"])*100).toFixed(1)
+              this.dailySaleList[i]["MORATE"] =  Number(this.dailySaleList[i]["MODAYTOT"])==0 ||Number(this.dailySaleList[i]["MOSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["MOSILAMT"]) /Number(this.dailySaleList[i]["MODAYTOT"])*100).toFixed(1)
+              this.dailySaleList[i]["INRATE"] =  Number(this.dailySaleList[i]["INDAYTOT"])==0 ||Number(this.dailySaleList[i]["INSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["INSILAMT"]) /Number(this.dailySaleList[i]["INDAYTOT"])*100).toFixed(1)
+              this.dailySaleList[i]["ITRATE"] =  Number(this.dailySaleList[i]["ITDAYTOT"])==0 ||Number(this.dailySaleList[i]["ITSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["ITSILAMT"]) /Number(this.dailySaleList[i]["ITDAYTOT"])*100).toFixed(1)
             }
             this.makeDailyChart(mon, this.dailySaleList)
             console.log("dailySaleList >>> ", this.dailySaleList);
@@ -863,13 +935,25 @@ export default {
       )
     },
     makeDailyChart: function (mon, source) {
-      //let data = source
+      let txt1 = this.selectedCODE
+      let txt2 = this.selectedCODE
+      if(this.selectedCODE == "00") {
+        txt1 = "전체"
+        txt2 = "TOT"
+      }
+
+      let columnWidth = 0
+      if(this.hide_sales == 0) {
+        columnWidth = 25
+      } else {
+        columnWidth = 40
+      }
 
       this.chart1 = AmCharts.makeChart("chartdiv1", {
         type: "serial",
-        startEffect: "easeOutSine",
+        //startEffect: "easeOutSine",
         categoryField: "SALEDT",
-        colors: ["#FFEB3B","#0336FF", "#6A1B9A", "#2E7D32", "#FF0266"],
+        colors: ["#3F93F5"],
         sequencedAnimation: false,
         categoryAxis: {
           axisAlpha: 0.1,
@@ -877,81 +961,38 @@ export default {
           gridAlpha: 0.05,
           tickLength: 0,
           startOnAxis: false,
-          fontSize: 12
+          fontSize: 12,
+          autoWrap: false, 
+          minHorizontalGap: 0,
         },
         chartCursor: {
-          enabled: true,
-          zoomable: false,
-          cursorPosition: "mouse"
+          categoryBalloonEnabled: false,
+          cursorAlpha: 0,
+          zoomable: false
         },
         trendLines: [],
         graphs: [
           {
-            balloonText: "전체(백만원) : [[value]]",
-            id: "AmGraph-TOT",
-            valueField: "TOTSILAMT",
+            balloonText: txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)",
+            id: "AmGraph-"+txt2,
+            valueField: txt2 + "SILAMT",
             fillAlphas: 0.7,
             lineAlpha: 0,
-            title: "전체(백만원)",
+            title: txt1 + "",
             type: "column",
-            //bulletSize: 1,
-            //bullet: "diamond",
-            //markerType: "diamond"
-          },
-          {
-            balloonText: "MI(백만원) : [[value]]",
-            id: "AmGraph-MI",
-            valueField: "MISILAMT",
-            fillAlphas: 0,
-            lineAlpha: 1,
-            title: "MI(백만원)",
-            bulletSize: 1,
-            bullet: "diamond",
-            markerType: "diamond"
-          },
-          {
-            balloonText: "IT(백만원) : [[value]]",
-            id: "AmGraph-IT",
-            valueField: "ITSILAMT",
-            fillAlphas: 0,
-            lineAlpha: 1,
-            title: "IT(백만원)",
-            bulletSize: 1,
-            bullet: "round",
-            markerType: "round"
-          },
-          {
-            balloonText: "MO(백만원) : [[value]]",
-            id: "AmGraph-MO",
-            valueField: "MOSILAMT",
-            fillAlphas: 0,
-            lineAlpha: 1,
-            title: "MO(백만원)",
-            bulletSize: 1,
-            bullet: "triangleUp",
-            markerType: "triangleUp"
-          },
-          {
-            balloonText: "IN(백만원) : [[value]]",
-            id: "AmGraph-IN",
-            valueField: "INSILAMT",
-            fillAlphas: 0,
-            lineAlpha: 1,
-            title: "IN(백만원)",
-            bulletSize: 1,
-            bullet: "square",
-            markerType: "square"
+            fixedColumnWidth: columnWidth
           }
         ],
         guides: [],
         valueAxes: [
           {
-            axisAlpha: 0.1,
             id: "ValueAxis-1",
             gridColor: "#FFFFFF",
             tickLength: 0,
+            showFirstLabel: false,
             title: "",
-            fontSize: 13
+            fontSize: 13,
+            autoGridCount: false
           }
         ],
         allLabels: [],
@@ -959,8 +1000,12 @@ export default {
         legend: {
           enabled: true,
           align: "center",
-          fontSize: 13,
-          position: "bottom"
+          fontSize: 12,
+          position: "bottom",
+          //equalWidths: false,
+          valueWidth: 0,
+          //labelWidth: 50
+          //width: 120
         },
         titles: [],
         dataProvider: source
@@ -1104,7 +1149,6 @@ export default {
           this.currentCalendarMatrix[lastIndex].push(tempObj)
         }
       }
-      console.log("!!!!!!????? >>>> ", this.currentCalendarMatrix)
     },
     getEndOfDay: function(year, month){
         switch(month){
@@ -1198,8 +1242,11 @@ export default {
       } else {
         this.codeText = code
       }
-      this.changeGraph(code);
+      this.choice = 1, this.choice_copy = 1;
+      //this.changeGraph(code);
       this.selectedCODE = code;
+      this.makeDailyChart(this.month, this.dailySaleList);
+      //this.makeMonthlyChart(this.monthlySaleList);
     },
     changeGraph: function(code) {
       if(code == "00") {
@@ -1220,43 +1267,56 @@ export default {
         }
       }
     },
-    chageType: function(type) {
-      this.choice = type;
-      let source = [];
-      if(type == 1 || type == '1') {
+    changeCumulativeData: function() {
+      let source = [], returnSource = [];
+      let this_day = 0;
+      if(this.choice_copy == 1 || this.choice_copy == '1') {
         source = this.dailySaleList
-      } else if(type == 2 || type == '2'){
+        this_day = Number(moment(this.selectDate).format("DD"));
+      } else if(this.choice_copy == 2 || this.choice_copy == '2'){
         source = this.monthlySaleList
-      } else {
-        let this_year = moment(this.selectDate).format("YYYY");
-        let PRE_MISILAMT=0, PRE_MOSILAMT=0, PRE_ITSILAMT=0, PRE_INSILAMT=0;
-        for(var i in this.monthlySaleList) {
-          let compare_year = moment(this.monthlySaleList[i].SALEDT, "YYYY/MM").format("YYYY");
-          if(this_year == compare_year) {
-            if(moment(this.monthlySaleList[i-1].SALEDT, "YYYY/MM").format("YYYY") != this_year) {
-              PRE_MISILAMT = 0;
-              PRE_MOSILAMT = 0;
-              PRE_ITSILAMT = 0;
-              PRE_INSILAMT = 0;
-            } else {
-              PRE_MISILAMT = PRE_MISILAMT+Number(this.monthlySaleList[i-1].MISILAMT);
-              PRE_MOSILAMT = PRE_MOSILAMT+Number(this.monthlySaleList[i-1].MOSILAMT);
-              PRE_ITSILAMT = PRE_ITSILAMT+Number(this.monthlySaleList[i-1].ITSILAMT);
-              PRE_INSILAMT = PRE_INSILAMT+Number(this.monthlySaleList[i-1].INSILAMT);
-            }
-            
-            source.push({
-              SALEDT: this.monthlySaleList[i].SALEDT,
-              MISILAMT : PRE_MISILAMT + Number(this.monthlySaleList[i].MISILAMT),
-              MOSILAMT : PRE_MOSILAMT + Number(this.monthlySaleList[i].MOSILAMT),
-              ITSILAMT : PRE_ITSILAMT + Number(this.monthlySaleList[i].ITSILAMT),
-              INSILAMT : PRE_INSILAMT + Number(this.monthlySaleList[i].INSILAMT)
-            })
-          }
-        }
-        console.log("!!!!source >>> ",source)
+        this_day = Number(moment(this.selectDate).format("MM"));
       }
-      this.makeDailyChart(this.month, source)
+      let PRE_MISILAMT=0, PRE_MOSILAMT=0, PRE_ITSILAMT=0, PRE_INSILAMT=0, PRE_TOTSILAMT=0;
+      
+      for(var i in source) {
+        if(i-1 < 0) {
+          PRE_MISILAMT = 0;
+          PRE_MOSILAMT = 0;
+          PRE_ITSILAMT = 0;
+          PRE_INSILAMT = 0;
+          PRE_TOTSILAMT = 0
+        } else {
+          PRE_MISILAMT = PRE_MISILAMT+Number(source[i-1].MISILAMT);
+          PRE_MOSILAMT = PRE_MOSILAMT+Number(source[i-1].MOSILAMT);
+          PRE_ITSILAMT = PRE_ITSILAMT+Number(source[i-1].ITSILAMT);
+          PRE_INSILAMT = PRE_INSILAMT+Number(source[i-1].INSILAMT);
+          PRE_TOTSILAMT = PRE_TOTSILAMT+Number(source[i-1].TOTSILAMT);
+        }
+        let compare_day = Number(source[i].SALEDT);
+
+        returnSource.push({
+          SALEDT: Number(source[i].SALEDT),
+          MISILAMT : compare_day > this_day? "" : PRE_MISILAMT + Number(source[i].MISILAMT),
+          MOSILAMT : compare_day > this_day? "" : PRE_MOSILAMT + Number(source[i].MOSILAMT),
+          ITSILAMT : compare_day > this_day? "" : PRE_ITSILAMT + Number(source[i].ITSILAMT),
+          INSILAMT : compare_day > this_day? "" : PRE_INSILAMT + Number(source[i].INSILAMT),
+          TOTSILAMT : compare_day > this_day? "" : PRE_TOTSILAMT + Number(source[i].TOTSILAMT)
+        })
+      }
+      console.log("!!!!returnSource >>> ",returnSource)
+      return returnSource
+    },
+    changeType: function(type) {
+      this.choice = type;
+      //conso
+      if(type == 1 || type == 3) {
+        this.choice_copy = 1
+        this.getDailySaleList(this.clickedMonth)
+      } else {
+        this.choice_copy = 2
+        this.getMonthlySaleList(this.clickedMonth)
+      }
     },
     tabVal: function(gbn) {
       this.gubun = Number(gbn);
@@ -1269,7 +1329,7 @@ export default {
       } else {
         this.hide_sales = 0;
         document.getElementById("salesMonthlyDiv").style.display = "block";
-        document.getElementById("salesDailyDiv").setAttribute('class', 'col_md_6')
+        document.getElementById("salesDailyDiv").setAttribute('class', 'col_md_7')
       }
       this.makeDailyChart(this.month, this.dailySaleList);
     }
