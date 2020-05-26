@@ -147,7 +147,8 @@
                       <h4 class="card_title_text">당일 매출 목표</h4>
                     </div>
                     <div class="card_content">
-                      <strong class="em_obj" v-if="dr_C.length > 0">
+                      <!-- <strong class="em_obj" v-if="dr_C.length > 0"> -->
+                      <strong class="em_obj" style="font-size: 36px;color: #6B6E77;" v-if="dr_C.length > 0">
                         {{ Math.round(current_dr_C.AMT/1000) | currency }}<small class="txt">천원</small>
                       </strong>
                     </div>
@@ -293,7 +294,8 @@
                       <h4 class="card_title_text">당월 매출 목표</h4>
                     </div>
                     <div class="card_content">
-                      <strong class="em_obj" v-if="dr_C.length > 0">
+                      <!-- <strong class="em_obj" v-if="dr_C.length > 0"> -->
+                      <strong class="em_obj" style="font-size: 36px;color: #6B6E77;" v-if="dr_C.length > 0">
                         {{ Math.round(current_dr_C.MONTH_AMT/1000000) | currency }}<small class="txt">백만원</small>
                       </strong>
                     </div>
@@ -454,10 +456,15 @@
                     <!-- 텍스트 값 -->
                     <div class="graph_result">
                       <dl>
-                        <dt class="tit" v-if="choice_copy==1">금액 (천원)</dt>
-                        <dt class="tit" v-if="choice_copy==2">금액 (백만원)</dt>
-                        <dd class="txt_result txt_s" v-if="choice_copy==1">{{ dr_S_SALE_TOT + dr_S_ADVDEPAMT | currency }}</dd>
-                        <dd class="txt_result txt_s" v-if="choice_copy==2">{{ Math.round((dr_S_SALE_TOT + dr_S_ADVDEPAMT)/1000) | currency }}</dd>
+                        <dt class="tit">금액</dt>
+                        <dd class="txt_result txt_s" v-if="choice_copy==1">
+                          {{ dr_S_SALE_TOT + dr_S_ADVDEPAMT | currency }}
+                          <span class="pl10" style="font-size: 18px; font-weight: 400; vertical-align: middle;">천원</span>
+                        </dd>
+                        <dd class="txt_result txt_s" v-if="choice_copy==2">
+                          {{ Math.round((dr_S_SALE_TOT + dr_S_ADVDEPAMT)/1000) | currency }}
+                          <span class="pl10" style="font-size: 18px; font-weight: 400; vertical-align: middle;">백만원</span>
+                        </dd>
                         <dd class="txt_etc" v-if="(selectedCODE == '1') || (selectedCODE == 'MI')">
                           <span class="chip chip_m box_chip chip_sty01">
                             <span class="chip_text">선수금</span>
@@ -1082,7 +1089,8 @@ export default {
                   LY_SALE_TOT: Number(list[i].LY_SALE_TOT),
                   SALEDT: list[i].SALEDT,
                   SALE_TOT: 0,
-                  SUNM: list[i].SUNM
+                  SUNM: list[i].SUNM,
+                  SALEDT2: moment(this.selectDate, "YYYY-MM-DD").format("MM") + this.twinNum(i+1)
                 })
               }
             }
@@ -1129,10 +1137,10 @@ export default {
                 let count = Math.max(list.length, this.dr_LYP.length)
                 let l1 = list.length > this.dr_LYP.length ? list : this.dr_LYP
                 let l2 = list.length > this.dr_LYP.length ? this.dr_LYP : list
+                
                 let list2 = [];
-                console.log("this.dr_LYP.length >>> ", this.dr_LYP.length)
                 for (let i=0;i<count;i++) {
-                  let data = _.find(l2, function(o) { return o.SALEDT.slice(4, 8) == l1[i].SALEDT.slice(4, 8)})
+                  let data = _.find(l2, function(o) { return o.SALEDT.slice(4, 8) == l1[i].SALEDT2})
                   let AMT2 = data ? Number(data.AMT) : 0
                   let LY_SALE_TOT2 = data ? Number(data.LY_SALE_TOT) : 0
                   let SALE_TOT2 = data ? Number(data.SALE_TOT) : 0
@@ -1141,11 +1149,12 @@ export default {
                   let _LY_SALE_TOT = Number(l1[i].LY_SALE_TOT) != 0 ? Number(l1[i].LY_SALE_TOT) : LY_SALE_TOT2
                   let _SALE_TOT = Number(l1[i].SALE_TOT) != 0 ? Number(l1[i].SALE_TOT) : SALE_TOT2
 
-                  let saleDt = Number(moment(l2[i].SALEDT).format("MMDD"))
+                  let saleDt = Number(moment(l2[i].SALEDT, "YYYYMMDD").format("MMDD"))
                   let toDt = Number(moment(date).format("MMDD"))
 
-
                   if(saleDt <= toDt) {
+                    
+                    console.log("SALE_TOT2>>> ", SALE_TOT2, " || _SALE_TOT >>>", _SALE_TOT)
                     list2.push({
                       AMT: Math.round(_AMT/1000),
                       LY_SALE_TOT: Math.round(_LY_SALE_TOT/1000),
@@ -1185,7 +1194,6 @@ export default {
                   this.dr_P[i]["COLOR"] = "#000000"
                 }
               }
-              //this.getTempData(this.dr_P)
               console.log("dr_P >>> ", this.dr_P)
             }
           }
@@ -1240,7 +1248,6 @@ export default {
                   this.dr_P[i]["RATE2"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["LY_SALE_TOT"]*100)
                 }
               }
-              //this.getTempData(this.dr_P)
               console.log("dr_P >>> ", this.dr_P)
             }
           }
@@ -1290,7 +1297,6 @@ export default {
             SUNM: list[i].SUNM
           })
         }
-        //this.getTempData(this.dr_P)
       }
       
     },
@@ -1485,14 +1491,14 @@ export default {
         txt = '당일'; 
         data = [
           { category: txt + "판매", 
-            JAMT_T: "정상", JAMT: Math.round(this.dr_S.JAMT/1000),
-            DCAMT_T: "할인", DCAMT: Math.round(this.dr_S.DCAMT/1000),
-            GAMT_T: "균일", GAMT: Math.round(this.dr_S.GAMT/1000)
+            JAMT_T: "정상", JAMT: Math.round(this.dr_S.JAMT/1000000),
+            DCAMT_T: "할인", DCAMT: Math.round(this.dr_S.DCAMT/1000000),
+            GAMT_T: "균일", GAMT: Math.round(this.dr_S.GAMT/1000000)
           },
           { category: txt + "반품", 
-            JAMT_T: "정상", JAMT: Math.round(Math.abs(this.dr_S.R_JAMT/1000)),
-            DCAMT_T: "할인", DCAMT: Math.round(Math.abs(this.dr_S.R_DCAMT/1000)),
-            GAMT_T: "균일", GAMT: Math.round(Math.abs(this.dr_S.R_GAMT/1000))
+            JAMT_T: "정상", JAMT: Math.round(Math.abs(this.dr_S.R_JAMT/1000000)),
+            DCAMT_T: "할인", DCAMT: Math.round(Math.abs(this.dr_S.R_DCAMT/1000000)),
+            GAMT_T: "균일", GAMT: Math.round(Math.abs(this.dr_S.R_GAMT/1000000))
           }
         ]
       } else if(this.choice_copy == 2) { 
@@ -1571,7 +1577,7 @@ export default {
             labelsEnabled: false,
             showFirstLabel: true,
             titleRotation: 0,
-            totalText: "[[total]]"
+            totalText: "[[total]] (백만원)"
           }
         ],
         allLabels: [],
@@ -1808,7 +1814,6 @@ export default {
 
       this.req2svr.getChartData2_1(this.tabType, this.selectedCODE, paramStartDt, lastYearLastday, this.choice_copy).then(
         res => {
-          this.dr_dr_LYTPLYP = []
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
           } else {

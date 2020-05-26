@@ -97,14 +97,14 @@
                   </tr>
                   <tr>
                     <th scope="col">월목표</th>
-                    <th scope="col" colspan="4">{{ totalGoal.TOTAMT | currency }}</th>
-                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')" colspan="4">{{ totalGoal.MIAMT  | currency }}</th>
-                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')" colspan="4">{{ totalGoal.ITAMT  | currency }}</th>
-                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.TSOAMT | currency }}</th>
-                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.SOAMT  | currency }}</th>
-                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.SOAMT1 | currency }}</th>
-                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')" colspan="4">{{ totalGoal.MOAMT | currency }}</th>
-                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')" colspan="4">{{ totalGoal.FOAMT | currency }}</th>
+                    <th scope="col" colspan="4">{{ totalGoal.TOTAMT | currency }} 천원</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '1')" colspan="4">{{ totalGoal.MIAMT  | currency }} 천원</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '4')" colspan="4">{{ totalGoal.ITAMT  | currency }} 천원</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.TSOAMT | currency }} 천원</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.SOAMT  | currency }} 천원</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '3')" colspan="4">{{ totalGoal.SOAMT1 | currency }} 천원</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '12')" colspan="4">{{ totalGoal.MOAMT | currency }} 천원</th>
+                    <th scope="col" v-if="(MCODE == 'A' || MCODE == '21')" colspan="4">{{ totalGoal.FOAMT | currency }} 천원</th>
                     <!-- <th scope="col" v-for="(data,index) in proDates" :key="index">{{ data }}</th> -->
                   </tr>
                   <tr>
@@ -422,9 +422,6 @@ export default {
     };
   },
   methods: {
-    test(a) {
-      console.log("test >>>", a)
-    },
     close() {
       this.$emit("close");
     },

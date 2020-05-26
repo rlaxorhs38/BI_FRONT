@@ -96,22 +96,9 @@
         </div>
         <!-- //scrolling card -->
         <div class="row">
-          <div class="col_md_6">
-            <div class="list_box">
+          <div class="col_md_4">
+            <div class="list_box" style="margin-bottom: 0;">
               <ul class="list_card">
-                <li>
-                  <!-- card_당일 전체 매출 -->
-                  <div class="card card_mini">
-                    <div class="card_title">
-                      <h4 class="card_title_text">당일 전체 매출</h4>
-                    </div>
-                    <div class="card_content">
-                      <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
-                        {{ current_BS.DAYTOT | currency }}<small class="txt">천원</small>
-                      </strong>
-                    </div>
-                  </div>
-                </li>
                 <li>
                   <!-- card_당일 온라인 매출 -->
                   <div class="card card_mini">
@@ -121,6 +108,9 @@
                     <div class="card_content">
                       <strong class="em_obj"  v-if="baseSaleList.length > 0">
                         {{ Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT) | currency }}<small class="txt">천원</small>
+                      </strong>
+                      <strong class="em_obj" style="font-size: 30px;color: #6B6E77; padding: 0;" v-if="baseSaleList.length > 0">
+                        <small class="txt">당일 전체 매출</small> {{ current_BS.DAYTOT | currency }}<small class="txt">천원</small>
                       </strong>
                     </div>
                   </div>
@@ -145,22 +135,9 @@
               </ul>
             </div>
           </div>
-          <div class="col_md_6 npl">
-            <div class="list_box">
+          <div class="col_md_4 npl">
+            <div class="list_box" style="margin-bottom: 0;">
               <ul class="list_card">
-                <li>
-                  <!-- card_당월 전체 매출 -->
-                  <div class="card card_mini">
-                    <div class="card_title">
-                      <h4 class="card_title_text">당월 전체 매출</h4>
-                    </div>
-                    <div class="card_content">
-                      <strong class="em_obj" style="font-size: 36px;color: #6b6e77;" v-if="baseSaleList.length > 0">
-                        {{ Math.round(current_BS.MONTOT/1000) | currency }}<small class="txt">백만원</small>
-                      </strong>
-                    </div>
-                  </div>
-                </li>
                 <li>
                   <!-- card_당월 온라인 매출 -->
                   <div class="card card_mini">
@@ -170,6 +147,9 @@
                     <div class="card_content">
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
                         {{ Math.round((Number(current_BS.MONJASA) + (Number(current_BS.MONOUT)))/1000) | currency }}<small class="txt">백만원</small>
+                      </strong>
+                      <strong class="em_obj" style="font-size: 30px;color: #6B6E77; padding: 0;" v-if="baseSaleList.length > 0">
+                        <small class="txt">당월 전체 매출</small> {{ Math.round(current_BS.MONTOT/1000) | currency }}<small class="txt">백만원</small>
                       </strong>
                     </div>
                   </div>
@@ -186,6 +166,45 @@
                     <div class="card_content" >
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
                         {{ getMakeRate(current_BS.MONJASA, current_BS.MONOUT,current_BS.MONTOT, true) }}
+                        <small class="txt2" >%</small>
+                      </strong>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col_md_4 npl">
+            <div class="list_box" style="margin-bottom: 0;">
+              <ul class="list_card">
+                <li>
+                  <!-- card_당월 온라인 매출 -->
+                  <div class="card card_mini">
+                    <div class="card_title">
+                      <h4 class="card_title_text">당월 온라인 매출</h4>
+                    </div>
+                    <div class="card_content">
+                      <strong class="em_obj" v-if="baseSaleList.length > 0">
+                        {{ Math.round((Number(current_BS.YEARJASA) + (Number(current_BS.YEAROUT)))/1000) | currency }}<small class="txt">백만원</small>
+                      </strong>
+                      <strong class="em_obj" style="font-size: 30px;color: #6B6E77; padding: 0;" v-if="baseSaleList.length > 0">
+                        <small class="txt">당월 전체 매출</small> {{ Math.round(current_BS.YEARTOT/1000) | currency }}<small class="txt">백만원</small>
+                      </strong>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <!-- card_당월 온라인 매출 달성률 -->
+                  <div class="card card_mini">
+                    <div class="card_title">
+                      <h4 class="card_title_text">당년 온라인 매출 비중</h4>
+                    </div>
+                    <div class="card_title">
+                      <small class="txt_box">(당년 온라인 매출/당년 온라인 전체 매출) * 100</small>
+                    </div>
+                    <div class="card_content" >
+                      <strong class="em_obj" v-if="baseSaleList.length > 0">
+                        {{ getMakeRate(current_BS.YEARJASA, current_BS.YEAROUT,current_BS.YEARTOT, true) }}
                         <small class="txt2" >%</small>
                       </strong>
                     </div>
@@ -228,13 +247,9 @@
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월누적</span>
                     </label>
                   </div>
-                  <button class="btn_icon btn_s btn_edge_sty01" @click="hideSalesTop()">
-                    <i class="material-icons" v-if="hide_sales == 0" style="font-size:30px;">arrow_right</i>
-                    <i class="material-icons" v-if="hide_sales == 1" style="font-size:30px;">arrow_left</i>
-                  </button>
               </div>
               <div class="cont">
-                <div class="tr pr10 mt10" v-if="choice_copy==1"> 단위: 천원 </div>
+                <div class="tr pr10 mt10" v-if="choice==1"> 단위: 천원 </div>
                 <div class="tr pr10 mt10" v-else> 단위: 백만원 </div>
                 <div class="graph_area" style="height: auto;">
                   <div class="graph_view npt">
@@ -482,8 +497,8 @@ export default {
       this.endOfDay = this.getEndOfDay(this.year, this.month);
       this.initCalendar();
 
-      this.getSaleByBrdDetailData()
-      this.getITOnOffSaleList()
+      //this.getSaleByBrdDetailData()
+      //this.getITOnOffSaleList()
       //this.getITOnOffDetailData()
       this.getBaseSaleList()
       this.setChartData(this.month)
@@ -657,7 +672,7 @@ export default {
         this.clickedMonth = mon
         //this.getMonthlySaleList(mon)
         this.getDailySaleList(mon)
-        this.getCalendarData(mon)
+        //his.getCalendarData(mon)
       }
     },
     getMonthlySaleList: function (mon) {
@@ -918,12 +933,34 @@ export default {
               this.dailySaleList = this.changeCumulativeData();
             }
             for(let i in this.dailySaleList) {
+              if(this.choice == 3) {
+                this.dailySaleList[i].TOTSILAMT = Math.round(Number(this.dailySaleList[i].TOTSILAMT)/1000)
+                this.dailySaleList[i].MISILAMT = Math.round(Number(this.dailySaleList[i].MISILAMT)/1000)
+                this.dailySaleList[i].MOSILAMT = Math.round(Number(this.dailySaleList[i].MOSILAMT)/1000)
+                this.dailySaleList[i].INSILAMT = Math.round(Number(this.dailySaleList[i].INSILAMT)/1000)
+                this.dailySaleList[i].ITSILAMT = Math.round(Number(this.dailySaleList[i].ITSILAMT)/1000)
+
+                this.dailySaleList[i].TOTDAYTOT = Math.round(Number(this.dailySaleList[i].TOTDAYTOT)/1000)
+                this.dailySaleList[i].MIDAYTOT = Math.round(Number(this.dailySaleList[i].MIDAYTOT)/1000)
+                this.dailySaleList[i].MODAYTOT = Math.round(Number(this.dailySaleList[i].MODAYTOT)/1000)
+                this.dailySaleList[i].INDAYTOT = Math.round(Number(this.dailySaleList[i].INDAYTOT)/1000)
+                this.dailySaleList[i].ITDAYTOT = Math.round(Number(this.dailySaleList[i].ITDAYTOT)/1000)
+              }
               this.dailySaleList[i].SALEDT = Number(this.dailySaleList[i].SALEDT)
               this.dailySaleList[i]["TOTRATE"]=  Number(this.dailySaleList[i]["TOTDAYTOT"])==0||Number(this.dailySaleList[i]["TOTSILAMT"])==0?0:(Number(this.dailySaleList[i]["TOTSILAMT"])/Number(this.dailySaleList[i]["TOTDAYTOT"])*100).toFixed(1)
               this.dailySaleList[i]["MIRATE"] =  Number(this.dailySaleList[i]["MIDAYTOT"])==0 ||Number(this.dailySaleList[i]["MISILAMT"]) ==0?0:(Number(this.dailySaleList[i]["MISILAMT"]) /Number(this.dailySaleList[i]["MIDAYTOT"])*100).toFixed(1)
               this.dailySaleList[i]["MORATE"] =  Number(this.dailySaleList[i]["MODAYTOT"])==0 ||Number(this.dailySaleList[i]["MOSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["MOSILAMT"]) /Number(this.dailySaleList[i]["MODAYTOT"])*100).toFixed(1)
               this.dailySaleList[i]["INRATE"] =  Number(this.dailySaleList[i]["INDAYTOT"])==0 ||Number(this.dailySaleList[i]["INSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["INSILAMT"]) /Number(this.dailySaleList[i]["INDAYTOT"])*100).toFixed(1)
               this.dailySaleList[i]["ITRATE"] =  Number(this.dailySaleList[i]["ITDAYTOT"])==0 ||Number(this.dailySaleList[i]["ITSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["ITSILAMT"]) /Number(this.dailySaleList[i]["ITDAYTOT"])*100).toFixed(1)
+
+              this.dailySaleList[i]["SALEDT2"] = moment(this.selectDate).format("YYYYMM") + this.twinNum(this.dailySaleList[i]["SALEDT"])
+              if(moment(this.dailySaleList[i]["SALEDT2"]).format("d") == "6") {
+                this.dailySaleList[i]["COLOR"] = "#2962FF"
+              } else if(moment(this.dailySaleList[i]["SALEDT2"]).format("d") == "0") {
+                this.dailySaleList[i]["COLOR"] = "#B71C1C"
+              } else {
+                this.dailySaleList[i]["COLOR"] = "#000000"
+              }
             }
             this.makeDailyChart(mon, this.dailySaleList)
             console.log("dailySaleList >>> ", this.dailySaleList);
@@ -948,6 +985,32 @@ export default {
       } else {
         columnWidth = 40
       }
+      
+      let maxSource = []
+      if(this.choice_copy == 1) {
+        maxSource = this.dailySaleList
+      } else if(this.choice_copy == 2) {
+        maxSource = this.monthlySaleList
+      }
+
+
+      let unit = function (n) {
+        return Number('1'+new Array(n.toString().length-1).join('0'));
+      }
+      let maxNum = 0, maximum = 0;
+      if(this.selectedCODE != "00") {
+        let MIMax = _.maxBy(maxSource, function(o) { return Number(o.MISILAMT) }).MISILAMT;
+        let ITMax = _.maxBy(maxSource, function(o) { return Number(o.ITSILAMT) }).ITSILAMT;
+        let MOMax = _.maxBy(maxSource, function(o) { return Number(o.MOSILAMT) }).MOSILAMT;
+        let INMax = _.maxBy(maxSource, function(o) { return Number(o.INSILAMT) }).INSILAMT;
+
+        maxNum = Math.max(MIMax, ITMax, MOMax, INMax)
+      } else if(this.selectedCODE == "00") {
+        maxNum = _.maxBy(maxSource, function(o) { return Number(o.TOTSILAMT) }).TOTSILAMT
+        //maximum = Math.ceil(_.maxBy(maxSource, function(o) { return Number(o.TOTSILAMT) }).TOTSILAMT/unit1)*unit1; 
+      }
+      maximum = Math.ceil(maxNum/unit(maxNum))*unit(maxNum); 
+      console.log("maximum >>> ", maximum);
 
       this.chart1 = AmCharts.makeChart("chartdiv1", {
         type: "serial",
@@ -961,9 +1024,11 @@ export default {
           gridAlpha: 0.05,
           tickLength: 0,
           startOnAxis: false,
-          fontSize: 12,
+          fontSize: 13,
           autoWrap: false, 
           minHorizontalGap: 0,
+          labelColorField: "COLOR",
+          boldLabels: true
         },
         chartCursor: {
           categoryBalloonEnabled: false,
@@ -989,16 +1054,17 @@ export default {
             id: "ValueAxis-1",
             gridColor: "#FFFFFF",
             tickLength: 0,
-            showFirstLabel: false,
+            showFirstLabel: true,
             title: "",
             fontSize: 13,
-            autoGridCount: false
+            autoGridCount: false,
+            maximum: maximum
           }
         ],
         allLabels: [],
         balloon: {},
         legend: {
-          enabled: true,
+          enabled: false,
           align: "center",
           fontSize: 12,
           position: "bottom",
@@ -1245,7 +1311,8 @@ export default {
       this.choice = 1, this.choice_copy = 1;
       //this.changeGraph(code);
       this.selectedCODE = code;
-      this.makeDailyChart(this.month, this.dailySaleList);
+      this.getDailySaleList(this.month);
+      //this.makeDailyChart(this.month, this.dailySaleList);
       //this.makeMonthlyChart(this.monthlySaleList);
     },
     changeGraph: function(code) {
@@ -1278,20 +1345,25 @@ export default {
         this_day = Number(moment(this.selectDate).format("MM"));
       }
       let PRE_MISILAMT=0, PRE_MOSILAMT=0, PRE_ITSILAMT=0, PRE_INSILAMT=0, PRE_TOTSILAMT=0;
+      let PRE_MIDAYTOT=0, PRE_MODAYTOT=0, PRE_ITDAYTOT=0, PRE_INDAYTOT=0, PRE_TOTDAYTOT=0;
       
       for(var i in source) {
         if(i-1 < 0) {
-          PRE_MISILAMT = 0;
-          PRE_MOSILAMT = 0;
-          PRE_ITSILAMT = 0;
-          PRE_INSILAMT = 0;
-          PRE_TOTSILAMT = 0
+          PRE_MISILAMT = 0, PRE_MOSILAMT = 0, PRE_ITSILAMT = 0, PRE_INSILAMT = 0, PRE_TOTSILAMT = 0;
+
+          PRE_MIDAYTOT = 0, PRE_MODAYTOT = 0, PRE_ITDAYTOT = 0, PRE_INDAYTOT = 0, PRE_TOTDAYTOT = 0;
         } else {
           PRE_MISILAMT = PRE_MISILAMT+Number(source[i-1].MISILAMT);
           PRE_MOSILAMT = PRE_MOSILAMT+Number(source[i-1].MOSILAMT);
           PRE_ITSILAMT = PRE_ITSILAMT+Number(source[i-1].ITSILAMT);
           PRE_INSILAMT = PRE_INSILAMT+Number(source[i-1].INSILAMT);
           PRE_TOTSILAMT = PRE_TOTSILAMT+Number(source[i-1].TOTSILAMT);
+
+          PRE_MIDAYTOT = PRE_MIDAYTOT+Number(source[i-1].MIDAYTOT);
+          PRE_MODAYTOT = PRE_MODAYTOT+Number(source[i-1].MODAYTOT);
+          PRE_ITDAYTOT = PRE_ITDAYTOT+Number(source[i-1].ITDAYTOT);
+          PRE_INDAYTOT = PRE_INDAYTOT+Number(source[i-1].INDAYTOT);
+          PRE_TOTDAYTOT = PRE_TOTDAYTOT+Number(source[i-1].TOTDAYTOT);
         }
         let compare_day = Number(source[i].SALEDT);
 
@@ -1301,7 +1373,13 @@ export default {
           MOSILAMT : compare_day > this_day? "" : PRE_MOSILAMT + Number(source[i].MOSILAMT),
           ITSILAMT : compare_day > this_day? "" : PRE_ITSILAMT + Number(source[i].ITSILAMT),
           INSILAMT : compare_day > this_day? "" : PRE_INSILAMT + Number(source[i].INSILAMT),
-          TOTSILAMT : compare_day > this_day? "" : PRE_TOTSILAMT + Number(source[i].TOTSILAMT)
+          TOTSILAMT : compare_day > this_day? "" : PRE_TOTSILAMT + Number(source[i].TOTSILAMT),
+
+          MIDAYTOT : compare_day > this_day? "" : PRE_MIDAYTOT + Number(source[i].MIDAYTOT),
+          MODAYTOT : compare_day > this_day? "" : PRE_MODAYTOT + Number(source[i].MODAYTOT),
+          ITDAYTOT : compare_day > this_day? "" : PRE_ITDAYTOT + Number(source[i].ITDAYTOT),
+          INDAYTOT : compare_day > this_day? "" : PRE_INDAYTOT + Number(source[i].INDAYTOT),
+          TOTDAYTOT : compare_day > this_day? "" : PRE_TOTDAYTOT + Number(source[i].TOTDAYTOT)
         })
       }
       console.log("!!!!returnSource >>> ",returnSource)
@@ -1320,18 +1398,6 @@ export default {
     },
     tabVal: function(gbn) {
       this.gubun = Number(gbn);
-    },
-    hideSalesTop() {
-      if(this.hide_sales == 0) {
-        this.hide_sales = 1;
-        document.getElementById("salesMonthlyDiv").style.display = "none";
-        document.getElementById("salesDailyDiv").setAttribute('class', 'col_md_12')
-      } else {
-        this.hide_sales = 0;
-        document.getElementById("salesMonthlyDiv").style.display = "block";
-        document.getElementById("salesDailyDiv").setAttribute('class', 'col_md_7')
-      }
-      this.makeDailyChart(this.month, this.dailySaleList);
     }
   },
   filters: {
