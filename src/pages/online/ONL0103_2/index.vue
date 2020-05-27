@@ -28,7 +28,7 @@
           <div class="tbl_sheet yellow np">
             <table class="tbl table_condensed tbl_center" id="tbl_excel" style="width: 1775px;">
               <colgroup>
-                <col class="bg_point_col20" v-bind:style="{width:MCODE=='00'?'150px':'151px', fontWeight: bold}"/>
+                <col class="bg_point_col20" v-bind:style="{width:MCODE=='00'?'150px':'151px', fontWeight: 'bold'}"/>
                 <col v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
                 <col v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
                 <col v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
@@ -80,27 +80,27 @@
               </thead>
               <tbody style="display: block; height: 700px; overflow: hidden auto; width: 1805px;">
                 <tr v-for="(data , index) in dr_DS" v-bind:key="index">
-                  <td v-bind:style="{width:MCODE=='00'?'150px':'152px'}">{{ data.DAY }} 일</td>
+                  <th v-bind:style="{width:MCODE=='00'?'150px':'152px', 'background-color': data.COLOR}" class="tc">{{ data.DAY }} 일</th>
 
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'271px'}">{{ data.TDAYTOT | currency }}</td>
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'271px'}">{{ data.TDAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}">{{ Math.round(Number(data.TDAYON)/Number(data.TDAYTOT)*100) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}">{{ makeRate(data.TDAYON, data.TDAYTOT) }}</td>
 
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYTOT | currency }}</td>
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ Math.round(Number(data.MIDAYON)/Number(data.MIDAYTOT)*100) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ makeRate(data.MIDAYON, data.MIDAYTOT) }}</td>
 
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYTOT | currency }}</td>
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ Math.round(Number(data.ITDAYON)/Number(data.ITDAYTOT)*100) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ makeRate(data.ITDAYON, data.ITDAYTOT) }}</td>
 
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYTOT | currency }}</td>
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ Math.round(Number(data.MODAYON)/Number(data.MODAYTOT)*100) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ makeRate(data.MODAYON, data.MODAYTOT) }}</td>
 
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYTOT | currency }}</td>
                   <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ Math.round(Number(data.INDAYON)/Number(data.INDAYTOT)*100) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ makeRate(data.INDAYON, data.INDAYTOT) }}</td>
                 </tr>
               </tbody>
               <tfoot>
@@ -108,19 +108,19 @@
                   <th scope="col"><strong>합계</strong></th>
                   <td class="tr"><strong>{{ totalData.TDAYTOT | currency}}</strong></td>
                   <td class="tr"><strong>{{ totalData.TDAYON | currency}}</strong></td>
-                  <td class="tr"><small class="point_col1">{{ Math.round(Number(totalData.TDAYON)/Number(totalData.TDAYTOT)*100) }}</small></td>
+                  <td class="tr"><small class="point_col1">{{ makeRate(totalData.TDAYON, totalData.TDAYTOT) }}</small></td>
                   <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><strong>{{ totalData.MIDAYTOT| currency}}</strong></td>
                   <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><strong>{{ totalData.MIDAYON | currency}}</strong></td>
-                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><small class="point_col1">{{ Math.round(Number(totalData.MIDAYON)/Number(totalData.MIDAYTOT)*100) }}</small></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MI')"><small class="point_col1">{{ makeRate(totalData.MIDAYON, totalData.MIDAYTOT) }}</small></td>
                   <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><strong>{{ totalData.ITDAYTOT | currency}}</strong></td>
                   <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><strong>{{ totalData.ITDAYON | currency}}</strong></td>
-                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><small class="point_col1">{{ Math.round(Number(totalData.ITDAYON)/Number(totalData.ITDAYTOT)*100) }}</small></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IT')"><small class="point_col1">{{ makeRate(totalData.ITDAYON, totalData.ITDAYTOT) }}</small></td>
                   <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><strong>{{ totalData.MODAYTOT | currency}}</strong></td>
                   <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><strong>{{ totalData.MODAYON | currency}}</strong></td>
-                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><small class="point_col1">{{ Math.round(Number(totalData.MODAYON)/Number(totalData.MODAYTOT)*100) }}</small></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'MO')"><small class="point_col1">{{ makeRate(totalData.MODAYON, totalData.MODAYTOT) }}</small></td>
                   <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><strong>{{ totalData.INDAYTOT | currency}}</strong></td>
                   <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><strong>{{ totalData.INDAYON | currency}}</strong></td>
-                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><small class="point_col1">{{ Math.round(Number(totalData.INDAYON)/Number(totalData.INDAYTOT)*100) }}</small></td>
+                  <td class="tr" v-if="(MCODE == '00' || MCODE == 'IN')"><small class="point_col1">{{ makeRate(totalData.INDAYON, totalData.INDAYTOT) }}</small></td>
                 </tr>
               </tfoot>
             </table>
@@ -228,6 +228,17 @@ export default {
               this.dr_DS.push(res);
             } else {
               this.dr_DS = JSON.parse("[" + res + "]");
+
+              for(let i in this.dr_DS) {
+              this.dr_DS[i]["SALEDT"] = moment(this.selectDate).format("YYYYMM") + this.dr_DS[i]["DAY"]
+              if(moment(this.dr_DS[i]["SALEDT"]).format("d") == "6") {
+                this.dr_DS[i]["COLOR"] = this.hexToRgb("#0779e4")
+              } else if(moment(this.dr_DS[i]["SALEDT"]).format("d") == "0") {
+                this.dr_DS[i]["COLOR"] = this.hexToRgb("#eb3737")
+              } else {
+                this.dr_DS[i]["COLOR"] = this.hexToRgb("#eeee")
+              }
+            }
             }
             console.log("dr_DS >>> ", this.dr_DS)
           }
@@ -295,6 +306,35 @@ export default {
         returnNum = "0" + num;
       }
       return returnNum;
+    },
+    hexToRgb( hexType ){ 
+
+      var hex = hexType.replace( "#", "" ); 
+      var value = hex.match( /[a-f\d]/gi ); 
+
+
+      // 헥사값이 세자리일 경우, 여섯자리로. 
+      if ( value.length == 3 ) hex = value[0] + value[0] + value[1] + value[1] + value[2] + value[2]; 
+
+
+      value = hex.match( /[a-f\d]{2}/gi ); 
+
+      var r = parseInt( value[0], 16 ); 
+      var g = parseInt( value[1], 16 ); 
+      var b = parseInt( value[2], 16 ); 
+
+      var rgbType = "rgba(" + r + ", " + g + ", " + b + ", 0.6)"; 
+
+      return rgbType; 
+    },
+    makeRate(on, tot) {
+      let late = 0
+      if(Number(tot) == 0 || Number(on) == 0) {
+        late = 0
+      } else {
+        late = (Number(on)/Number(tot)*100).toFixed(1)
+      }
+      return late;
     }
   },
   filters: {

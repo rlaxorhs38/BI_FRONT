@@ -290,13 +290,19 @@
                     </dl>
                     <dl class="col_md_8 sub_card_sty noline_right">
                       <dt v-for="(department,index) in data.departmentList" :key="index"><strong class="em_obj">{{department.RSLTAMT | currency}}<small class="txt">백만원</small></strong>
-                        <div v-if="rate(department.RSLTAMT, department.PLNAMT) < 95" class="sub_chip point_col5">
+                        <div 
+                            v-if="rate(department.RSLTAMT, department.PLNAMT) < 95" 
+                            class="sub_chip point_col5">
                           {{ rate(department.RSLTAMT, department.PLNAMT).toFixed(1) | nanToDot }}%
                         </div>
-                        <div v-else-if="rate(department.RSLTAMT, department.PLNAMT) >= 95 && rate(department.RSLTAMT, department.PLNAMT) < 99" class="sub_chip point_col7">
+                        <div 
+                            v-else-if="rate(department.RSLTAMT, department.PLNAMT) >= 95 && rate(department.RSLTAMT, department.PLNAMT) < 99" 
+                            class="sub_chip point_col7">
                           {{ rate(department.RSLTAMT, department.PLNAMT).toFixed(1) | nanToDot }}%
                         </div>
-                        <div v-else-if="rate(department.RSLTAMT, department.PLNAMT) >= 100" class="sub_chip point_col8">
+                        <div 
+                            v-else-if="rate(department.RSLTAMT, department.PLNAMT) >= 100" 
+                            class="sub_chip point_col8">
                           {{ rate(department.RSLTAMT, department.PLNAMT).toFixed(1) | nanToDot }}%
                         </div>
                       </dt>
@@ -636,6 +642,8 @@ export default {
               this.makeChart(this.dr_S[i], "chartdiv"+i)
               this.getDepartmentList(this.dr_S[i] , this.dr_S[i].GUBUN)
             }
+
+            console.log("dr_S >>> ", this.dr_S)
           }
         },
         rej => {

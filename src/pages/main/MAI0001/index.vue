@@ -35,6 +35,7 @@
                 <div class="sub_btns">
                   <a href="javascript:void(0);" @click="link('/NewStyleMain')" class="btn_sub">스타일</a>
                   <a href="javascript:void(0);" @click="link('/StoreMain')" class="btn_sub">매장</a>
+                  <a href="javascript:void(0);" @click="link('/StoreSalesStatus2')" class="btn_sub">월평균매출현황</a>
                 </div>
                 <a href="javascript:void(0);" @click="link('/SalesMain')" class="btn_main">
                   <i class="material-icons">business_center</i>영업

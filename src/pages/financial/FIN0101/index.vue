@@ -381,7 +381,7 @@
                 </div>
                 <div class="layout_spacer"></div>
                 <div class="groups">
-                  <div class="toggle_group tg_sty01 mr10" id="comp_choice_div">
+                  <div class="toggle_group tg_sty01" id="comp_choice_div">
                     <!-- <label class="tg_btn" :class="{'is-checked': comp_choice === 1}">
                       <input type="radio" id="option-a" class="tg_radio" name="comp_select" :value="1" v-model="comp_choice" style="display:none" @click="changeGraph(1)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">전체</span>
@@ -395,7 +395,7 @@
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">전년대비</span>
                     </label>
                   </div>
-                  <div class="toggle_group tg_sty01 mr10">
+                  <div class="toggle_group tg_sty01">
                     <label class="tg_btn" :class="{'is-checked': choice === 1}">
                       <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="changeType(1)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일별</span>
@@ -413,10 +413,6 @@
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">월누적</span>
                     </label>
                   </div>
-                  <button class="btn_icon btn_s btn_edge_sty01" @click="hideSalesTop()">
-                    <i class="material-icons" v-if="hide_sales == 0" style="font-size:30px;">arrow_right</i>
-                    <i class="material-icons" v-if="hide_sales == 1" style="font-size:30px;">arrow_left</i>
-                  </button>
                 </div>
               </div>
               <div class="cont">
@@ -618,7 +614,6 @@ export default {
       comp_choice: 2,
       select_p_choice: 1,
       chart4: null,
-      hide_sales: 0,
       gubun2: 1,
       dr_TP: [],
       dr_LYTP: []
@@ -1595,12 +1590,7 @@ export default {
         txt = "월별";
       } 
 
-      let graph1, columnWidth;
-      if(this.hide_sales == 0) {
-        columnWidth = 25
-      } else {
-        columnWidth = 40
-      }
+      let graph1;
       if(this.comp_choice == 2) {
         legend_txt = "실적";
         balloon_txt = "실적";
@@ -1651,7 +1641,7 @@ export default {
           valueField: "SALE_TOT",
           //markerType: "circle"
           type: "column",
-          fixedColumnWidth: columnWidth
+          fixedColumnWidth: 25
         }, graph1(txt)
       ];
       this.chart4 = AmCharts.makeChart("chartdiv4", {
@@ -1687,10 +1677,11 @@ export default {
             id: "ValueAxis-1",
             gridColor: "#FFFFFF",
             tickLength: 0,
-            showFirstLabel: false,
+            showFirstLabel: true,
             title: "",
             fontSize: 13,
-            autoGridCount: false
+            autoGridCount: false,
+            minimum: 0
           }
         ],
         allLabels: [],
@@ -1755,18 +1746,6 @@ export default {
       //     break;
       //   default: break;
       // }
-    },
-    hideSalesTop() {
-      if(this.hide_sales == 0) {
-        this.hide_sales = 1;
-        document.getElementById("salesTopDiv").style.display = "none";
-        document.getElementById("salesGraphDiv").setAttribute('class', 'col_md_12')
-      } else {
-        this.hide_sales = 0;
-        document.getElementById("salesTopDiv").style.display = "block";
-        document.getElementById("salesGraphDiv").setAttribute('class', 'col_md_7')
-      }
-      this.makeChart4();
     },
     twinNum: function (num) {
       if(num.toString().length == 1) {

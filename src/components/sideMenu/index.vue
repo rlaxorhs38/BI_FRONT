@@ -12,6 +12,7 @@
       <ul class="sub_link_list">
         <li><a class="navigation_link" href="javascript:void(0);" @click="link('/NewStyleMain')">스타일</a></li>
         <li><a class="navigation_link" href="javascript:void(0);" @click="link('/StoreMain')">매장</a></li>
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/StoreSalesStatus2')">월평균매출현황</a></li>
       </ul>
     </div>
     <a class="navigation_link" href="javascript:void(0);" @click="link('/WeeklyClothSale')"><i class="material-icons">insert_drive_file</i>주간보고</a>

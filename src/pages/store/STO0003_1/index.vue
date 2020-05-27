@@ -27,20 +27,19 @@
                     <div class="toggle_group">
                         <span class="sub_title mr10">(최종 정보수정일: {{ makeDataDate }})</span>
                     </div>
-                    <!-- select -->
-                    <div class="select_box" style="min-width:180px;">
+                    <!-- select 사업부 -->
+                    <!-- <div class="select_box" style="min-width:180px;">
                         <select class="select" v-model="selectSucd" @change="changeSucd">
-                            <!-- <option :value="0">사업부</option> -->
                             <option v-for="data in SUCDs" :key="data.MCODE" :value="data.MCODE">{{ data.CODNM }}</option>
                         </select>
-                    </div>
-                    <!-- select -->
+                    </div> -->
+                    <!-- select 년도 -->
                     <div class="select_box" style="min-width:130px;">
                         <select class="select" v-model="year" @change="chageDate">
                             <option v-for="data in y_options" :key="data" :value="data">{{ data }}년</option>
                         </select>
                     </div>
-                    <!-- select -->
+                    <!-- select 월 -->
                     <div class="select_box" style="min-width:86px;">
                         <select class="select" v-model="month" @change="chageDate">
                             <option v-for="data in m_options" :key="data" :value="data">{{ data }}월</option>
@@ -51,6 +50,44 @@
         </header>
         <div class="container">
             <div class="content">
+                <!-- scrolling card -->
+                <div class="list_box lb_sty01">
+                    <div class="inner">
+                        <ul class="list_card">
+                        <template v-for="data in salesTotal">
+                        <li :key="data.SUCD">
+                            <!-- card_MI 사업부 -->
+                            <div
+                            class="card card_mini"
+                            @click="changeBusiness(data.SUCD)"
+                            :class="{on : selectSucd == data.SUCD}"
+                            >
+                            <div class="card_title">
+                                <h4 class="card_title_text">{{ data.SUNM }}</h4>
+                            </div>
+                            <div class="card_content">
+                                <strong class="em_obj" v-if="data.SILAMT">
+                                {{ Math.round(Number(data.SILAMT)/1000000) | currency }}<small class="txt">백만원</small>
+                                </strong>
+                                <strong class="em_obj" v-else>
+                                0<small class="txt">백만원</small>
+                                </strong>
+                                <dl class="list_obj">
+                                <dt class="tit">전년대비</dt>
+                                <dd class="txt" v-if="data.JSILAMT">
+                                    {{ Math.round((data.SILAMT-data.JSILAMT)/1000000) }}
+                                </dd>
+                                <dd class="txt" v-else>
+                                    0 %
+                                </dd>
+                                </dl>
+                            </div>
+                            </div>
+                        </li>
+                        </template>
+                        </ul>
+                    </div>
+                </div>
                 <div class="list_box">
                     <!-- 계산 카드 리스트 -->
                     <ul class="list_card">
@@ -65,6 +102,12 @@
                                     <dl class="list_obj">
                                         <dt class="tit">전년</dt>
                                         <dd class="txt">{{ lastData.CNT | currency }}</dd>
+                                        <dt class="tit">대비</dt>
+                                        <i
+                                            class="material-icons"
+                                            :class="[currentData.CNT-lastData.CNT > 0 ? 'col_primary' : 'col_danger']"
+                                            >{{ currentData.CNT-lastData.CNT > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                                        <dd class="txt">{{ Math.abs(currentData.CNT-lastData.CNT) | currency }}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -82,6 +125,12 @@
                                     <dl class="list_obj">
                                         <dt class="tit">전년</dt>
                                         <dd class="txt">{{ Math.round(lastData.NOWMON/1000000) | currency }}</dd>
+                                        <dt class="tit">대비</dt>
+                                        <i
+                                            class="material-icons"
+                                            :class="[currentData.NOWMON-lastData.NOWMON > 0 ? 'col_primary' : 'col_danger']"
+                                            >{{ currentData.NOWMON-lastData.NOWMON > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                                        <dd class="txt">{{ (Math.abs(Math.round((currentData.NOWMON-lastData.NOWMON)/1000000))) | currency }}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -99,6 +148,12 @@
                                     <dl class="list_obj">
                                         <dt class="tit">전년</dt>
                                         <dd class="txt">{{ Math.round(lastData.AVGMON/1000000) | currency }}</dd>
+                                        <dt class="tit">대비</dt>
+                                        <i
+                                            class="material-icons"
+                                            :class="[currentData.AVGMON-lastData.AVGMON > 0 ? 'col_primary' : 'col_danger']"
+                                            >{{ currentData.AVGMON-lastData.AVGMON > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                                        <dd class="txt">{{ Math.abs(Math.round((currentData.AVGMON-lastData.AVGMON)/1000000)) | currency }}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -116,6 +171,12 @@
                                     <dl class="list_obj">
                                         <dt class="tit">전년</dt>
                                         <dd class="txt">{{ Math.round(lastData.AVGVDCD/1000000) | currency }}</dd>
+                                        <dt class="tit">대비</dt>
+                                        <i
+                                            class="material-icons"
+                                            :class="[currentData.AVGVDCD-lastData.AVGVDCD > 0 ? 'col_primary' : 'col_danger']"
+                                            >{{ currentData.AVGVDCD-lastData.AVGVDCD > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                                        <dd class="txt">{{ Math.abs(Math.round((currentData.AVGVDCD-lastData.AVGVDCD)/1000000)) | currency }}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -162,7 +223,7 @@
                                         </div>
                                     </div>
                                     <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
-                                    <div class="graph_category">
+                                    <!-- <div class="graph_category">
                                         <ul>
                                             <li><span class="ico_dot" style="background-color:#C0DEFA;"></span>20%이내</li>
                                             <li><span class="ico_dot" style="background-color:#79BDF4;"></span>50%이내</li>
@@ -170,7 +231,7 @@
                                             <li><span class="ico_dot" style="background-color:#FF8A97;"></span>감소</li>
                                             <li><span class="ico_dot" style="background-color:#d0c3fd;"></span>신규</li>
                                         </ul>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -438,7 +499,7 @@ import datePick from "vue-date-pick"
 import storeMonthSalesStatusPopup from '@/pages/store/STO0004'
 
 export default {
-  name: "STO0003",
+  name: "STO0003_1",
   components: {
     sideMenu,
     mapView,
@@ -446,31 +507,33 @@ export default {
     storeMonthSalesStatusPopup
   },
   props: {
-    data: {
-      type: Object
-    }
+    // data: {
+    //   type: Object
+    // }
   },
   mounted() {
     this.loadData()
   },
   created() {
-      this.year = moment().subtract(1, "month").format("YYYY")
-      this.month = moment().subtract(1, "month").format("M");
+    // this.year = moment().subtract(1, "month").format("YYYY")
+    this.year = moment().format("YYYY")
+    // this.month = moment().subtract(1, "month").format("M");
+    this.month = moment().format("M");
 
-        for (var i = 0; i < 3; i++) {
-            this.y_options[i] = this.year - i;
-        }
-        this.y_options = _.sortBy(this.y_options)
+    for (var i = 0; i < 3; i++) {
+        this.y_options[i] = this.year - i;
+    }
+    this.y_options = _.sortBy(this.y_options)
 
-        for (var i = 0; i < 12; i++) {
-            this.m_options[i] = 12 - i;
-        }
-        this.m_options = _.sortBy(this.m_options)
+    for (var i = 0; i < 12; i++) {
+        this.m_options[i] = 12 - i;
+    }
+    this.m_options = _.sortBy(this.m_options)
 
-        this.selectSucd = this.data.selectedCODE
-        this.choice = this.data.choice
-        // this.year = this.data.year
-        // this.month = this.data.month
+    // this.selectSucd = this.data.selectedCODE
+    // this.choice = this.data.choice
+    // this.year = this.data.year
+    // this.month = this.data.month
   },
   computed: {
     req2svr: () => req2svr,
@@ -484,8 +547,20 @@ export default {
         return _.head(this.lastStatusData) || {}
     },
     SelectCodeName() {
-        // return this.$store.getters.getSUCDCODNM(this.selectSucd)
-        return this.selectSucd
+        return this.$store.getters.getSUCDCODNM(this.selectSucd)
+        // return this.selectSucd
+    },
+    CODECardsList() {
+      let FDRList = this.$store.getters.getFDRList
+      for(var i=0; i<FDRList.length; i++){
+        let data = _.find(this.authCodeList, {MCODE:FDRList[i].MCODE})
+        if (data) {
+          FDRList[i].VISIBLE = true
+        } else {
+          FDRList[i].VISIBLE = false
+        }
+      }
+      return FDRList
     },
   },
   data() {
@@ -518,11 +593,14 @@ export default {
       lastMonthAvgData: [], // 지표별 매장 요약 - 작년 월평균
       cuMonthStoreAvgData: [], // 지표별 매장 요약 - 올해 매장별 평균
       lastMonthStoreAvgData: [], // 지표별 매장 요약 - 작년 매장별 평균
-      monthSalesPopupData: {}
+      monthSalesPopupData: {},
+      salesTotal: [],
+      selectedCODE: "1",
     }
   },
   methods: {
     loadData() {
+        this.getSalesTotal()
         this.getMakeDataDate()
         // 상단카드 현재년도
         this.getMainCurrentStatus()
@@ -553,6 +631,52 @@ export default {
         // 지표별 매장 요약 > 매장수 > 유통형태별비중 > 작년
         this.getLastIndexStore().then(() => this.getCuIndexStore()).then(() => this.changeGubun())
         this.changeShtpGubun()
+    },
+    changeBusiness(sucd) {
+        this.selectSucd = sucd
+        this.changeSucd();
+    },
+    getSalesTotal() {
+        this.req2svr.getSalesTotal(this.year, this.month).then(
+            res => {
+                this.salesTotal = []
+                if (res.MACHBASE_ERROR) {
+                    console.log("res", res)
+                } else {
+                    let count = (JSON.stringify(res).match(/{/g) || []).length;
+                    if(count < 1) {
+                    } else if(count == 1) {
+                        this.salesTotal.push(res);
+                    } else {
+                        this.salesTotal = JSON.parse("[" + res + "]");
+                        for(let i in this.salesTotal) {
+                            if(this.salesTotal[i].SUCD == "3") {
+                                let dongyoung = _.find(this.salesTotal, { 'SUCD': '5' });
+                                this.salesTotal[i].SILAMT = Number(this.salesTotal[i].SILAMT) + Number(dongyoung.SILAMT)
+                                this.salesTotal[i].JSILAMT = Number(this.salesTotal[i].JSILAMT) + Number(dongyoung.JSILAMT)
+                            }
+                            let tempObj = _.find(this.CODECardsList, { 'MCODE': this.salesTotal[i].SUCD })
+                            if(tempObj) {
+                                this.salesTotal[i]["SUNM"] = tempObj.CODNM;
+                            }
+                        }
+                        _.remove(this.salesTotal, function(o) { return o.SUCD == '5'; });
+                        let totOnj = {
+                            SILAMT: _.sumBy(this.salesTotal, function(o) { return Number(o.SILAMT); }),
+                            JSILAMT: _.sumBy(this.salesTotal, function(o) { return Number(o.JSILAMT); }),
+                            SORT: "0",
+                            SUCD: "0",
+                            SUNM: "전체"
+                        }
+                        // this.salesTotal.unshift(totOnj)
+                        console.log("salesTotal >>> ", this.salesTotal);
+                    }
+                }
+            },
+            rej => {
+                console.log("rej", rej);
+            }
+        )
     },
     getMakeDataDate(){
       this.req2svr.getMakeDataDate().then(
@@ -714,7 +838,7 @@ export default {
                         Number(this.storeMoneyData[i].de) +
                         Number(this.storeMoneyData[i].new)
                     }
-                    
+                    console.log("storeCntData >>> ", this.storeCntData)
                     this.openCloseChart1(this.storeCntData, 1)
                     this.openCloseChart1(this.storeMoneyData, 2)
                 }

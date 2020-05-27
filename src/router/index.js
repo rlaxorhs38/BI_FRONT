@@ -26,6 +26,7 @@ import NEWSTY0001 from '@/pages/style/NEWSTY0001'
 import NEWSTY0101 from '@/pages/style/NEWSTY0101'
 import STO0001 from '@/pages/store/STO0001'
 import STO0003 from '@/pages/store/STO0003'
+import STO0003_1 from '@/pages/store/STO0003_1'
 import CRM0001 from '@/pages/crm/CRM0001'
 import PRO0101 from '@/pages/product/PRO0101'
 import PRO0102 from '@/pages/product/PRO0102'
@@ -856,9 +857,11 @@ const authCheckURL = function(next, isRoot, path) {
       || path == "/WeeklyResearch"
       || path == "/WeeklyProgress"
       || path == "/StoreSalesStatus"
+      || path == "/StoreSalesStatus2"
       || path == "/OnLineSale"
       || path == "/OnLineSaleDetail"
       || path == "/DailyReportDetail"
+      || path == "/StoreMain"
       || path == "/Error") {
         next()
       } else {
@@ -988,6 +991,7 @@ export default new Router({
     { name: 'STO0003', component: STO0003, path: '/StoreSalesStatus', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
     },
+    { name: 'STO0003_1', component: STO0003_1, path: '/StoreSalesStatus2', beforeEnter: requireAuth },
     // CRM
     { name: 'CRM0001', component: CRM0001, path: '/Crm', beforeEnter: requireAuth },
     // 생산

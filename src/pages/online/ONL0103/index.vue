@@ -110,7 +110,7 @@
                         {{ Number(current_BS.DAYJASA) + Number(current_BS.DAYOUT) | currency }}<small class="txt">천원</small>
                       </strong>
                       <strong class="em_obj" style="font-size: 30px;color: #6B6E77; padding: 0;" v-if="baseSaleList.length > 0">
-                        <small class="txt">당일 전체 매출</small> {{ current_BS.DAYTOT | currency }}<small class="txt">천원</small>
+                        <small class="txt">당일 매출</small> {{ current_BS.DAYTOT | currency }}<small class="txt">천원</small>
                       </strong>
                     </div>
                   </div>
@@ -121,9 +121,9 @@
                     <div class="card_title">
                       <h4 class="card_title_text">당일 온라인 매출 비중</h4>
                     </div>
-                    <div class="card_title">
+                    <!-- <div class="card_title">
                       <small class="txt_box">(당일 온라인 매출/당일 전체 매출) * 100</small>
-                    </div>
+                    </div> -->
                     <div class="card_content" >
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
                         {{ getMakeRate(current_BS.DAYJASA, current_BS.DAYOUT,current_BS.DAYTOT, true) }}
@@ -149,7 +149,7 @@
                         {{ Math.round((Number(current_BS.MONJASA) + (Number(current_BS.MONOUT)))/1000) | currency }}<small class="txt">백만원</small>
                       </strong>
                       <strong class="em_obj" style="font-size: 30px;color: #6B6E77; padding: 0;" v-if="baseSaleList.length > 0">
-                        <small class="txt">당월 전체 매출</small> {{ Math.round(current_BS.MONTOT/1000) | currency }}<small class="txt">백만원</small>
+                        <small class="txt">당월 매출</small> {{ Math.round(current_BS.MONTOT/1000) | currency }}<small class="txt">백만원</small>
                       </strong>
                     </div>
                   </div>
@@ -160,9 +160,9 @@
                     <div class="card_title">
                       <h4 class="card_title_text">당월 온라인 매출 비중</h4>
                     </div>
-                    <div class="card_title">
+                    <!-- <div class="card_title">
                       <small class="txt_box">(당월 온라인 매출/당월 온라인 전체 매출) * 100</small>
-                    </div>
+                    </div> -->
                     <div class="card_content" >
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
                         {{ getMakeRate(current_BS.MONJASA, current_BS.MONOUT,current_BS.MONTOT, true) }}
@@ -181,27 +181,27 @@
                   <!-- card_당월 온라인 매출 -->
                   <div class="card card_mini">
                     <div class="card_title">
-                      <h4 class="card_title_text">당월 온라인 매출</h4>
+                      <h4 class="card_title_text">당년 온라인 매출</h4>
                     </div>
                     <div class="card_content">
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
                         {{ Math.round((Number(current_BS.YEARJASA) + (Number(current_BS.YEAROUT)))/1000) | currency }}<small class="txt">백만원</small>
                       </strong>
                       <strong class="em_obj" style="font-size: 30px;color: #6B6E77; padding: 0;" v-if="baseSaleList.length > 0">
-                        <small class="txt">당월 전체 매출</small> {{ Math.round(current_BS.YEARTOT/1000) | currency }}<small class="txt">백만원</small>
+                        <small class="txt">당년 매출</small> {{ Math.round(current_BS.YEARTOT/1000) | currency }}<small class="txt">백만원</small>
                       </strong>
                     </div>
                   </div>
                 </li>
                 <li>
-                  <!-- card_당월 온라인 매출 달성률 -->
+                  <!-- card_당년 온라인 매출 달성률 -->
                   <div class="card card_mini">
                     <div class="card_title">
                       <h4 class="card_title_text">당년 온라인 매출 비중</h4>
                     </div>
-                    <div class="card_title">
+                    <!-- <div class="card_title">
                       <small class="txt_box">(당년 온라인 매출/당년 온라인 전체 매출) * 100</small>
-                    </div>
+                    </div> -->
                     <div class="card_content" >
                       <strong class="em_obj" v-if="baseSaleList.length > 0">
                         {{ getMakeRate(current_BS.YEARJASA, current_BS.YEAROUT,current_BS.YEARTOT, true) }}
@@ -229,7 +229,17 @@
                   </ul>
                 </div>
                 <div class="layout_spacer"></div>
-                  <div class="toggle_group tg_sty01 mr10">
+                <div class="toggle_group tg_sty01 mr10">
+                    <label class="tg_btn" :class="{'is-checked': choice2 === 1}">
+                      <input type="radio" id="option-s" class="tg_radio" name="select2" :value="1" v-model="choice2" style="display:none" @click="changeType2(1)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">매출</span>
+                    </label>
+                    <label class="tg_btn" :class="{'is-checked': choice2 === 2}" id="rdo_daily_cmlt">
+                      <input type="radio" id="option-r" class="tg_radio" name="select2" :value="3" v-model="choice2" style="display:none" @click="changeType2(2)" />
+                      <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">비율</span>
+                    </label>
+                  </div>
+                  <div class="toggle_group tg_sty01">
                     <label class="tg_btn" :class="{'is-checked': choice === 1}">
                       <input type="radio" id="option-d" class="tg_radio" name="select" :value="1" v-model="choice" style="display:none" @click="changeType(1)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">일별</span>
@@ -448,8 +458,8 @@ export default {
       chart1: null,
       chart2: null,
       gubun: 1,
-      hide_sales: 0,
-      codeText: '전체'
+      codeText: '전체',
+      choice2: 1
     }
   },
   methods: {
@@ -955,11 +965,14 @@ export default {
 
               this.dailySaleList[i]["SALEDT2"] = moment(this.selectDate).format("YYYYMM") + this.twinNum(this.dailySaleList[i]["SALEDT"])
               if(moment(this.dailySaleList[i]["SALEDT2"]).format("d") == "6") {
-                this.dailySaleList[i]["COLOR"] = "#2962FF"
+                this.dailySaleList[i]["LABELCOLOR"] = "#2962FF"
+                this.dailySaleList[i]["GRAPHCOLOR"] = "#2962FF"
               } else if(moment(this.dailySaleList[i]["SALEDT2"]).format("d") == "0") {
-                this.dailySaleList[i]["COLOR"] = "#B71C1C"
+                this.dailySaleList[i]["LABELCOLOR"] = "#B71C1C"
+                this.dailySaleList[i]["GRAPHCOLOR"] = "#B71C1C"
               } else {
-                this.dailySaleList[i]["COLOR"] = "#000000"
+                this.dailySaleList[i]["LABELCOLOR"] = "#000000"
+                this.dailySaleList[i]["GRAPHCOLOR"] = "#929DB5"
               }
             }
             this.makeDailyChart(mon, this.dailySaleList)
@@ -978,14 +991,13 @@ export default {
         txt1 = "전체"
         txt2 = "TOT"
       }
-
-      let columnWidth = 0
-      if(this.hide_sales == 0) {
-        columnWidth = 25
-      } else {
-        columnWidth = 40
-      }
       
+      let field;
+      if(this.choice2 == 1) {
+        field = "SILAMT";
+      } else {
+        field = "RATE";
+      }
       let maxSource = []
       if(this.choice_copy == 1) {
         maxSource = this.dailySaleList
@@ -993,24 +1005,23 @@ export default {
         maxSource = this.monthlySaleList
       }
 
-
       let unit = function (n) {
         return Number('1'+new Array(n.toString().length-1).join('0'));
       }
-      let maxNum = 0, maximum = 0;
+      let maxNum = 0, maximum = this.choice2 == 1?5000:0;
       if(this.selectedCODE != "00") {
-        let MIMax = _.maxBy(maxSource, function(o) { return Number(o.MISILAMT) }).MISILAMT;
-        let ITMax = _.maxBy(maxSource, function(o) { return Number(o.ITSILAMT) }).ITSILAMT;
-        let MOMax = _.maxBy(maxSource, function(o) { return Number(o.MOSILAMT) }).MOSILAMT;
-        let INMax = _.maxBy(maxSource, function(o) { return Number(o.INSILAMT) }).INSILAMT;
+        let MIMax = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field];
+        let ITMax = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field];
+        let MOMax = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field];
+        let INMax = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field];
 
         maxNum = Math.max(MIMax, ITMax, MOMax, INMax)
       } else if(this.selectedCODE == "00") {
-        maxNum = _.maxBy(maxSource, function(o) { return Number(o.TOTSILAMT) }).TOTSILAMT
-        //maximum = Math.ceil(_.maxBy(maxSource, function(o) { return Number(o.TOTSILAMT) }).TOTSILAMT/unit1)*unit1; 
+        maxNum = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field]
       }
-      maximum = Math.ceil(maxNum/unit(maxNum))*unit(maxNum); 
-      console.log("maximum >>> ", maximum);
+      let max_temp = Math.ceil(maxNum/unit(maxNum))*unit(maxNum)
+      maximum = max_temp > maximum? max_temp:maximum; 
+
 
       this.chart1 = AmCharts.makeChart("chartdiv1", {
         type: "serial",
@@ -1027,7 +1038,7 @@ export default {
           fontSize: 13,
           autoWrap: false, 
           minHorizontalGap: 0,
-          labelColorField: "COLOR",
+          labelColorField: "LABELCOLOR",
           boldLabels: true
         },
         chartCursor: {
@@ -1038,14 +1049,15 @@ export default {
         trendLines: [],
         graphs: [
           {
-            balloonText: txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)",
+            balloonText: this.choice2 == 1?txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)":txt1 + " : [[value]] %",
             id: "AmGraph-"+txt2,
-            valueField: txt2 + "SILAMT",
+            valueField: txt2 + field,
             fillAlphas: 0.7,
             lineAlpha: 0,
             title: txt1 + "",
             type: "column",
-            fixedColumnWidth: columnWidth
+            fixedColumnWidth: 25,
+            colorField: "GRAPHCOLOR",
           }
         ],
         guides: [],
@@ -1058,7 +1070,9 @@ export default {
             title: "",
             fontSize: 13,
             autoGridCount: false,
-            maximum: maximum
+            maximum: maximum,
+            minimum: 0,
+            includeHidden: true
           }
         ],
         allLabels: [],
@@ -1393,6 +1407,15 @@ export default {
         this.getDailySaleList(this.clickedMonth)
       } else {
         this.choice_copy = 2
+        this.getMonthlySaleList(this.clickedMonth)
+      }
+    },
+    changeType2: function(type) {
+      this.choice2 = type;
+      //conso
+      if(this.choice_copy == 1) {
+        this.getDailySaleList(this.clickedMonth)
+      } else {
         this.getMonthlySaleList(this.clickedMonth)
       }
     },

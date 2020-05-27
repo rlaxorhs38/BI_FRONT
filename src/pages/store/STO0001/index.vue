@@ -328,7 +328,7 @@ export default {
       this.m_options[i] = 12 - i;
     }
     this.m_options = _.sortBy(this.m_options)
-    
+    console.log(this.authCodeList)
     this.selectedCODE = this.authCodeList[0].MCODE
   },
   computed: {
