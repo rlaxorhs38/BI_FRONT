@@ -75,7 +75,7 @@
                                 <dl class="list_obj">
                                 <dt class="tit">전년대비</dt>
                                 <dd class="txt" v-if="data.JSILAMT">
-                                    {{ Math.round((data.SILAMT-data.JSILAMT)/1000000) }}
+                                    {{ Math.round((data.SILAMT-data.JSILAMT)/1000000) | currency }}
                                 </dd>
                                 <dd class="txt" v-else>
                                     0 %
@@ -98,16 +98,17 @@
                                     <h4 class="card_title_text">{{ year }}년 매장수</h4>
                                 </div>
                                 <div class="card_content">
-                                    <strong class="em_obj">{{ currentData.CNT | currency }}</strong>
+                                    <strong class="em_obj">
+                                        {{ currentData.CNT | currency }}<small class="txt">개</small>
+                                    </strong>
                                     <dl class="list_obj">
-                                        <dt class="tit">전년</dt>
-                                        <dd class="txt">{{ lastData.CNT | currency }}</dd>
-                                        <dt class="tit">대비</dt>
-                                        <i
-                                            class="material-icons"
-                                            :class="[currentData.CNT-lastData.CNT > 0 ? 'col_primary' : 'col_danger']"
-                                            >{{ currentData.CNT-lastData.CNT > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                                        <dd class="txt">{{ Math.abs(currentData.CNT-lastData.CNT) | currency }}</dd>
+                                        <dt style="font-size: 18px;">전년</dt>
+                                        <dd class="txt">{{ lastData.CNT | currency }}</dd><dt class="txt" style="font-size: 18px;">개</dt>
+                                        <dt class="tit">전년대비</dt>
+                                        <i style="font-size: 28px;"
+                                           :class="[currentData.CNT-lastData.CNT > 0 ? 'col_primary' : 'col_danger', 'material-icons']"
+                                        >{{ currentData.CNT-lastData.CNT > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                                        <dd class="txt" style="padding-left: 0;">{{ Math.abs(currentData.CNT-lastData.CNT) | currency }}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -123,14 +124,13 @@
                                         {{ Math.round(currentData.NOWMON/1000000) | currency }}<small class="txt">백만원</small>
                                     </strong>
                                     <dl class="list_obj">
-                                        <dt class="tit">전년</dt>
+                                        <dt style="font-size: 18px;">전년</dt>
                                         <dd class="txt">{{ Math.round(lastData.NOWMON/1000000) | currency }}</dd>
-                                        <dt class="tit">대비</dt>
-                                        <i
-                                            class="material-icons"
-                                            :class="[currentData.NOWMON-lastData.NOWMON > 0 ? 'col_primary' : 'col_danger']"
-                                            >{{ currentData.NOWMON-lastData.NOWMON > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                                        <dd class="txt">{{ (Math.abs(Math.round((currentData.NOWMON-lastData.NOWMON)/1000000))) | currency }}</dd>
+                                        <dt class="tit">전년대비</dt>
+                                        <i style="font-size: 28px;"
+                                           :class="[currentData.NOWMON-lastData.NOWMON > 0 ? 'col_primary' : 'col_danger', 'material-icons']"
+                                        >{{ currentData.NOWMON-lastData.NOWMON > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                                        <dd class="txt" style="padding-left: 0;">{{ (Math.abs(Math.round((currentData.NOWMON-lastData.NOWMON)/1000000))) | currency }}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -146,14 +146,13 @@
                                         {{ Math.round(currentData.AVGMON/1000000) | currency }}<small class="txt">백만원</small>
                                     </strong>
                                     <dl class="list_obj">
-                                        <dt class="tit">전년</dt>
+                                        <dt style="font-size: 18px;">전년</dt>
                                         <dd class="txt">{{ Math.round(lastData.AVGMON/1000000) | currency }}</dd>
-                                        <dt class="tit">대비</dt>
-                                        <i
-                                            class="material-icons"
-                                            :class="[currentData.AVGMON-lastData.AVGMON > 0 ? 'col_primary' : 'col_danger']"
-                                            >{{ currentData.AVGMON-lastData.AVGMON > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                                        <dd class="txt">{{ Math.abs(Math.round((currentData.AVGMON-lastData.AVGMON)/1000000)) | currency }}</dd>
+                                        <dt class="tit">전년대비</dt>
+                                        <i style="font-size: 28px;"
+                                           :class="[currentData.AVGMON-lastData.AVGMON > 0 ? 'col_primary' : 'col_danger', 'material-icons']"
+                                        >{{ currentData.AVGMON-lastData.AVGMON > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                                        <dd class="txt" style="padding-left: 0;">{{ Math.abs(Math.round((currentData.AVGMON-lastData.AVGMON)/1000000)) | currency }}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -169,14 +168,13 @@
                                         {{ Math.round(currentData.AVGVDCD/1000000) | currency }}<small class="txt">백만원</small>
                                     </strong>
                                     <dl class="list_obj">
-                                        <dt class="tit">전년</dt>
+                                        <dt style="font-size: 18px;">전년</dt>
                                         <dd class="txt">{{ Math.round(lastData.AVGVDCD/1000000) | currency }}</dd>
-                                        <dt class="tit">대비</dt>
-                                        <i
-                                            class="material-icons"
-                                            :class="[currentData.AVGVDCD-lastData.AVGVDCD > 0 ? 'col_primary' : 'col_danger']"
-                                            >{{ currentData.AVGVDCD-lastData.AVGVDCD > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                                        <dd class="txt">{{ Math.abs(Math.round((currentData.AVGVDCD-lastData.AVGVDCD)/1000000)) | currency }}</dd>
+                                        <dt class="tit">전년대비</dt>
+                                        <i style="font-size: 28px;"
+                                           :class="[currentData.AVGVDCD-lastData.AVGVDCD > 0 ? 'col_primary' : 'col_danger', 'material-icons']"
+                                        >{{ currentData.AVGVDCD-lastData.AVGVDCD > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                                        <dd class="txt" style="padding-left: 0;">{{ Math.abs(Math.round((currentData.AVGVDCD-lastData.AVGVDCD)/1000000)) | currency }}</dd>
                                     </dl>
                                 </div>
                             </div>

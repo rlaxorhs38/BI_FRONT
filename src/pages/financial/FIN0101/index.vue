@@ -381,7 +381,7 @@
                 </div>
                 <div class="layout_spacer"></div>
                 <div class="groups">
-                  <div class="toggle_group tg_sty01" id="comp_choice_div">
+                  <div class="toggle_group tg_sty01" id="comp_choice_div" v-if="gubun == 2">
                     <!-- <label class="tg_btn" :class="{'is-checked': comp_choice === 1}">
                       <input type="radio" id="option-a" class="tg_radio" name="comp_select" :value="1" v-model="comp_choice" style="display:none" @click="changeGraph(1)" />
                       <span class="btn_n txt_label" style="height: 40px; line-height: 40px; vertical-align: top;">전체</span>
@@ -1182,11 +1182,14 @@ export default {
                 }
                 this.dr_P[i]["SALEDT2"] = moment(this.selectDate).format("YYYYMM") + this.twinNum(this.dr_P[i]["SALEDT"])
                 if(moment(this.dr_P[i]["SALEDT2"]).format("d") == "6") {
-                  this.dr_P[i]["COLOR"] = "#2962FF"
+                  this.dr_P[i]["LABELCOLOR"] = "#2962FF"
+                  this.dr_P[i]["GRAPHCOLOR"] = "#2962FF"
                 } else if(moment(this.dr_P[i]["SALEDT2"]).format("d") == "0") {
-                  this.dr_P[i]["COLOR"] = "#B71C1C"
+                  this.dr_P[i]["LABELCOLOR"] = "#B71C1C"
+                  this.dr_P[i]["GRAPHCOLOR"] = "#B71C1C"
                 } else {
-                  this.dr_P[i]["COLOR"] = "#000000"
+                  this.dr_P[i]["LABELCOLOR"] = "#000000"
+                  this.dr_P[i]["GRAPHCOLOR"] = "#8195CC"
                 }
               }
               console.log("dr_P >>> ", this.dr_P)
@@ -1380,14 +1383,14 @@ export default {
         //this.changeType(this.choice);
         this.makeChart1();
         this.makeChart2();
-        document.getElementById("comp_choice_div").style.display = "none";
+        // document.getElementById("comp_choice_div").style.display = "none";
         document.getElementById("rdo_daily_cmlt").style.display = "none";
         document.getElementById("rdo_monthly_cmlt").style.display = "none";
         
       } else if (val == "2" || val == 2) {
         this.gubun = 2;
         this.makeChart4();
-        document.getElementById("comp_choice_div").style.display = "block";
+        // document.getElementById("comp_choice_div").style.display = "block";
         document.getElementById("rdo_daily_cmlt").style.display = "block";
         document.getElementById("rdo_monthly_cmlt").style.display = "block";
       } 
@@ -1641,7 +1644,8 @@ export default {
           valueField: "SALE_TOT",
           //markerType: "circle"
           type: "column",
-          fixedColumnWidth: 25
+          fixedColumnWidth: 25,
+          colorField: "GRAPHCOLOR"
         }, graph1(txt)
       ];
       this.chart4 = AmCharts.makeChart("chartdiv4", {
@@ -1661,7 +1665,7 @@ export default {
           fontSize: 13,
           autoWrap: false, 
           minHorizontalGap: 0,
-          labelColorField: "COLOR",
+          labelColorField: "LABELCOLOR",
           boldLabels: true
         },
         chartCursor: {

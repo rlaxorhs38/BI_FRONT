@@ -259,8 +259,9 @@
                   </div>
               </div>
               <div class="cont">
-                <div class="tr pr10 mt10" v-if="choice==1"> 단위: 천원 </div>
-                <div class="tr pr10 mt10" v-else> 단위: 백만원 </div>
+                <div class="tr pr10 mt10" v-if="choice_copy==1&&choice2==1"> 단위: 천원 </div>
+                <div class="tr pr10 mt10" v-else-if="choice_copy==2&&choice2==1"> 단위: 백만원 </div>
+                <div class="tr pr10 mt10" v-else style="height: 27px;"></div>
                 <div class="graph_area" style="height: auto;">
                   <div class="graph_view npt">
                     <div class="graph" style="position:relative; width:100%; height:270px;">
@@ -715,11 +716,13 @@ export default {
             }
             for(let i in this.monthlySaleList) {
               this.monthlySaleList[i].SALEDT = Number(this.monthlySaleList[i].SALEDT)
-              this.monthlySaleList[i]["TOTRATE"] = Number(this.monthlySaleList[i]["TOTDAYTOT"])==0?0:(Number(this.monthlySaleList[i]["TOTSILAMT"])/Number(this.monthlySaleList[i]["TOTDAYTOT"])*100).toFixed(1)
-              this.monthlySaleList[i]["MIRATE"]  = Number(this.monthlySaleList[i]["MIDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["MISILAMT"])/Number(this.monthlySaleList[i]["MIDAYTOT"])*100).toFixed(1)
-              this.monthlySaleList[i]["MORATE"]  = Number(this.monthlySaleList[i]["MODAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["MOSILAMT"])/Number(this.monthlySaleList[i]["MODAYTOT"])*100).toFixed(1)
-              this.monthlySaleList[i]["INRATE"]  = Number(this.monthlySaleList[i]["INDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["INSILAMT"])/Number(this.monthlySaleList[i]["INDAYTOT"])*100).toFixed(1)
-              this.monthlySaleList[i]["ITRATE"]  = Number(this.monthlySaleList[i]["ITDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["ITSILAMT"])/Number(this.monthlySaleList[i]["ITDAYTOT"])*100).toFixed(1)
+              if(this.monthlySaleList[i].SALEDT <= Number(moment(this.selectDate).format('MM'))) {
+                this.monthlySaleList[i]["TOTRATE"] = Number(this.monthlySaleList[i]["TOTDAYTOT"])==0?0:(Number(this.monthlySaleList[i]["TOTSILAMT"])/Number(this.monthlySaleList[i]["TOTDAYTOT"])*100).toFixed(1)
+                this.monthlySaleList[i]["MIRATE"]  = Number(this.monthlySaleList[i]["MIDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["MISILAMT"])/Number(this.monthlySaleList[i]["MIDAYTOT"])*100).toFixed(1)
+                this.monthlySaleList[i]["MORATE"]  = Number(this.monthlySaleList[i]["MODAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["MOSILAMT"])/Number(this.monthlySaleList[i]["MODAYTOT"])*100).toFixed(1)
+                this.monthlySaleList[i]["INRATE"]  = Number(this.monthlySaleList[i]["INDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["INSILAMT"])/Number(this.monthlySaleList[i]["INDAYTOT"])*100).toFixed(1)
+                this.monthlySaleList[i]["ITRATE"]  = Number(this.monthlySaleList[i]["ITDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["ITSILAMT"])/Number(this.monthlySaleList[i]["ITDAYTOT"])*100).toFixed(1)
+              }
             }
             this.makeDailyChart(mon, this.monthlySaleList)
             //this.makeMonthlyChart(this.monthlySaleList)
@@ -929,6 +932,9 @@ export default {
               this.dailySaleList.push(res);
             } else if(count > 1) {
               this.dailySaleList = JSON.parse("[" + res + "]");
+              for(let i in this.dailySaleList) {
+                
+              }
               let entMonthDay = Number(moment(this.selectDate).endOf('month').format('DD'));
               for(let i = Number(moment(this.selectDate).format('DD')); i < entMonthDay; i++) {
                 this.dailySaleList.push({
@@ -943,26 +949,15 @@ export default {
               this.dailySaleList = this.changeCumulativeData();
             }
             for(let i in this.dailySaleList) {
-              if(this.choice == 3) {
-                this.dailySaleList[i].TOTSILAMT = Math.round(Number(this.dailySaleList[i].TOTSILAMT)/1000)
-                this.dailySaleList[i].MISILAMT = Math.round(Number(this.dailySaleList[i].MISILAMT)/1000)
-                this.dailySaleList[i].MOSILAMT = Math.round(Number(this.dailySaleList[i].MOSILAMT)/1000)
-                this.dailySaleList[i].INSILAMT = Math.round(Number(this.dailySaleList[i].INSILAMT)/1000)
-                this.dailySaleList[i].ITSILAMT = Math.round(Number(this.dailySaleList[i].ITSILAMT)/1000)
-
-                this.dailySaleList[i].TOTDAYTOT = Math.round(Number(this.dailySaleList[i].TOTDAYTOT)/1000)
-                this.dailySaleList[i].MIDAYTOT = Math.round(Number(this.dailySaleList[i].MIDAYTOT)/1000)
-                this.dailySaleList[i].MODAYTOT = Math.round(Number(this.dailySaleList[i].MODAYTOT)/1000)
-                this.dailySaleList[i].INDAYTOT = Math.round(Number(this.dailySaleList[i].INDAYTOT)/1000)
-                this.dailySaleList[i].ITDAYTOT = Math.round(Number(this.dailySaleList[i].ITDAYTOT)/1000)
-              }
               this.dailySaleList[i].SALEDT = Number(this.dailySaleList[i].SALEDT)
-              this.dailySaleList[i]["TOTRATE"]=  Number(this.dailySaleList[i]["TOTDAYTOT"])==0||Number(this.dailySaleList[i]["TOTSILAMT"])==0?0:(Number(this.dailySaleList[i]["TOTSILAMT"])/Number(this.dailySaleList[i]["TOTDAYTOT"])*100).toFixed(1)
-              this.dailySaleList[i]["MIRATE"] =  Number(this.dailySaleList[i]["MIDAYTOT"])==0 ||Number(this.dailySaleList[i]["MISILAMT"]) ==0?0:(Number(this.dailySaleList[i]["MISILAMT"]) /Number(this.dailySaleList[i]["MIDAYTOT"])*100).toFixed(1)
-              this.dailySaleList[i]["MORATE"] =  Number(this.dailySaleList[i]["MODAYTOT"])==0 ||Number(this.dailySaleList[i]["MOSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["MOSILAMT"]) /Number(this.dailySaleList[i]["MODAYTOT"])*100).toFixed(1)
-              this.dailySaleList[i]["INRATE"] =  Number(this.dailySaleList[i]["INDAYTOT"])==0 ||Number(this.dailySaleList[i]["INSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["INSILAMT"]) /Number(this.dailySaleList[i]["INDAYTOT"])*100).toFixed(1)
-              this.dailySaleList[i]["ITRATE"] =  Number(this.dailySaleList[i]["ITDAYTOT"])==0 ||Number(this.dailySaleList[i]["ITSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["ITSILAMT"]) /Number(this.dailySaleList[i]["ITDAYTOT"])*100).toFixed(1)
-
+              if(this.dailySaleList[i].SALEDT <= Number(moment(this.selectDate).format('DD'))) {
+                this.dailySaleList[i]["TOTRATE"]=  Number(this.dailySaleList[i]["TOTDAYTOT"])==0||Number(this.dailySaleList[i]["TOTSILAMT"])==0?0:(Number(this.dailySaleList[i]["TOTSILAMT"])/Number(this.dailySaleList[i]["TOTDAYTOT"])*100).toFixed(1)
+                this.dailySaleList[i]["MIRATE"] =  Number(this.dailySaleList[i]["MIDAYTOT"])==0 ||Number(this.dailySaleList[i]["MISILAMT"]) ==0?0:(Number(this.dailySaleList[i]["MISILAMT"]) /Number(this.dailySaleList[i]["MIDAYTOT"])*100).toFixed(1)
+                this.dailySaleList[i]["MORATE"] =  Number(this.dailySaleList[i]["MODAYTOT"])==0 ||Number(this.dailySaleList[i]["MOSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["MOSILAMT"]) /Number(this.dailySaleList[i]["MODAYTOT"])*100).toFixed(1)
+                this.dailySaleList[i]["INRATE"] =  Number(this.dailySaleList[i]["INDAYTOT"])==0 ||Number(this.dailySaleList[i]["INSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["INSILAMT"]) /Number(this.dailySaleList[i]["INDAYTOT"])*100).toFixed(1)
+                this.dailySaleList[i]["ITRATE"] =  Number(this.dailySaleList[i]["ITDAYTOT"])==0 ||Number(this.dailySaleList[i]["ITSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["ITSILAMT"]) /Number(this.dailySaleList[i]["ITDAYTOT"])*100).toFixed(1)
+              }
+              
               this.dailySaleList[i]["SALEDT2"] = moment(this.selectDate).format("YYYYMM") + this.twinNum(this.dailySaleList[i]["SALEDT"])
               if(moment(this.dailySaleList[i]["SALEDT2"]).format("d") == "6") {
                 this.dailySaleList[i]["LABELCOLOR"] = "#2962FF"
@@ -972,7 +967,7 @@ export default {
                 this.dailySaleList[i]["GRAPHCOLOR"] = "#B71C1C"
               } else {
                 this.dailySaleList[i]["LABELCOLOR"] = "#000000"
-                this.dailySaleList[i]["GRAPHCOLOR"] = "#929DB5"
+                this.dailySaleList[i]["GRAPHCOLOR"] = "#8195CC"
               }
             }
             this.makeDailyChart(mon, this.dailySaleList)
@@ -992,12 +987,41 @@ export default {
         txt2 = "TOT"
       }
       
-      let field;
+      let field, graphs;
       if(this.choice2 == 1) {
         field = "SILAMT";
+        graphs = [
+          {
+            balloonText: this.choice2 == 1?txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)":txt1 + " : [[value]] %",
+            id: "AmGraph-"+txt2,
+            valueField: txt2 + field,
+            fillAlphas: 0.7,
+            lineAlpha: 0,
+            title: txt1 + "",
+            type: "column",
+            fixedColumnWidth: 25,
+            colorField: "GRAPHCOLOR",
+          }
+        ]
       } else {
         field = "RATE";
+        graphs = [
+          {
+            balloonText: this.choice2 == 1?txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)":txt1 + " : [[value]] %",
+            id: "AmGraph-"+txt2,
+            valueField: txt2 + field,
+            fillAlphas: 0,
+            lineAlpha: 1,
+            lineThickness: 2,
+            title: txt1 + "",
+            markerType: "circle",
+            bullet: "circle",
+            bulletSize: 7,
+            colorField: "GRAPHCOLOR",
+          }
+        ]
       }
+      
       let maxSource = []
       if(this.choice_copy == 1) {
         maxSource = this.dailySaleList
@@ -1008,20 +1032,9 @@ export default {
       let unit = function (n) {
         return Number('1'+new Array(n.toString().length-1).join('0'));
       }
-      let maxNum = 0, maximum = this.choice2 == 1?5000:0;
-      if(this.selectedCODE != "00") {
-        let MIMax = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field];
-        let ITMax = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field];
-        let MOMax = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field];
-        let INMax = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field];
-
-        maxNum = Math.max(MIMax, ITMax, MOMax, INMax)
-      } else if(this.selectedCODE == "00") {
-        maxNum = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field]
-      }
-      let max_temp = Math.ceil(maxNum/unit(maxNum))*unit(maxNum)
-      maximum = max_temp > maximum? max_temp:maximum; 
-
+      let maxNum = 0, maximum = 0;
+      maxNum = _.maxBy(maxSource, function(o) { return Number(o[txt2 + field]) })[txt2 + field]
+      maximum = maxNum > maximum? maxNum:maximum; 
 
       this.chart1 = AmCharts.makeChart("chartdiv1", {
         type: "serial",
@@ -1047,19 +1060,7 @@ export default {
           zoomable: false
         },
         trendLines: [],
-        graphs: [
-          {
-            balloonText: this.choice2 == 1?txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)":txt1 + " : [[value]] %",
-            id: "AmGraph-"+txt2,
-            valueField: txt2 + field,
-            fillAlphas: 0.7,
-            lineAlpha: 0,
-            title: txt1 + "",
-            type: "column",
-            fixedColumnWidth: 25,
-            colorField: "GRAPHCOLOR",
-          }
-        ],
+        graphs: graphs,
         guides: [],
         valueAxes: [
           {
@@ -1360,12 +1361,13 @@ export default {
       }
       let PRE_MISILAMT=0, PRE_MOSILAMT=0, PRE_ITSILAMT=0, PRE_INSILAMT=0, PRE_TOTSILAMT=0;
       let PRE_MIDAYTOT=0, PRE_MODAYTOT=0, PRE_ITDAYTOT=0, PRE_INDAYTOT=0, PRE_TOTDAYTOT=0;
+      let PRE_MIRATE=0, PRE_MORATE=0, PRE_ITRATE=0, PRE_INRATE=0, PRE_TOTRATE=0;
       
       for(var i in source) {
         if(i-1 < 0) {
           PRE_MISILAMT = 0, PRE_MOSILAMT = 0, PRE_ITSILAMT = 0, PRE_INSILAMT = 0, PRE_TOTSILAMT = 0;
-
           PRE_MIDAYTOT = 0, PRE_MODAYTOT = 0, PRE_ITDAYTOT = 0, PRE_INDAYTOT = 0, PRE_TOTDAYTOT = 0;
+          PRE_MIRATE = 0, PRE_MORATE = 0, PRE_ITRATE = 0, PRE_INRATE = 0, PRE_TOTRATE = 0;
         } else {
           PRE_MISILAMT = PRE_MISILAMT+Number(source[i-1].MISILAMT);
           PRE_MOSILAMT = PRE_MOSILAMT+Number(source[i-1].MOSILAMT);

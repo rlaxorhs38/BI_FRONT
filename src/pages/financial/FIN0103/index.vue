@@ -185,41 +185,41 @@
                 </colgroup>
                 <tbody>
                   <tr v-for="(data, index) in dr_LIST" :key="index">
-                    <td scope="row" class="tc" @click="showStoreList(data.DAY)">
+                    <td scope="row" class="tc" @click="showStoreList(data.DAY)" v-bind:style="{'color': data.COLOR}">
                       <label>{{ data.DAY }} | {{thisDay(thisYear, thisMonth, data.DAY)}}</label>
                     </td>
-                    <td class="tc">{{ Math.round(data.TOTTARGETAMT/1000) | currency }}</td>
-                    <td class="tc">{{ Math.round(data.TOTSAMT/1000) | currency }}</td>
-                    <td class="tc">{{ ((data.TOTSAMT/1000)/(data.TOTTARGETAMT/1000)*100).toFixed(1) }}</td>
-                    <td class="tc">{{ ((data.CUMTOTAMT/1000)/totalGoal.TOTAMT*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':''}">{{ Math.round(data.MITARGETAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':''}">{{ Math.round(data.MISAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':''}">{{ ((data.MISAMT/1000)/(data.MITARGETAMT/1000)*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':''}">{{ ((data.CUMMIAMT/1000)/totalGoal.MIAMT*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':''}">{{ Math.round(data.ITTARGETAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':''}">{{ Math.round(data.ITSAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':''}">{{ ((data.ITSAMT/1000)/(data.ITTARGETAMT/1000)*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':''}">{{ ((data.CUMITAMT/1000)/totalGoal.ITAMT*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.TSOTARGETAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.TSOSAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.TSOSAMT/1000)/(data.TSOTARGETAMT/1000)*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.CUMTSOAMT/1000)/totalGoal.TSOAMT*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.SOTARGETAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.SOSAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.SOSAMT/1000)/(data.SOTARGETAMT/1000)*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.CUMSOAMT/1000)/totalGoal.SOAMT*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.SOTARGETAMT1/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ Math.round(data.SOSAMT1/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.SOSAMT1/1000)/(data.SOTARGETAMT1/1000)*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':''}">{{ ((data.CUMSOAMT1/1000)/totalGoal.SOAMT1*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':''}">{{ Math.round(data.MOTARGETAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':''}">{{ Math.round(data.MOSAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':''}">{{ ((data.MOSAMT/1000)/(data.MOTARGETAMT/1000)*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':''}">{{ ((data.CUMMOAMT/1000)/totalGoal.MOAMT*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':''}">{{ Math.round(data.FOTARGETAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':''}">{{ Math.round(data.FOSAMT/1000) | currency }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':''}">{{ ((data.FOSAMT/1000)/(data.FOTARGETAMT/1000)*100).toFixed(1) }}</td>
-                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':''}">{{ ((data.CUMFOAMT/1000)/totalGoal.FOAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-bind:style="{'color': data.COLOR}">{{ Math.round(data.TOTTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-bind:style="{'color': data.COLOR}">{{ Math.round(data.TOTSAMT/1000) | currency }}</td>
+                    <td class="tc" v-bind:style="{'color': data.COLOR}">{{ ((data.TOTSAMT/1000)/(data.TOTTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-bind:style="{'color': data.COLOR}">{{ ((data.CUMTOTAMT/1000)/totalGoal.TOTAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.MITARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.MISAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.MISAMT/1000)/(data.MITARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '1')" v-bind:style="{'background-color':MCODE=='1'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.CUMMIAMT/1000)/totalGoal.MIAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.ITTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.ITSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.ITSAMT/1000)/(data.ITTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '4')" v-bind:style="{'background-color':MCODE=='4'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.CUMITAMT/1000)/totalGoal.ITAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.TSOTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.TSOSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.TSOSAMT/1000)/(data.TSOTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.CUMTSOAMT/1000)/totalGoal.TSOAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.SOTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.SOSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.SOSAMT/1000)/(data.SOTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.CUMSOAMT/1000)/totalGoal.SOAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.SOTARGETAMT1/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.SOSAMT1/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.SOSAMT1/1000)/(data.SOTARGETAMT1/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '3')" v-bind:style="{'background-color':MCODE=='3'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.CUMSOAMT1/1000)/totalGoal.SOAMT1*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.MOTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.MOSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.MOSAMT/1000)/(data.MOTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '12')" v-bind:style="{'background-color':MCODE=='12'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.CUMMOAMT/1000)/totalGoal.MOAMT*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.FOTARGETAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':'', 'color': data.COLOR}">{{ Math.round(data.FOSAMT/1000) | currency }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.FOSAMT/1000)/(data.FOTARGETAMT/1000)*100).toFixed(1) }}</td>
+                    <td class="tc" v-if="(MCODE == 'A' || MCODE == '21')" v-bind:style="{'background-color':MCODE=='21'?'#F3F6F0':'', 'color': data.COLOR}">{{ ((data.CUMFOAMT/1000)/totalGoal.FOAMT*100).toFixed(1) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -545,6 +545,15 @@ export default {
                     this.dr_LIST[i]["CUMFOTARGETAMT"] = Number(this.dr_LIST[i-1]["CUMFOTARGETAMT"]) + Number(this.dr_LIST[i]["FOTARGETAMT"])
                     this.dr_LIST[i]["CUMFOAMT"] = Number(this.dr_LIST[i-1]["CUMFOAMT"]) + Number(this.dr_LIST[i]["FOSAMT"])
                   }
+                }
+
+                this.dr_LIST[i]["SALEDT"] = moment(this.selectDate).format("YYYYMM") + this.dr_LIST[i].DAY
+                if(moment(this.dr_LIST[i]["SALEDT"]).format("d") == "6") {
+                  this.dr_LIST[i]["COLOR"] = "#0779E4"
+                } else if(moment(this.dr_LIST[i]["SALEDT"]).format("d") == "0") {
+                  this.dr_LIST[i]["COLOR"] = "#EB3737"
+                } else {
+                  this.dr_LIST[i]["COLOR"] = "#000000"
                 }
               }
               console.log("dr_LIST >>> ", this.dr_LIST)

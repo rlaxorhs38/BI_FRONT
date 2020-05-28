@@ -26,7 +26,7 @@
       <div class="container">
         <div class="content">
           <div class="tbl_sheet yellow np">
-            <table class="tbl table_condensed tbl_center" id="tbl_excel" style="width: 1775px;">
+            <table class="tbl tbl_center" id="tbl_excel" style="width: 1775px;">
               <colgroup>
                 <col class="bg_point_col20" v-bind:style="{width:MCODE=='00'?'150px':'151px', fontWeight: 'bold'}"/>
                 <col v-bind:style="{width:MCODE=='00'?'109px':'270px'}"/>
@@ -55,7 +55,7 @@
                   <th v-if="(MCODE == '00' || MCODE == 'IN')" colspan="3">IN</th>
                 </tr>
                 <tr>
-                  <th>일자</th>
+                  <th>일자 | 요일</th>
 
                   <th>전체</th>
                   <th>온라인</th>
@@ -78,29 +78,29 @@
                   <th v-if="(MCODE == '00' || MCODE == 'IN')">비율(%)</th>
                 </tr>
               </thead>
-              <tbody style="display: block; height: 700px; overflow: hidden auto; width: 1805px;">
+              <tbody style="display: block; height: 680px; overflow: hidden auto; width: 1805px;">
                 <tr v-for="(data , index) in dr_DS" v-bind:key="index">
-                  <th v-bind:style="{width:MCODE=='00'?'150px':'152px', 'background-color': data.COLOR}" class="tc">{{ data.DAY }} 일</th>
+                  <td v-bind:style="{width:MCODE=='00'?'150px':'152px', 'color': data.COLOR}" scope="row" class="tc">{{ data.DAY }} {{makeDay(data.DAY)}}</td>
 
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'271px'}">{{ data.TDAYTOT | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'271px'}">{{ data.TDAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}">{{ makeRate(data.TDAYON, data.TDAYTOT) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'271px', 'color': data.COLOR}">{{ data.TDAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'271px', 'color': data.COLOR}">{{ data.TDAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}">{{ makeRate(data.TDAYON, data.TDAYTOT) }}</td>
 
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYTOT | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ makeRate(data.MIDAYON, data.MIDAYTOT) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ data.MIDAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'MI')">{{ makeRate(data.MIDAYON, data.MIDAYTOT) }}</td>
 
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYTOT | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ makeRate(data.ITDAYON, data.ITDAYTOT) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ data.ITDAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'IT')">{{ makeRate(data.ITDAYON, data.ITDAYTOT) }}</td>
 
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYTOT | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ makeRate(data.MODAYON, data.MODAYTOT) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ data.MODAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'MO')">{{ makeRate(data.MODAYON, data.MODAYTOT) }}</td>
 
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYTOT | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYON | currency }}</td>
-                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px'}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ makeRate(data.INDAYON, data.INDAYTOT) }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYTOT | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ data.INDAYON | currency }}</td>
+                  <td class="tr" v-bind:style="{width:MCODE=='00'?'109px':'270px', 'color': data.COLOR}" v-if="(MCODE == '00' || MCODE == 'IN')">{{ makeRate(data.INDAYON, data.INDAYTOT) }}</td>
                 </tr>
               </tbody>
               <tfoot>
@@ -323,7 +323,7 @@ export default {
       var g = parseInt( value[1], 16 ); 
       var b = parseInt( value[2], 16 ); 
 
-      var rgbType = "rgba(" + r + ", " + g + ", " + b + ", 0.6)"; 
+      var rgbType = "rgb(" + r + ", " + g + ", " + b + ")"; 
 
       return rgbType; 
     },
@@ -335,6 +335,10 @@ export default {
         late = (Number(on)/Number(tot)*100).toFixed(1)
       }
       return late;
+    },
+    makeDay(day) {
+      let date = moment(this.selectDate).format("YYYYMM") + day
+      return "| "+moment(date, "YYYYMMDD").format("ddd")
     }
   },
   filters: {
