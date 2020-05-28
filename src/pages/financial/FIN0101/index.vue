@@ -1378,18 +1378,24 @@ export default {
         this.gubun = 1;
         return
       }
+      let date = moment(this.selectDate).format("YYYYMMDD")
       if (val == "1" || val == 1) {
         this.gubun = 1;
+        this.choice = this.choice_copy;
         //this.changeType(this.choice);
-        this.makeChart1();
-        this.makeChart2();
+        this.getChartData1(this.selectedCODE, date)
         // document.getElementById("comp_choice_div").style.display = "none";
         document.getElementById("rdo_daily_cmlt").style.display = "none";
         document.getElementById("rdo_monthly_cmlt").style.display = "none";
         
       } else if (val == "2" || val == 2) {
         this.gubun = 2;
-        this.makeChart4();
+        if(this.choice_copy == 1) {
+          this.getChartData2(this.selectedCODE, date);
+        } else if(this.choice_copy == 2) {
+          this.getCumulativeSales(this.selectedCODE, date);
+        }
+        //this.makeChart4();
         // document.getElementById("comp_choice_div").style.display = "block";
         document.getElementById("rdo_daily_cmlt").style.display = "block";
         document.getElementById("rdo_monthly_cmlt").style.display = "block";

@@ -723,6 +723,12 @@ export default {
                 this.monthlySaleList[i]["INRATE"]  = Number(this.monthlySaleList[i]["INDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["INSILAMT"])/Number(this.monthlySaleList[i]["INDAYTOT"])*100).toFixed(1)
                 this.monthlySaleList[i]["ITRATE"]  = Number(this.monthlySaleList[i]["ITDAYTOT"]) ==0?0:(Number(this.monthlySaleList[i]["ITSILAMT"])/Number(this.monthlySaleList[i]["ITDAYTOT"])*100).toFixed(1)
               }
+
+              this.monthlySaleList[i]["TOTSILAMT2"] = this.comma(this.monthlySaleList[i]["TOTSILAMT"])
+              this.monthlySaleList[i]["MISILAMT2"] = this.comma(this.monthlySaleList[i]["MISILAMT"])
+              this.monthlySaleList[i]["MOSILAMT2"] = this.comma(this.monthlySaleList[i]["MOSILAMT"])
+              this.monthlySaleList[i]["INSILAMT2"] = this.comma(this.monthlySaleList[i]["INSILAMT"])
+              this.monthlySaleList[i]["ITSILAMT2"] = this.comma(this.monthlySaleList[i]["ITSILAMT"])
             }
             this.makeDailyChart(mon, this.monthlySaleList)
             //this.makeMonthlyChart(this.monthlySaleList)
@@ -957,7 +963,12 @@ export default {
                 this.dailySaleList[i]["INRATE"] =  Number(this.dailySaleList[i]["INDAYTOT"])==0 ||Number(this.dailySaleList[i]["INSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["INSILAMT"]) /Number(this.dailySaleList[i]["INDAYTOT"])*100).toFixed(1)
                 this.dailySaleList[i]["ITRATE"] =  Number(this.dailySaleList[i]["ITDAYTOT"])==0 ||Number(this.dailySaleList[i]["ITSILAMT"]) ==0?0:(Number(this.dailySaleList[i]["ITSILAMT"]) /Number(this.dailySaleList[i]["ITDAYTOT"])*100).toFixed(1)
               }
-              
+              this.dailySaleList[i]["TOTSILAMT2"] = this.comma(this.dailySaleList[i]["TOTSILAMT"])
+              this.dailySaleList[i]["MISILAMT2"] = this.comma(this.dailySaleList[i]["MISILAMT"])
+              this.dailySaleList[i]["MOSILAMT2"] = this.comma(this.dailySaleList[i]["MOSILAMT"])
+              this.dailySaleList[i]["INSILAMT2"] = this.comma(this.dailySaleList[i]["INSILAMT"])
+              this.dailySaleList[i]["ITSILAMT2"] = this.comma(this.dailySaleList[i]["ITSILAMT"])
+
               this.dailySaleList[i]["SALEDT2"] = moment(this.selectDate).format("YYYYMM") + this.twinNum(this.dailySaleList[i]["SALEDT"])
               if(moment(this.dailySaleList[i]["SALEDT2"]).format("d") == "6") {
                 this.dailySaleList[i]["LABELCOLOR"] = "#2962FF"
@@ -986,13 +997,20 @@ export default {
         txt1 = "전체"
         txt2 = "TOT"
       }
+
+      let unit_txt;
+      if(this.choice_copy == 1) {
+        unit_txt = "천원"
+      } else {
+        unit_txt = "백만원"
+      }
       
       let field, graphs;
       if(this.choice2 == 1) {
         field = "SILAMT";
         graphs = [
           {
-            balloonText: this.choice2 == 1?txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)":txt1 + " : [[value]] %",
+            balloonText: txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)",
             id: "AmGraph-"+txt2,
             valueField: txt2 + field,
             fillAlphas: 0.7,
@@ -1007,7 +1025,7 @@ export default {
         field = "RATE";
         graphs = [
           {
-            balloonText: this.choice2 == 1?txt1 + " : [[value]] (총매출대비 [["+txt2+"RATE]]%)":txt1 + " : [[value]] %",
+            balloonText: txt1 + " : [[value]] % (매출금액 [["+txt2+"SILAMT2]]"+unit_txt+")",
             id: "AmGraph-"+txt2,
             valueField: txt2 + field,
             fillAlphas: 0,
@@ -1423,6 +1441,16 @@ export default {
     },
     tabVal: function(gbn) {
       this.gubun = Number(gbn);
+    },
+    comma: function(num) {
+      let str
+      if(num != "" && num != null && num != "undefined") {
+        str = num.toString();
+        return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+      } else {
+        return "";
+      }
+      
     }
   },
   filters: {
