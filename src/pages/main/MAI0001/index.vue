@@ -87,6 +87,7 @@
             <li>
               <div class="btns">
                 <div class="sub_btns">
+                  <a href="javascript:void(0);" @click="link('/NewDailyReport')" class="btn_sub">재무종합</a>
                   <a href="javascript:void(0);" @click="link('/NewDailyReportSales')" class="btn_sub">매출</a>
                   <a href="javascript:void(0);" @click="link('/NewDailyReportCash')" class="btn_sub">현금</a>
                   <a href="javascript:void(0);" @click="link('/NewDailyReportProfit')" class="btn_sub">영업이익B</a>

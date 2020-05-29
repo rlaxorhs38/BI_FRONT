@@ -23,6 +23,7 @@
     <a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReport')"><i class="material-icons">assessment</i>재무</a>
     <div class="sub_link">
       <ul class="sub_link_list">
+        <li><a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReport')">재무종합</a></li>
         <li><a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReportSales')">매출</a></li>
         <li><a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReportCash')">현금</a></li>
         <li><a class="navigation_link" href="javascript:void(0);" @click="link('/NewDailyReportProfit')">영업이익B</a></li>
