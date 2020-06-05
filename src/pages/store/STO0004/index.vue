@@ -1,7 +1,7 @@
 ﻿<template>
     <transition name="modal">
     <!-- 팝업용 레이아웃 클래스 : popup_layout -->
-    <div class="wrap popup_layout pl_r" style="height:1300px">
+    <div class="wrap popup_layout pl_r">
         <!-- popup close button -->
         <div class="btn_pop_close" role="button" @click="close()"><i class="material-icons">close</i></div>
         <!-- header -->
@@ -227,7 +227,7 @@
                             <colgroup>
                                 <col style="width: 8%;" />
                                 <col style="width: 8%;" />
-                                <col style="width: 20%;" />
+                                <col style="width: 20%;"/>
                                 <col style="width: 8%;" />
                                 <col style="width: 8%;" />
                                 <col style="width: 8%;" />
@@ -250,7 +250,7 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="tbody_wrap tbl_hover_none" style="margin-top: 43px;">
+                    <div class="tbody_wrap tbl_hover_none" style="margin-top: 43px; height: 680px;">
                         <table class="tbl tbl_right">
                             <colgroup>
                                 <col style="width: 8%;" />
@@ -342,7 +342,12 @@ export default {
   computed: {
     req2svr: () => req2svr,
     SUCDs() {
-      return this.$store.getters.getSTOList
+      // let returns = this.$store.getters.getFDRList
+      let returns = _.remove(this.$store.getters.getFDRList, function(n) {
+        return n.MCODE != '10';
+      });
+      console.log("SUCDs >>> ", returns)
+      return returns
     },
     SelectCodeName() {
         return this.$store.getters.getSUCDCODNM(this.selectSucd)

@@ -15,5 +15,15 @@ export default {
         date : date
       }
     }).then(x => x.data)
+  },
+  getStoreList(start_date, end_date, tabType, code) {
+    return axios.get(apiUrl() + "fin/getStoreList2", {
+      params : { 
+        start_date : start_date,
+        end_date : end_date,
+        tabType : tabType,
+        code : code
+      }
+    }).then(x => x.data)
   }
 }

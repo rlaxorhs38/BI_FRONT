@@ -40,6 +40,7 @@
             </span>
           </label>
         </div>
+        <button v-if="choice === 2" type="button" class="btn_n point_col1 point_box1 txt_bold pl20 pr20 ml10" @click="toSalesStatus">월 평균 매출 현황</button>
         <div class="layout_spacer"></div>
         <div style="margin-right: 10px;"><small class="txt_s">데이터 기준일 : {{ makeDataDate }}</small></div>
         <!-- groups -->
@@ -140,12 +141,12 @@
                             <option v-for="data in regionData" :key="data.RENNM" :value="data.RENNM">{{ data.RENNM }}({{ data.CNT }})</option>
                           </select>
                         </div>
-                        <div class="select_box" style="width:30%;">
+                        <!-- <div class="select_box" style="width:30%;">
                           <select class="select input_s" v-model="selectStoreSU" @change="changeStoreSU">
                             <option :value="0">사업부</option>
                             <option v-for="data in storeSUData" :key="data.SUCD" :value="data.SUCD">{{ data.CODNM }}({{ data.CNT }})</option>
                           </select>
-                        </div>
+                        </div> -->
                         <div class="select_box" style="width:40%;">
                           <select class="select input_s" v-model="selectStoreType" @change="changeStoreType">
                             <option :value="0">매장 구분</option>
@@ -327,7 +328,7 @@ export default {
       this.m_options[i] = 12 - i;
     }
     this.m_options = _.sortBy(this.m_options)
-    
+    console.log(this.authCodeList)
     this.selectedCODE = this.authCodeList[0].MCODE
   },
   computed: {
@@ -377,8 +378,8 @@ export default {
       drawer: null,
       y_options: [],
       m_options: [],
-      selectedCODE: null,
-      selectedMapCODE: null,
+      selectedCODE: "1",
+      selectedMapCODE: "1",
       choice: 2,
       year: "",
       month: "",
@@ -432,8 +433,8 @@ export default {
         // this.getStoreOptionData()
         // this.getSelectVDCDStoreInfo()
         // 데이터를 순차적으로 가져와야 하므로 Promiss 적용
-        return this.getRegionData().then(() => this.getStoreSUData())
-        .then(() => this.getStoreTypeData())
+        // return this.getRegionData().then(() => this.getStoreSUData())
+        return this.getRegionData().then(() => this.getStoreTypeData())
         .then(() => this.getStoreOptionData())
         .then(() => this.getSelectVDCDStoreInfo())
     },
@@ -874,8 +875,8 @@ export default {
       // this.getStoreOptionData()
       // this.getSelectVDCDStoreInfo()
       // 데이터를 순차적으로 가져와야 하므로 Promiss 적용
-      this.getRegionData().then(() => this.getStoreSUData())
-      .then(() => this.getStoreTypeData())
+      // this.getRegionData().then(() => this.getStoreSUData())
+      this.getRegionData().then(() => this.getStoreTypeData())
       .then(() => this.getStoreOptionData())
       .then(() => this.getSelectVDCDStoreInfo())
       // this.getSelectVDCDStoreInfo()
@@ -992,7 +993,10 @@ export default {
       this.storeTypeData = []
       this.storeOptionData = []
       this.selectRegion = "전국"
-      this.loadData().then(() => this.selectedMapCODE = this.selectedCODE)
+      this.selectedMapCODE = this.selectedCODE
+      this.mapOrgStoreList = []
+      this.mapRegionData = []
+      this.loadData()
     },
     chageDate() {
       this.loadData()
@@ -1044,6 +1048,20 @@ export default {
     },
     toMain() {
       this.$router.replace("/")
+    },
+    toSalesStatus() {
+      // this.$router.replace("/StoreSalesStatus")
+      this.$router.push({
+          name: 'STO0003',
+          params: {
+            data: {
+              selectedCODE: this.selectedCODE, // 사업부 코드
+              choice: this.choice, // 월간
+              year: this.year, // 년도
+              month: this.month, // 월
+            }
+          }
+        })
     },
     chageStore() {
       this.toStoreDetail(this.store, this.choice)
