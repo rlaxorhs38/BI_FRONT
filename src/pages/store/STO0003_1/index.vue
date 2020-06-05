@@ -20,7 +20,7 @@
                     <i class="material-icons">arrow_back_ios</i>
                 </button>
                 <!-- Title -->
-                <h2 class="layout_title">전년 대비 월 평균 매출 현황<small class="txt_date"><strong class="point_col1">{{ SelectCodeName }} 사업부</strong></small></h2>
+                <h2 class="layout_title">월매출<small class="txt_date"><strong class="point_col1">{{ SelectCodeName }} 사업부</strong></small></h2>
                 <div class="layout_spacer"></div>
                 <!-- groups -->
                 <div class="groups">
@@ -182,14 +182,14 @@
                     </ul>
                 </div>
                 <div class="row">
-                    <div class="col_md_8">
+                    <div class="col_md_4">
                         <div class="cont_box">
                             <div class="tit">
                                 <strong class="tit_txt">신장매장 및 감소매장</strong>
                                 <div class="layout_spacer"></div>
                                 <span class="txt">(단위 : 백만원)</span>
                             </div>
-                            <div class="cont" style="height:310px;">
+                            <div class="cont" style="height:340px;">
                                 <div class="graph_area">
                                     <!-- 그래프 1 -->
                                     <div class="graph_view" style="width:50%;">
@@ -202,7 +202,7 @@
                                         </div>
                                         <!-- 그래프 -->
                                         <div class="graph">
-                                            <div id="chartdiv1" style="width: 100%; height:120px;">
+                                            <div id="chartdiv1" style="width: 100%; height:230px;">
                                             </div>
                                         </div>
                                     </div>
@@ -217,7 +217,7 @@
                                         </div>
                                         <!-- 그래프 -->
                                         <div class="graph">
-                                            <div id="chartdiv2" style="width: 100%; height:120px;"></div>
+                                            <div id="chartdiv2" style="width: 100%; height:230px;"></div>
                                         </div>
                                     </div>
                                     <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
@@ -234,8 +234,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col_md_4">
-                        <div class="cont_box">
+                    <div class="col_md_8">
+                        <!-- <div class="cont_box">
                             <div class="tit">
                                 <strong class="tit_txt">신규 및 철수매장</strong>
                                 <div class="layout_spacer"></div>
@@ -243,7 +243,7 @@
                             </div>
                             <div class="cont" style="height: 310px;">
                                 <div class="graph_area">
-                                    <!-- 그래프 1 -->
+                                    
                                     <div class="graph_view" style="width:50%;">
                                         <div class="graph_result gr_s">
                                             <span class="point_col1">신규매장</span>
@@ -252,7 +252,7 @@
                                             <div id="chartdiv3" style="width: 100%; height: 220px;"></div>
                                         </div>
                                     </div>
-                                    <!-- 그래프 2 -->
+                                    
                                     <div class="graph_view" style="width:50%;">
                                         <div class="graph_result gr_s">
                                             <span style="color: #FF8A97;">철수매장</span>
@@ -263,211 +263,209 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- box2 -->
-                <div class="cont_box">
-                    <div class="tit">
-                        <div class="tab">
-                            <ul>
-                                <li :class="{on: tab == 0}"><a href="javascript:void(0);" @click="chageTab(0)">지표별 매장 요약</a></li>
-                                <li :class="{on: tab == 1}"><a href="javascript:void(0);" @click="chageTab(1)">유통형태별 매장 요약</a></li>
-                            </ul>
-                        </div>
-                        <div class="layout_spacer"></div>
-                        <span class="txt">(단위 : 백만원)</span>
-                    </div>
-                    <div class="cont" v-show="tab == 0">
-                        <div class="graph_box">
-                            <!-- 타이틀 있을때 -->
+                        </div> -->
+                        <div class="cont_box">
                             <div class="tit">
-                                구분
-                                <div class="select_box">
-                                    <select class="select select_s" v-model="selectGubun" @change="changeGubun()">
-                                        <option value="0">매장수</option>
-                                        <option value="1">({{year}}.{{month}}){{month}}월 누계</option>
-                                        <option value="2">월평균</option>
-                                        <option value="3">매장별 평균</option>
-                                    </select>
+                                <div class="tab">
+                                    <ul>
+                                        <li :class="{on: tab == 0}"><a href="javascript:void(0);" @click="chageTab(0)">지표별 매장 요약</a></li>
+                                        <li :class="{on: tab == 1}"><a href="javascript:void(0);" @click="chageTab(1)">유통형태별 매장 요약</a></li>
+                                    </ul>
+                                </div>
+                                <div class="layout_spacer"></div>
+                                <span class="txt">(단위 : 백만원)</span>
+                            </div>
+                            <div class="cont" v-show="tab == 0">
+                                <div class="graph_box">
+                                    <!-- 타이틀 있을때 -->
+                                    <div class="tit" style="padding: 8px 0;">
+                                        구분
+                                        <div class="select_box">
+                                            <select class="select select_s" v-model="selectGubun" @change="changeGubun()">
+                                                <option value="0">매장수</option>
+                                                <option value="1">월누계</option>
+                                                <option value="2">월평균</option>
+                                                <option value="3">매장별 평균</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- 기본 그래프만 넣을때 -->
+                                    <div class="graph_area gv_line" style="padding-bottom: 8px;">
+                                        <!-- 그래프 1 -->
+                                        <div class="graph_view np col_md_4">
+                                            <!-- 칩 -->
+                                            <span class="chip chip_m"><span class="chip_text txt_bold">유통형태별 비중</span></span>
+                                            <!-- 그래프 -->
+                                            <div class="graph" style="">
+                                                <!-- <div class="col_md_6" style="position:relative; left:70px">
+                                                    <div class="graph">
+                                                        <div id="chartdiv5" style="width: 100%; height: 330px;">
+                                                        </div>
+                                                    </div>
+                                                </div> -->
+                                                <div class="" style="width: 100%">
+                                                    <div class="graph">
+                                                        <div id="chartdiv6" style="width: 100%; height: 205px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 그래프 2 -->
+                                        <div class="graph_view np col_md_7">
+                                            <!-- 칩 -->
+                                            <!-- 구분 select opction에 따라 명칭 변경 -->
+                                            <span class="chip chip_m" style=" border-color: #00C0D0;">
+                                                <span class="chip_text txt_bold" style="color: #00C0D0;" v-if="selectGubun == 0">매장수 비교</span>
+                                                <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 1">{{month}}월 누계 비교(백만원)</span>
+                                                <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 2">월평균 비교</span>
+                                                <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 3">매장별 평균 비교</span>
+                                            </span>
+                                            <!-- 그래프 -->
+                                            <div class="graph">
+                                                <div id="chartdiv7" style="width: 100%; height: 200px;"></div>
+                                            </div>
+                                            <!-- <div class="graph" style="height: 170px;">
+                                                <div class="col_md_3">
+                                                    <div class="graph_result">
+                                                        <dl>
+                                                            <dt class="tit">백화점</dt>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="graph">
+                                                        <div id="chartdiv7" style="width: 100%; height: 150px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col_md_3">
+                                                    <div class="graph_result">
+                                                        <dl>
+                                                            <dt class="tit">몰</dt>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="graph">
+                                                        <div id="chartdiv8" style="width: 100%; height: 150px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col_md_3">
+                                                    <div class="graph_result">
+                                                        <dl>
+                                                            <dt class="tit">대리점</dt>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="graph">
+                                                        <div id="chartdiv9" style="width: 100%; height: 150px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col_md_3">
+                                                    <div class="graph_result">
+                                                        <dl>
+                                                            <dt class="tit">온라인 및 기타</dt>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="graph">
+                                                        <div id="chartdiv10" style="width: 100%; height: 150px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> -->
+                                            <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
+                                            <div class="graph_category" style="padding: 10px 0;">
+                                                <ul>
+                                                    <li><span class="ico_dot" style="background-color:#00D8E1;"></span>{{ year-1 }}년</li>
+                                                    <li><span class="ico_dot" style="background-color:#00BECF;"></span>{{ year }}년</li>
+                                                    <!-- <li><span class="ico_dot" style="background-color:#C6C6C7;"></span>증가</li>
+                                                    <li><span class="ico_dot" style="background-color:#FFA89F;"></span>감소</li> -->
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- 기본 그래프만 넣을때 -->
-                            <div class="graph_area gv_line">
-                                <!-- 그래프 1 -->
-                                <div class="graph_view np col_md_5">
-                                    <!-- 칩 -->
-                                    <span class="chip chip_m"><span class="chip_text txt_bold">유통형태별 비중</span></span>
-                                    <!-- 그래프 -->
-                                    <div class="graph" style="height: 330px;width:1000px;">
-                                        <div class="col_md_6" style="position:relative; left:70px">
-                                            <div class="graph">
-                                                <div id="chartdiv5" style="width: 100%; height: 330px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col_md_6" style="position:relative; left:-80px">
-                                            <div class="graph">
-                                                <div id="chartdiv6" style="width: 100%; height: 330px;">
-                                                </div>
-                                            </div>
+                            <div class="cont" v-show="tab == 1">
+                                <div class="graph_box">
+                                    <!-- 타이틀 있을때 -->
+                                    <div class="tit" style="padding: 8px 0;">구분
+                                        <div class="select_box">
+                                            <select class="select select_s" v-model="selectShtpGubun" @change="changeShtpGubun()">
+                                                <option value="전체">유통형태 전체</option>
+                                                <option value="백화점">백화점</option>
+                                                <option value="몰">몰</option>
+                                                <option value="대리점">대리점</option>
+                                                <option value="기타">온라인 및 기타</option>
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- 그래프 2 -->
-                                <div class="graph_view np col_md_7">
-                                    <!-- 칩 -->
-                                    <!-- 구분 select opction에 따라 명칭 변경 -->
-                                    <span class="chip chip_m" style=" border-color: #00C0D0;">
-                                        <span class="chip_text txt_bold" style="color: #00C0D0;" v-if="selectGubun == 0">매장수 비교</span>
-                                        <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 1">{{month}}월 누계 비교(백만원)</span>
-                                        <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 2">월평균 비교</span>
-                                        <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 3">매장별 평균 비교</span>
-                                    </span>
-                                    <!-- 그래프 -->
-                                    <div class="graph" style="height: 280px;">
-                                        <div class="col_md_3">
-                                            <!-- 텍스트 값 -->
-                                            <div class="graph_result">
-                                                <dl>
-                                                    <dt class="tit">백화점</dt>
-                                                </dl>
-                                            </div>
-                                            <div class="graph">
-                                                <div id="chartdiv7" style="width: 100%; height: 200px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col_md_3">
-                                            <!-- 텍스트 값 -->
-                                            <div class="graph_result">
-                                                <dl>
-                                                    <dt class="tit">몰</dt>
-                                                </dl>
-                                            </div>
-                                            <div class="graph">
-                                                <div id="chartdiv8" style="width: 100%; height: 200px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col_md_3">
-                                            <!-- 텍스트 값 -->
-                                            <div class="graph_result">
-                                                <dl>
-                                                    <dt class="tit">대리점</dt>
-                                                </dl>
-                                            </div>
-                                            <div class="graph">
-                                                <div id="chartdiv9" style="width: 100%; height: 200px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col_md_3">
-                                            <!-- 텍스트 값 -->
-                                            <div class="graph_result">
-                                                <dl>
-                                                    <dt class="tit">온라인 및 기타</dt>
-                                                </dl>
-                                            </div>
-                                            <div class="graph">
-                                                <div id="chartdiv10" style="width: 100%; height: 200px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
-                                    <div class="graph_category">
-                                        <ul>
-                                            <li><span class="ico_dot" style="background-color:#00D8E1;"></span>{{ year-1 }}년</li>
-                                            <li><span class="ico_dot" style="background-color:#00BECF;"></span>{{ year }}년</li>
-                                            <li><span class="ico_dot" style="background-color:#C6C6C7;"></span>증가</li>
-                                            <li><span class="ico_dot" style="background-color:#FFA89F;"></span>감소</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="cont" style="height:440px;" v-show="tab == 1">
-                        <div class="graph_box">
-                            <!-- 타이틀 있을때 -->
-                            <div class="tit">구분
-                                <div class="select_box">
-                                    <select class="select select_s" v-model="selectShtpGubun" @change="changeShtpGubun()">
-                                        <option value="전체">유통형태 전체</option>
-                                        <option value="백화점">백화점</option>
-                                        <option value="몰">몰</option>
-                                        <option value="대리점">대리점</option>
-                                        <option value="기타">온라인 및 기타</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- 기본 그래프만 넣을때 -->
-                            <div class="graph_area">
-                                <!-- 그래프 2 -->
-                                <div class="graph_view np">
-                                    <!-- 그래프 -->
-                                    <div class="graph">
-                                        <div class="col_md_3">
-                                            <!-- 텍스트 값 -->
-                                            <div class="graph_result">
-                                                <dl>
-                                                    <dt class="tit">매장수</dt>
-                                                </dl>
-                                            </div>
+                                    <!-- 기본 그래프만 넣을때 -->
+                                    <div class="graph_area" style="padding-bottom: 8px;">
+                                        <!-- 그래프 2 -->
+                                        <div class="graph_view np">
+                                            <!-- 그래프 -->
                                             <div class="graph">
-                                                <div id="chartdiv11" style="width: 100%; height: 240px;">
+                                                <div class="col_md_3" style="padding: 0px 10px 3px;">
+                                                    <!-- 텍스트 값 -->
+                                                    <div class="graph_result">
+                                                        <dl>
+                                                            <dt class="tit">매장수</dt>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="graph">
+                                                        <div id="chartdiv11" style="width: 100%; height: 200px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col_md_3" style="padding: 0px 10px 3px;">
+                                                    <!-- 텍스트 값 -->
+                                                    <div class="graph_result">
+                                                        <dl>
+                                                            <dt class="tit">{{month}}월 누계</dt>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="graph">
+                                                        <div id="chartdiv12" style="width: 100%; height: 200px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col_md_3" style="padding: 0px 10px 3px;">
+                                                    <!-- 텍스트 값 -->
+                                                    <div class="graph_result">
+                                                        <dl>
+                                                            <dt class="tit">월 평균</dt>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="graph">
+                                                        <div id="chartdiv13" style="width: 100%; height: 200px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col_md_3" style="padding: 0px 10px 3px;">
+                                                    <!-- 텍스트 값 -->
+                                                    <div class="graph_result">
+                                                        <dl>
+                                                            <dt class="tit">매장별 평균</dt>
+                                                        </dl>
+                                                    </div>
+                                                    <div class="graph">
+                                                        <div id="chartdiv14" style="width: 100%; height: 200px;">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col_md_3">
-                                            <!-- 텍스트 값 -->
-                                            <div class="graph_result">
-                                                <dl>
-                                                    <dt class="tit">{{month}}월 누계</dt>
-                                                </dl>
-                                            </div>
-                                            <div class="graph">
-                                                <div id="chartdiv12" style="width: 100%; height: 240px;">
-                                                </div>
+                                            <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
+                                            <div class="graph_category" style="padding: 10px 0;">
+                                                <ul>
+                                                    <li><span class="ico_dot" style="background-color:#8BBEF9;"></span>{{ year-1 }}년</li>
+                                                    <li><span class="ico_dot" style="background-color:#3F93F5;"></span>{{ year }}년</li>
+                                                    <!-- <li><span class="ico_dot" style="background-color:#C6C6C7;"></span>증가</li>
+                                                    <li><span class="ico_dot" style="background-color:#FFA89F;"></span>감소</li> -->
+                                                </ul>
                                             </div>
                                         </div>
-                                        <div class="col_md_3">
-                                            <!-- 텍스트 값 -->
-                                            <div class="graph_result">
-                                                <dl>
-                                                    <dt class="tit">월 평균</dt>
-                                                </dl>
-                                            </div>
-                                            <div class="graph">
-                                                <div id="chartdiv13" style="width: 100%; height: 240px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col_md_3">
-                                            <!-- 텍스트 값 -->
-                                            <div class="graph_result">
-                                                <dl>
-                                                    <dt class="tit">매장별 평균</dt>
-                                                </dl>
-                                            </div>
-                                            <div class="graph">
-                                                <div id="chartdiv14" style="width: 100%; height: 240px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
-                                    <div class="graph_category">
-                                        <ul>
-                                            <li><span class="ico_dot" style="background-color:#8BBEF9;"></span>{{ year-1 }}년</li>
-                                            <li><span class="ico_dot" style="background-color:#3F93F5;"></span>{{ year }}년</li>
-                                            <li><span class="ico_dot" style="background-color:#C6C6C7;"></span>증가</li>
-                                            <li><span class="ico_dot" style="background-color:#FFA89F;"></span>감소</li>
-                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -594,6 +592,12 @@ export default {
       monthSalesPopupData: {},
       salesTotal: [],
       selectedCODE: "1",
+      gubuns: [
+            {category_en: "department", category_ko: "백화점"},
+            {category_en: "mall",       category_ko: "몰"},
+            {category_en: "agency",     category_ko: "대리점"},
+            {category_en: "online",     category_ko: "온라인및기타"}
+        ]
     }
   },
   methods: {
@@ -667,7 +671,7 @@ export default {
                             SUNM: "전체"
                         }
                         // this.salesTotal.unshift(totOnj)
-                        console.log("salesTotal >>> ", this.salesTotal);
+                        // console.log("salesTotal >>> ", this.salesTotal);
                     }
                 }
             },
@@ -764,7 +768,10 @@ export default {
 
                     let cnt = _.get(listData, '0.CNT')
                     let money = Math.round(_.get(listData, '0.MONCHANGE')/1000000)
-                    this.getInDeCreaseStore(cnt,money)
+
+                    let wthdr_cnt = _.get(listData, '1.CNT')
+                    let wthdr_money = Math.round(_.get(listData, '1.MONCHANGE')/1000000)
+                    this.getInDeCreaseStore(cnt,money,wthdr_cnt,Math.abs(wthdr_money))
                 }
             },
             rej => {
@@ -773,7 +780,7 @@ export default {
         )
     },
     
-    getInDeCreaseStore(cnt,money) {
+    getInDeCreaseStore(cnt,money,cntWthdr,moneyWthdr) {
         // 신장매장 및 감소매장
         this.req2svr.getInDeCreaseStore(this.selectSucd, this.year, this.month).then(
             res => {
@@ -800,19 +807,26 @@ export default {
                     let cntDe = _.filter(this.listData, function(v){return v.AMT != 0 && v.MONCHANGERR < 0}).length
                     let cntNew = cnt
 
-                    this.storeCntData.push({category:"신장매장", in20under:cntIn20Under, in50under:cntIn50Under, in50over:cntIn50Over, de:0, minus_de:0, new:0, tot:this.currency(cntIn20Under+cntIn50Under+cntIn50Over)})
-                    this.storeCntData.push({category:"감소매장", in20under:0, in50under:0, in50over:0, de:cntDe, minus_de:this.currency("-"+cntDe), new:0, tot:this.currency("-"+cntDe)})
-                    this.storeCntData.push({category:"신규매장", in20under:0, in50under:0, in50over:0, de:0, minus_de:0, new:cntNew, tot:this.currency(cntNew)})
+                    // this.storeCntData.push({category:"신장/신규", in20under:cntIn20Under, in50under:cntIn50Under, in50over:cntIn50Over, new:cntNew, de:'', minus_de:'', wthdr:'', minus_wthdr:'', tot:this.currency(cntIn20Under+cntIn50Under+cntIn50Over+Number(cntNew))})
+                    // this.storeCntData.push({category:"감소/철수", in20under:'', in50under:'', in50over:'', new:'', de:cntDe, minus_de:this.currency("-"+cntDe), wthdr:Number(cntWthdr), minus_wthdr:this.currency("-"+cntWthdr), tot:this.currency("-"+(cntDe+Number(cntWthdr)))})
+                    
+                    this.storeCntData.push({category:"신장", in20under:cntIn20Under, in50under:cntIn50Under, in50over:cntIn50Over, tot:this.currency(cntIn20Under+cntIn50Under+cntIn50Over)})
+                    this.storeCntData.push({category:"감소", de:cntDe, minus_de:this.currency("-"+cntDe), tot:this.currency("-"+cntDe)})
+                    this.storeCntData.push({category:"신규", new:cntNew, tot:this.currency(cntNew)})
+                    this.storeCntData.push({category:"철수", wthdr:Number(cntWthdr), minus_wthdr:this.currency("-"+cntWthdr), tot:this.currency("-"+cntWthdr)})
 
                     // 전체 매장수는 신장매장+감소매장+신규매장은 제외
                     this.storeTotCnt = 0
                     for(let i=0; i<this.storeCntData.length; i++) {
-                        this.storeTotCnt += 
-                        Number(this.storeCntData[i].in20under) + 
-                        Number(this.storeCntData[i].in50under) + 
-                        Number(this.storeCntData[i].in50over) + 
-                        Number(this.storeCntData[i].de) +
-                        Number(this.storeCntData[i].new)
+                        // this.storeTotCnt += 
+                        // this.storeCntData[i].in20under?Number(this.storeCntData[i].in20under):0 + 
+                        // this.storeCntData[i].in50under?Number(this.storeCntData[i].in50under):0 + 
+                        // this.storeCntData[i].in50over?Number(this.storeCntData[i].in50over):0 + 
+                        // this.storeCntData[i].de?Number(this.storeCntData[i].de):0 +
+                        // this.storeCntData[i].new?Number(this.storeCntData[i].new):0
+                        if(!this.storeCntData[i].wthdr) {
+                            this.storeTotCnt += Number(Math.abs(this.storeCntData[i].tot.replace(/,/g,"")))
+                        }
                     }
 
                     // 금액
@@ -822,21 +836,28 @@ export default {
                     let moneyDe = _(this.listData).filter(v => v.AMT != 0 && v.MONCHANGERR < 0).sumBy(({AMT}) => + Number(AMT))
                     let moneyNew = money
 
-                    this.storeMoneyData.push({category:"신장매장", in20under:Math.round(moneyIn20Under/1000000), in50under:Math.round(moneyIn50Under/1000000), in50over:Math.round(moneyIn50Over/1000000), de:0, minus_de:0, new:0, tot:this.currency(Math.round(moneyIn20Under/1000000)+Math.round(moneyIn50Under/1000000)+Math.round(moneyIn50Over/1000000))})
-                    this.storeMoneyData.push({category:"감소매장", in20under:0, in50under:0, in50over:0, de:Math.round(moneyDe/1000000), minus_de:this.currency("-"+Math.round(moneyDe/1000000)), new:0, tot:this.currency("-"+Math.round(moneyDe/1000000))})
-                    this.storeMoneyData.push({category:"신규매장", in20under:0, in50under:0, in50over:0, de:0, minus_de:0, new:moneyNew, tot:this.currency(moneyNew)})
+                    // this.storeMoneyData.push({category:"신장/신규", in20under:Math.round(moneyIn20Under/1000000), in50under:Math.round(moneyIn50Under/1000000), in50over:Math.round(moneyIn50Over/1000000), new:Number(moneyNew), de:'', minus_de:'', wthdr:'', minus_wthdr:'', tot:this.currency(Math.round(moneyIn20Under/1000000)+Math.round(moneyIn50Under/1000000)+Math.round(moneyIn50Over/1000000)+moneyNew)})
+                    // this.storeMoneyData.push({category:"감소/철수", in20under:'', in50under:'', in50over:'', new:'', de:Math.round(moneyDe/1000000), minus_de:this.currency("-"+Math.round(moneyDe/1000000)), wthdr:Number(moneyWthdr), minus_wthdr:this.currency("-"+moneyWthdr), tot:this.currency("-"+(Math.round(moneyDe/1000000)+moneyWthdr))})
+                    
+                    this.storeMoneyData.push({category:"신장", in20under:Math.round(moneyIn20Under/1000000), in50under:Math.round(moneyIn50Under/1000000), in50over:Math.round(moneyIn50Over/1000000), tot:this.currency(Math.round(moneyIn20Under/1000000)+Math.round(moneyIn50Under/1000000)+Math.round(moneyIn50Over/1000000))})
+                    this.storeMoneyData.push({category:"감소", de:Math.round(moneyDe/1000000), minus_de:this.currency("-"+Math.round(moneyDe/1000000)), tot:this.currency("-"+Math.round(moneyDe/1000000))})
+                    this.storeMoneyData.push({category:"신규", new:moneyNew, tot:this.currency(moneyNew)})
+                    this.storeMoneyData.push({category:"철수", wthdr:Number(moneyWthdr), minus_wthdr:this.currency("-"+moneyWthdr), tot:this.currency(Number(moneyWthdr))})
 
                     // 전체 매장수는 신장매장+감소매장(신규매장은 제외)
                     this.storeTotMoney = 0
+                    
                     for(let i=0; i<this.storeMoneyData.length; i++) {
-                        this.storeTotMoney += 
-                        Number(this.storeMoneyData[i].in20under) + 
-                        Number(this.storeMoneyData[i].in50under) + 
-                        Number(this.storeMoneyData[i].in50over) - 
-                        Number(this.storeMoneyData[i].de) +
-                        Number(this.storeMoneyData[i].new)
+                        // this.storeTotMoney += 
+                        // this.storeMoneyData[i].in20under?Number(this.storeMoneyData[i].in20under):0 + 
+                        // this.storeMoneyData[i].in50under?Number(this.storeMoneyData[i].in50under):0 + 
+                        // this.storeMoneyData[i].in50over?Number(this.storeMoneyData[i].in50over):0 - 
+                        // this.storeMoneyData[i].de?Number(this.storeMoneyData[i].de):0 +
+                        // this.storeMoneyData[i].new?Number(this.storeMoneyData[i].new):0
+                        if(!this.storeMoneyData[i].wthdr) {
+                            this.storeTotMoney += Number(this.storeMoneyData[i].tot.replace(/,/g,""))
+                        }
                     }
-                    console.log("storeCntData >>> ", this.storeCntData)
                     this.openCloseChart1(this.storeCntData, 1)
                     this.openCloseChart1(this.storeMoneyData, 2)
                 }
@@ -957,6 +978,8 @@ export default {
 
     },
     getCompareStore() {
+        let tot_data = []
+        let color = ""
         // 지표별 매장 요약 > 매장수
         let department = ((this.cuIndexData.department/this.cuIndexData.tot)*100).toFixed(1)
         let mall = ((this.cuIndexData.mall/this.cuIndexData.tot)*100).toFixed(1)
@@ -967,48 +990,83 @@ export default {
         paramData_department.push({category:(this.year-1) + "년", absdata:this.lastIndexData.department, ogdata:this.lastIndexData.department, color: "#4fdbe2"})
         paramData_department.push({category:this.year + "년", absdata:this.cuIndexData.department, ogdata:this.cuIndexData.department, color: "#00becf"})
         if(this.cuIndexData.department-this.lastIndexData.department > 0) {
-            paramData_department.push({category:"증감", absdata:Math.abs(this.cuIndexData.department-this.lastIndexData.department), ogdata:this.cuIndexData.department-this.lastIndexData.department, color: "rgb(198, 198, 199)"})
+            color = "rgb(198, 198, 199)"
         } else {
-            paramData_department.push({category:"증감", absdata:Math.abs(this.cuIndexData.department-this.lastIndexData.department), ogdata:this.cuIndexData.department-this.lastIndexData.department, color: "#ffa89f"})
+            color = "#ffa89f"
         }
+        paramData_department.push({category:"증감", absdata:Math.abs(this.cuIndexData.department-this.lastIndexData.department), ogdata:this.cuIndexData.department-this.lastIndexData.department, color: color})
+        tot_data.push({
+            category_en:"department", category: "백화점", 
+            lastyear: this.year-1, cuyear: this.year, 
+            lastdata: this.lastIndexData.department, cudata: this.cuIndexData.department, 
+            abs_incredata: Math.abs(this.cuIndexData.department-this.lastIndexData.department), incredata: this.cuIndexData.department-this.lastIndexData.department,
+            incredata_color: color
+        })
         
 
         let paramData_mall = []
         paramData_mall.push({category:(this.year-1) + "년", absdata:this.lastIndexData.mall, ogdata:this.lastIndexData.mall, color: "#4fdbe2"})
         paramData_mall.push({category:this.year + "년", absdata:this.cuIndexData.mall, ogdata:this.cuIndexData.mall, color: "#00becf"})
         if(this.cuIndexData.mall-this.lastIndexData.mall > 0) {
-            paramData_mall.push({category:"증감", absdata:Math.abs(this.cuIndexData.mall-this.lastIndexData.mall), ogdata:this.cuIndexData.mall-this.lastIndexData.mall, color: "rgb(198, 198, 199)"})
+            color = "rgb(198, 198, 199)"
         } else {
-            paramData_mall.push({category:"증감", absdata:Math.abs(this.cuIndexData.mall-this.lastIndexData.mall), ogdata:this.cuIndexData.mall-this.lastIndexData.mall, color: "#ffa89f"})
+            color = "#ffa89f"
         }
+        paramData_mall.push({category:"증감", absdata:Math.abs(this.cuIndexData.mall-this.lastIndexData.mall), ogdata:this.cuIndexData.mall-this.lastIndexData.mall, color: color})
+        tot_data.push({
+            category_en:"mall", category: "몰", 
+            lastyear: this.year-1, cuyear: this.year, 
+            lastdata: this.lastIndexData.mall, cudata: this.cuIndexData.mall, 
+            abs_incredata: Math.abs(this.cuIndexData.mall-this.lastIndexData.mall), incredata: this.cuIndexData.mall-this.lastIndexData.mall,
+            incredata_color: color
+        })
         
 
         let paramData_agency = []
         paramData_agency.push({category:(this.year-1) + "년", absdata:this.lastIndexData.agency, ogdata:this.lastIndexData.agency, color: "#4fdbe2"})
         paramData_agency.push({category:this.year + "년", absdata:this.cuIndexData.agency, ogdata:this.cuIndexData.agency, color: "#00becf"})
         if(this.cuIndexData.agency-this.lastIndexData.agency > 0) {
-            paramData_agency.push({category:"증감", absdata:Math.abs(this.cuIndexData.agency-this.lastIndexData.agency), ogdata:this.cuIndexData.agency-this.lastIndexData.agency, color: "rgb(198, 198, 199)"})
+            color = "rgb(198, 198, 199)"
         } else {
-            paramData_agency.push({category:"증감", absdata:Math.abs(this.cuIndexData.agency-this.lastIndexData.agency), ogdata:this.cuIndexData.agency-this.lastIndexData.agency, color: "#ffa89f"})
+            color = "#ffa89f"
         }
+        paramData_agency.push({category:"증감", absdata:Math.abs(this.cuIndexData.agency-this.lastIndexData.agency), ogdata:this.cuIndexData.agency-this.lastIndexData.agency, color: color})
+        tot_data.push({
+            category_en:"agency", category: "대리점", 
+            lastyear: this.year-1, cuyear: this.year, 
+            lastdata: this.lastIndexData.agency, cudata: this.cuIndexData.agency, 
+            abs_incredata: Math.abs(this.cuIndexData.agency-this.lastIndexData.agency), incredata: this.cuIndexData.agency-this.lastIndexData.agency,
+            incredata_color: color
+        })
         
 
         let paramData_online = []
         paramData_online.push({category:(this.year-1) + "년", absdata:this.lastIndexData.online, ogdata:this.lastIndexData.online, color: "#4fdbe2"})
         paramData_online.push({category:this.year + "년", absdata:this.cuIndexData.online, ogdata:this.cuIndexData.online, color: "#00becf"})
         if(this.cuIndexData.online-this.lastIndexData.online > 0) {
-            paramData_online.push({category:"증감", absdata:Math.abs(this.cuIndexData.online-this.lastIndexData.online), ogdata:this.cuIndexData.online-this.lastIndexData.online, color: "rgb(198, 198, 199)"})
+            color = "rgb(198, 198, 199)"
         } else {
-            paramData_online.push({category:"증감", absdata:Math.abs(this.cuIndexData.online-this.lastIndexData.online), ogdata:this.cuIndexData.online-this.lastIndexData.online, color: "#ffa89f"})
+            color = "#ffa89f"
         }
+        paramData_online.push({category:"증감", absdata:Math.abs(this.cuIndexData.online-this.lastIndexData.online), ogdata:this.cuIndexData.online-this.lastIndexData.online, color: color})
+        tot_data.push({
+            category_en:"online", category: "온라인 및 기타", 
+            lastyear: this.year-1, cuyear: this.year, 
+            lastdata: this.lastIndexData.online, cudata: this.cuIndexData.online, 
+            abs_incredata: Math.abs(this.cuIndexData.online-this.lastIndexData.online), incredata: this.cuIndexData.online-this.lastIndexData.online,
+            incredata_color: color
+        })
         
         // 매장수 차트
-        this.storeChart(paramData_department, 7)
-        this.storeChart(paramData_mall, 8)
-        this.storeChart(paramData_agency, 9)
-        this.storeChart(paramData_online, 10)
+        // this.storeChart(paramData_department, 7)
+        // this.storeChart(paramData_mall, 8)
+        // this.storeChart(paramData_agency, 9)
+        // this.storeChart(paramData_online, 10)
+        this.storeChart_temp(tot_data)
     },
     getMonthAcc() {
+        let tot_data = []
+        let color = ""
         // 지표별 매장 요약 > 매장수 > 월 누계
         let last_department = ((this.lastIndexData.department_amt/this.lastIndexData.tot_amt)*100).toFixed(1)
         let last_mall = ((this.lastIndexData.mall_amt/this.lastIndexData.tot_amt)*100).toFixed(1)
@@ -1183,12 +1241,31 @@ export default {
                 }
             )
         }
+
+
+        for(let i in this.gubuns) {
+            if(this.cuIndexData[this.gubuns[i].category_en+"_amt"]-this.lastIndexData[this.gubuns[i].category_en+"_amt"] > 0) {
+                color = "rgb(198, 198, 199)"
+            } else {
+                color = "#ffa89f"
+            }
+            tot_data.push({
+                category_en:this.gubuns[i].category_en, category: this.gubuns[i].category_ko, 
+                lastyear: this.year-1, cuyear: this.year, 
+                lastdata: Math.round(this.lastIndexData[this.gubuns[i].category_en+"_amt"]/1000000), 
+                cudata: Math.round(this.cuIndexData[this.gubuns[i].category_en+"_amt"]/1000000), 
+                abs_incredata: Math.abs(Math.round((this.cuIndexData[this.gubuns[i].category_en+"_amt"]-this.lastIndexData[this.gubuns[i].category_en+"_amt"])/1000000)), 
+                incredata: Math.round((this.cuIndexData[this.gubuns[i].category_en+"_amt"]-this.lastIndexData[this.gubuns[i].category_en+"_amt"])/1000000),
+                incredata_color: color
+            })
+        }
             
         // 월 누계 차트
-        this.storeChart(paramData_department, 7)
-        this.storeChart(paramData_mall, 8)
-        this.storeChart(paramData_agency, 9)
-        this.storeChart(paramData_online, 10)    
+        // this.storeChart(paramData_department, 7)
+        // this.storeChart(paramData_mall, 8)
+        // this.storeChart(paramData_agency, 9)
+        // this.storeChart(paramData_online, 10)
+        this.storeChart_temp(tot_data)
     },
     getMonthAvg() {
         // 지표별 매장 요약 > 월평균
@@ -1400,11 +1477,32 @@ export default {
                         )
                     }
 
+                    let tot_data = []
+                    let color = ""
+
+                    for(let i in this.gubuns) {
+                        if(this.cuMonthAvgData[this.gubuns[i].category_en]-this.lastMonthAvgData[this.gubuns[i].category_en] > 0) {
+                            color = "rgb(198, 198, 199)"
+                        } else {
+                            color = "#ffa89f"
+                        }
+                        tot_data.push({
+                            category_en:this.gubuns[i].category_en, category: this.gubuns[i].category_ko, 
+                            lastyear: this.year-1, cuyear: this.year, 
+                            lastdata: Math.round(this.lastMonthAvgData[this.gubuns[i].category_en]/1000000), 
+                            cudata: Math.round(this.cuMonthAvgData[this.gubuns[i].category_en]/1000000), 
+                            abs_incredata: Math.abs(Math.round((this.cuMonthAvgData[this.gubuns[i].category_en]-this.lastMonthAvgData[this.gubuns[i].category_en])/1000000)), 
+                            incredata: Math.round((this.cuMonthAvgData[this.gubuns[i].category_en]-this.lastMonthAvgData[this.gubuns[i].category_en])/1000000),
+                            incredata_color: color
+                        })
+                    }
+
                     // 월평균 차트
-                    this.storeChart(paramData_department, 7)
-                    this.storeChart(paramData_mall, 8)
-                    this.storeChart(paramData_agency, 9)
-                    this.storeChart(paramData_online, 10)   
+                    // this.storeChart(paramData_department, 7)
+                    // this.storeChart(paramData_mall, 8)
+                    // this.storeChart(paramData_agency, 9)
+                    // this.storeChart(paramData_online, 10)   
+                    this.storeChart_temp(tot_data)
                 }
             },
             rej => {
@@ -1634,11 +1732,32 @@ export default {
                         )
                     }
 
+                    let tot_data = []
+                    let color = ""
+
+                    for(let i in this.gubuns) {
+                        if(this.cuMonthStoreAvgData[this.gubuns[i].category_en]-this.lastMonthStoreAvgData[this.gubuns[i].category_en] > 0) {
+                            color = "rgb(198, 198, 199)"
+                        } else {
+                            color = "#ffa89f"
+                        }
+                        tot_data.push({
+                            category_en:this.gubuns[i].category_en, category: this.gubuns[i].category_ko, 
+                            lastyear: this.year-1, cuyear: this.year, 
+                            lastdata: Math.round(this.lastMonthStoreAvgData[this.gubuns[i].category_en]/1000000), 
+                            cudata: Math.round(this.cuMonthStoreAvgData[this.gubuns[i].category_en]/1000000), 
+                            abs_incredata: Math.abs(Math.round((this.cuMonthStoreAvgData[this.gubuns[i].category_en]-this.lastMonthStoreAvgData[this.gubuns[i].category_en])/1000000)), 
+                            incredata: Math.round((this.cuMonthStoreAvgData[this.gubuns[i].category_en]-this.lastMonthStoreAvgData[this.gubuns[i].category_en])/1000000),
+                            incredata_color: color
+                        })
+                    }
+
                     // 매장별평균 차트
-                    this.storeChart(paramData_department, 7)
-                    this.storeChart(paramData_mall, 8)
-                    this.storeChart(paramData_agency, 9)
-                    this.storeChart(paramData_online, 10)   
+                    // this.storeChart(paramData_department, 7)
+                    // this.storeChart(paramData_mall, 8)
+                    // this.storeChart(paramData_agency, 9)
+                    // this.storeChart(paramData_online, 10)
+                    this.storeChart_temp(tot_data)
                 }
             },
             rej => {
@@ -1650,21 +1769,38 @@ export default {
     getShtpStore(key) {
         // 유통형태별 매장 요약 > 매장수
         let paramData = []
-        paramData.push({category:this.year-1, result:this.lastIndexData[key], color:"rgb(140, 190, 249)"})
-        paramData.push({category:this.year, result:this.cuIndexData[key], color:"rgb(63, 147, 245)"})
-        paramData.push({category:"증감", result:this.cuIndexData[key]-this.lastIndexData[key], color:"rgb(255, 168, 159)"})
+        // paramData.push({category:this.year-1, result:this.lastIndexData[key], color:"rgb(140, 190, 249)"})
+        // paramData.push({category:this.year, result:this.cuIndexData[key], color:"rgb(63, 147, 245)"})
+        // paramData.push({category:"증감", result:this.cuIndexData[key]-this.lastIndexData[key], color:"rgb(255, 168, 159)"})
+        let text = ""
+        if(this.cuIndexData[key]-this.lastIndexData[key] > 0) { text = "증가" } 
+        else if(this.cuIndexData[key]-this.lastIndexData[key] < 0) { text = "감소" } 
+        else { text = "동일" }
 
-        this.openCloseMakeChart2(paramData, 11)
+        paramData.push({category:this.year-1,   lastdata:this.lastIndexData[key],   color:"rgb(140, 190, 249)"})
+        paramData.push({category:this.year,     cudata:this.cuIndexData[key],       color:"rgb(63, 147, 245)", result:this.currency(this.cuIndexData[key]-this.lastIndexData[key]), text: text})
+
+        // this.openCloseMakeChart2(paramData, 11)
+        this.openCloseMakeChart3(paramData, 11)
     },
     getMonthAcc2(key) {
         // 유통형태별 매장 요약 > 월 누계
         let paramData = []
         
-        paramData.push({category:this.year-1, result:Math.round(this.lastIndexData[key]/1000000), color:"rgb(140, 190, 249)"})
-        paramData.push({category:this.year, result:Math.round(this.cuIndexData[key]/1000000), color:"rgb(63, 147, 245)"})
-        paramData.push({category:"증감", result:Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000), color:"rgb(255, 168, 159)"})
+        // paramData.push({category:this.year-1, result:Math.round(this.lastIndexData[key]/1000000), color:"rgb(140, 190, 249)"})
+        // paramData.push({category:this.year, result:Math.round(this.cuIndexData[key]/1000000), color:"rgb(63, 147, 245)"})
+        // paramData.push({category:"증감", result:Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000), color:"rgb(255, 168, 159)"})
         
-        this.openCloseMakeChart2(paramData, 12)
+        // this.openCloseMakeChart2(paramData, 12)
+
+        let text = ""
+        if(Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000) > 0) { text = "증가" } 
+        else if(Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000) < 0) { text = "감소" } 
+        else { text = "동일" }
+        paramData.push({category:this.year-1,   lastdata:Math.round(this.lastIndexData[key]/1000000),   color:"rgb(140, 190, 249)"})
+        paramData.push({category:this.year,     cudata:Math.round(this.cuIndexData[key]/1000000),       color:"rgb(63, 147, 245)", result:this.currency(Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000)), text: text })
+        
+        this.openCloseMakeChart3(paramData, 12)
     },
     getMonthlySalesAverage() {
         // 유통형태별 매장 요약 > 월 평균
@@ -1685,11 +1821,20 @@ export default {
                     }
                     
                     let paramData = []
-                    paramData.push({category:this.year-1, result:Math.round(this.monthlyAverageData.LAST_AVGMON/1000000), color:"rgb(140, 190, 249)"})
-                    paramData.push({category:this.year, result:Math.round(this.monthlyAverageData.CU_AVGMON/1000000), color:"rgb(63, 147, 245)"})
-                    paramData.push({category:"증감", result:Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000), color:"rgb(255, 168, 159)"})
+                    // paramData.push({category:this.year-1, result:Math.round(this.monthlyAverageData.LAST_AVGMON/1000000), color:"rgb(140, 190, 249)"})
+                    // paramData.push({category:this.year, result:Math.round(this.monthlyAverageData.CU_AVGMON/1000000), color:"rgb(63, 147, 245)"})
+                    // paramData.push({category:"증감", result:Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000), color:"rgb(255, 168, 159)"})
 
-                    this.openCloseMakeChart2(paramData, 13)
+                    // this.openCloseMakeChart2(paramData, 13)
+
+                    let text = ""
+                    if(Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000) > 0) { text = "증가" } 
+                    else if(Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000) < 0) { text = "감소" } 
+                    else { text = "동일" }
+                    paramData.push({category:this.year-1, lastdata:Math.round(this.monthlyAverageData.LAST_AVGMON/1000000), color:"rgb(140, 190, 249)"})
+                    paramData.push({category:this.year,   cudata:Math.round(this.monthlyAverageData.CU_AVGMON/1000000),     color:"rgb(63, 147, 245)", result: this.currency(Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000)), text: text})
+
+                    this.openCloseMakeChart3(paramData, 13)
                 }
             },
             rej => {
@@ -1716,11 +1861,20 @@ export default {
                     }
                     
                     let paramData = []
-                    paramData.push({category:this.year-1, result:Math.round(this.storeAverageData.LAST_AVGVDCD/1000000), color:"rgb(140, 190, 249)"})
-                    paramData.push({category:this.year, result:Math.round(this.storeAverageData.CU_AVGVDCD/1000000), color:"rgb(63, 147, 245)"})
-                    paramData.push({category:"증감", result:Math.round((this.storeAverageData.AA)/1000000), color:"rgb(255, 168, 159)"})
+                    // paramData.push({category:this.year-1, result:Math.round(this.storeAverageData.LAST_AVGVDCD/1000000), color:"rgb(140, 190, 249)"})
+                    // paramData.push({category:this.year, result:Math.round(this.storeAverageData.CU_AVGVDCD/1000000), color:"rgb(63, 147, 245)"})
+                    // paramData.push({category:"증감", result:Math.round((this.storeAverageData.AA)/1000000), color:"rgb(255, 168, 159)"})
 
-                    this.openCloseMakeChart2(paramData, 14)
+                    // this.openCloseMakeChart2(paramData, 14)
+
+                    let text = ""
+                    if(Math.round((this.storeAverageData.AA)/1000000) > 0) { text = "증가" } 
+                    else if(Math.round((this.storeAverageData.AA)/1000000) < 0) { text = "감소" } 
+                    else { text = "동일" }
+                    paramData.push({category:this.year-1, lastdata:Math.round(this.storeAverageData.LAST_AVGVDCD/1000000),  color:"rgb(140, 190, 249)"})
+                    paramData.push({category:this.year,   cudata:Math.round(this.storeAverageData.CU_AVGVDCD/1000000),      color:"rgb(63, 147, 245)", result:this.currency(Math.round((this.storeAverageData.AA)/1000000)), text: text})
+
+                    this.openCloseMakeChart3(paramData, 14)
                 }
             },
             rej => {
@@ -1819,7 +1973,7 @@ export default {
             titleField: "category",
             valueField: "data",
             fontFamily: "GothamBold",
-            fontSize: 16,
+            fontSize: 13,
             allLabels: [
                 {
                     align: "center",
@@ -1830,7 +1984,7 @@ export default {
                 {
                     align: "center",
                     id: "Label-2",
-                    size: 30,
+                    size: 20,
                     text: summary,
                     y: "44%",
                     fontFamily: "GothamBold"
@@ -1858,7 +2012,7 @@ export default {
         AmCharts.makeChart(divName, {
             type: "serial",
             categoryField: "category",
-            rotate: true,
+            //rotate: true,
             startDuration: 1,
             fontFamily: "GothamBold",
             fontSize: 13,
@@ -1876,6 +2030,7 @@ export default {
                     fillAlphas: 1,
                     id: "AmGraph-1",
                     labelText: "[[ogdata]]",
+                    showAllValueLabels: true,
                     lineColorField: "color",
                     // title: "graph 1",
                     type: "column",
@@ -1891,12 +2046,83 @@ export default {
                     gridThickness: 0,
                     labelsEnabled: false,
                     tickLength: 0,
-                    // totalText: "[[total]]"
+                    totalText: "[[ogdata]]"
                 }
             ],
             allLabels: [],
             balloon: {},
             dataProvider: val
+        });
+    },
+    storeChart_temp(val) {
+        let divName = "chartdiv7"
+
+        // AmCharts graphs 에서 labelText값으로 value를 쓰면 자동으로 ,가 찍히지만 
+        // -값 표현을 위해 absdata를 사용중이므로 ogdata를 currency로 가공
+        for(let i=0; i<val.length; i++) {
+            if(val[i].incredata > 0) {
+                val[i].incretext = "증가" 
+            } else if(val[i].incredata < 0) {
+                val[i].incretext = "감소" 
+            } else {
+                val[i].incretext = "동일" 
+            }
+            val[i].incredata = this.currency(val[i].incredata)
+        }
+        let color = ["rgb(140, 190, 249)", "rgb(63, 147, 245)"]
+        fontFamily: "GothamBold",
+        console.log(val)
+
+        AmCharts.makeChart(divName, {
+            type: "serial",
+            categoryField: "category",
+            theme: "none",
+            legend: {
+                enabled: false,
+                horizontalGap: 10,
+                useGraphSettings: true
+            },
+            fontSize: 15,
+            dataProvider: val,
+            valueAxes: [ {
+                stackType: "regular",
+                axisAlpha: 0,
+                gridAlpha: 0,
+                fontSize: 15,
+            } ],
+            graphs: [ {
+                balloonText: "<b>[[category]]</b><br><span style='font-size:14px'>[[title]]: <b>[[value]]</b></span>",
+                fillAlphas: 0.8,
+                labelText: "[[value]]",
+                labelPosition: "top",
+                showAllValueLabels: true,
+                lineAlpha: 0.3,
+                title: this.year-1,
+                type: "column",
+                newStack: true,
+                color: "#000000",
+                lineColor: color[0],
+                valueField: "lastdata"
+            }, {
+                balloonText: "<b>[[category]]</b><br><span style='font-size:14px'>[[title]]: <b>[[value]]</b></span><br><span>전년대비:<b>[[incretext]]([[incredata]])</b></span>",
+                fillAlphas: 0.8,
+                labelText: "[[value]]",
+                labelPosition: "top",
+                showAllValueLabels: true,
+                lineAlpha: 0.3,
+                title: this.year,
+                type: "column",
+                newStack: true,
+                color: "#000000",
+                lineColor: color[1],
+                valueField: "cudata"
+            }],
+            categoryAxis: {
+                gridPosition: "start",
+                axisAlpha: 0,
+                gridAlpha: 0,
+                position: "left"
+            }
         });
     },
     openCloseChart1(val, index) {
@@ -1908,17 +2134,17 @@ export default {
         //     }
         // }
 
-        let title = ["신장매장 20%이내","신장매장 50%이내", "신장매장 50%이상", "감소매장", "신규매장"]
+        let title = ["신장매장 20%이내","신장매장 50%이내", "신장매장 50%이상", "감소매장", "신규매장", "철수매장"]
 
         AmCharts.makeChart(divName, {
             type: "serial",
             startEffect: "easeOutSine",
             categoryField: "category",
+            colors: ["#C5DEFC", "#8CBEF9", "#3F93F5", "#FF8A97", "#D0C3FD", "#FF5C33"],
             marginRight: 100,
             rotate: true,
-            colors: [ "rgb(197, 222, 252)", "rgb(140, 190, 249)", "rgb(63, 147, 245)", "rgb(255, 138, 151)", "rgb(208, 195, 253)" ],
             startDuration: 1,
-            fontSize: 18,
+            fontSize: 15,
             categoryAxis: {
                 gridPosition: "start",
                 axisAlpha: 0,
@@ -1927,51 +2153,66 @@ export default {
             },
             trendLines: [],
             graphs: [
-            {
-                balloonText: "[[title]]:[[value]]",
-                fillAlphas: 1,
-                id: "AmGraph-1",
-                labelText: "[[value]]",
-                title: title[0],
-                type: "column",
-                valueField: "in20under"
-            },
-            {
-                balloonText: "[[title]]:[[value]]",
-                fillAlphas: 1,
-                id: "AmGraph-2",
-                labelText: "[[value]]",
-                title: title[1],
-                type: "column",
-                valueField: "in50under"
-            },
-            {
-                balloonText: "[[title]]:[[value]]",
-                fillAlphas: 1,
-                id: "AmGraph-3",
-                labelText: "[[value]]",
-                title: title[2],
-                type: "column",
-                valueField: "in50over"
-            },
-            {
-                balloonText: "[[title]]:[[minus_de]]",
-                fillAlphas: 1,
-                id: "AmGraph-4",
-                labelText: "[[minus_de]]",
-                title: title[3],
-                type: "column",
-                valueField: "de"
-            },
-            {
-                balloonText: "[[title]]:[[value]]",
-                fillAlphas: 1,
-                id: "AmGraph-5",
-                labelText: "[[value]]",
-                title: title[4],
-                type: "column",
-                valueField: "new"
-            }
+                {
+                    balloonText: "[[title]]:[[value]]",
+                    fillAlphas: 1,
+                    id: "AmGraph-1",
+                    labelText: "[[value]]",
+                    title: title[0],
+                    type: "column",
+                    fixedColumnWidth: 40,
+                    valueField: "in20under"
+                },
+                {
+                    balloonText: "[[title]]:[[value]]",
+                    fillAlphas: 1,
+                    id: "AmGraph-2",
+                    labelText: "[[value]]",
+                    title: title[1],
+                    type: "column",
+                    fixedColumnWidth: 40,
+                    valueField: "in50under"
+                },
+                {
+                    balloonText: "[[title]]:[[value]]",
+                    fillAlphas: 1,
+                    id: "AmGraph-3",
+                    labelText: "[[value]]",
+                    title: title[2],
+                    type: "column",
+                    fixedColumnWidth: 40,
+                    valueField: "in50over"
+                },
+                {
+                    balloonText: "[[title]]:[[minus_de]]",
+                    fillAlphas: 1,
+                    id: "AmGraph-4",
+                    labelText: "[[minus_de]]",
+                    title: title[3],
+                    type: "column",
+                    fixedColumnWidth: 40,
+                    valueField: "de"
+                },
+                {
+                    balloonText: "[[title]]:[[value]]",
+                    fillAlphas: 1,
+                    id: "AmGraph-5",
+                    labelText: "[[value]]",
+                    title: title[4],
+                    type: "column",
+                    fixedColumnWidth: 40,
+                    valueField: "new"
+                },
+                {
+                    balloonText: "[[title]]:[[minus_wthdr]]",
+                    fillAlphas: 1,
+                    id: "AmGraph-6",
+                    labelText: "[[minus_wthdr]]",
+                    title: title[5],
+                    type: "column",
+                    fixedColumnWidth: 40,
+                    valueField: "wthdr"
+                }
             ],
             guides: [],
             valueAxes: [
@@ -2014,19 +2255,85 @@ export default {
             },
             trendLines: [],
             graphs: [
+                {
+                    colorField: "color",
+                    fillAlphas: 1,
+                    fixedColumnWidth: 20,
+                    id: "AmGraph-1",
+                    labelText: "[[value]]",
+                    labelPosition: "top",
+                    lineColorField: "color",
+                    title: "graph 1",
+                    type: "column",
+                    valueField: "result",
+                    showAllValueLabels: true
+                }
+            ],
+            guides: [],
+            valueAxes: [
             {
-                colorField: "color",
-                fillAlphas: 1,
-                fixedColumnWidth: 20,
-                id: "AmGraph-1",
-                labelText: "[[value]]",
-                labelPosition: "top",
-                lineColorField: "color",
-                title: "graph 1",
-                type: "column",
-                valueField: "result",
-                showAllValueLabels: true
+                stackType: "regular",
+                id: "ValueAxis-1",
+                axisAlpha: 0,
+                gridColor: "#AAB3B3",
+                gridAlpha: 0.3,
+                gridThickness: 0,
+                labelsEnabled: false
             }
+            ],
+            allLabels: [],
+            balloon: {},
+            dataProvider: data
+        });
+    },
+    openCloseMakeChart3(val, index) {
+        let divName = "chartdiv" + index;
+        let data = val
+        
+        AmCharts.makeChart(divName, {
+            type: "serial",
+            startEffect: "easeOutSine",
+            categoryField: "category",
+            columnSpacing: 0,
+            columnWidth: 0.4,
+            startDuration: 0.7,
+            fontSize: 15,
+            categoryAxis: {
+                axisColor: "#AAB3B3",
+                gridAlpha: 0,
+                axisThickness: 0,
+                gridThickness: 0
+            },
+            trendLines: [],
+            graphs: [
+                {
+                    balloonText: "<span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
+                    colorField: "color",
+                    fillAlphas: 1,
+                    // fixedColumnWidth: 20,
+                    id: "AmGraph-1",
+                    labelText: "[[value]]",
+                    labelPosition: "top",
+                    lineColorField: "color",
+                    title: "graph 1",
+                    type: "column",
+                    valueField: "lastdata",
+                    showAllValueLabels: true
+                },
+                {
+                    balloonText: "<span style='font-size:14px'>[[category]]: <b>[[value]]</b></span><br><span>전년대비:<b>[[text]]([[result]])</b></span>",
+                    colorField: "color",
+                    fillAlphas: 1,
+                    // fixedColumnWidth: 20,
+                    id: "AmGraph-2",
+                    labelText: "[[value]]",
+                    labelPosition: "top",
+                    lineColorField: "color",
+                    title: "graph 2",
+                    type: "column",
+                    valueField: "cudata",
+                    showAllValueLabels: true
+                }
             ],
             guides: [],
             valueAxes: [

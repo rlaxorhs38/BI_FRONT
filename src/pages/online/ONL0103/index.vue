@@ -81,7 +81,8 @@
                     <dl class="list_obj">
                       <dt class="tit">당월 온라인 매출 비중</dt>
                       <dd class="txt" v-if="data.DAYRAT">
-                        {{ ((Number(data.MONJASA) + Number(data.MONOUT))/data.MONTOT*100).toFixed(1) }} %
+                        {{ getMakeRate(data.MONJASA, data.MONOUT, data.MONTOT) }} %
+                        <!-- {{ ((Number(data.MONJASA) + Number(data.MONOUT))/data.MONTOT*100).toFixed(1) }} % -->
                       </dd>
                       <dd class="txt" v-else>
                         0 %
@@ -474,7 +475,7 @@ export default {
           return ((Number(jasa) + Number(out))/Number(tot)*100).toFixed(1)
         }
       }
-      return 0;
+      return "0.0";
     },
     getMakeDataDate(){
       this.req2svr.getMakeDataDate().then(
