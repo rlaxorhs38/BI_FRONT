@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import MAI0001 from '@/pages/main/MAI0001'
+import MAI0002 from '@/pages/main/MAI0002'
 import FIN0001 from '@/pages/financial/FIN0001'
 import FIN0101 from '@/pages/financial/FIN0101'
 import FIN0201 from '@/pages/financial/FIN0201'
@@ -836,9 +837,7 @@ const authCheckURL = function(next, isRoot, path) {
     let Weekly = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0008"})
     let Sale = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0009"})
 
-    console.log(STORE.getters.getAuthGbnCd,  " / ", Sale)
-
-    if (path == "/") {
+    if (path == "/" || path == "/Main") {
       next()
     } else if ( (path == "/DailyReportDetail"
     || path == "/OnLineSale"
@@ -899,10 +898,12 @@ export default new Router({
     // { name: 'Test', component: T0001, path: '/Test'},
     // 메인화면
     { name: 'MAI0001', component: MAI0001, path: '/', beforeEnter: requireAuth },
+    { name: 'MAI0002', component: MAI0002, path: '/Main', beforeEnter: requireAuth },
 
     // 매출 
     // // 일매출
-    { name: 'FIN0101', component: FIN0101, path: '/DailyReportDetail', beforeEnter: requireAuth },
+    { name: 'FIN0101', component: FIN0101, path: '/DailyReportDetail', beforeEnter: requireAuth,
+    props: (route) => ({ data: route.params.data }) },
     // // 온라인 
     { name: 'ONL0103', component: ONL0103, path: '/OnLineSale', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
