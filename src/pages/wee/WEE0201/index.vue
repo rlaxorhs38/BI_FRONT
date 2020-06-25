@@ -40,9 +40,9 @@
         <ul class="tab_list">
           <!--활성화 class on-->
           <li><a href="javascript:void(0);" @click="link('WEE0101')">복종별 판매 및 할인율</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
           <li class="on"><a href="javascript:void(0);" @click="link('WEE0201')">주간판매 BEST 20</a></li>
           <li><a href="javascript:void(0);" @click="link('WEE0301')">신상품 반응조사</a></li>
-          <li><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
         </ul>
       </div>
     </div>
@@ -356,9 +356,11 @@
                                                     </div>
                                                     <div class="left_box">
                                                         <div class="txt_top">
-                                                            <!-- <div class="txt_main">MAIN<br>도도어패럴</div> -->
                                                             <div class="txt_main">{{ data.CUSTNM }}</div>
-                                                            <!-- <div class="txt_price"><strong>65,518</strong><small> 천원</small></div> -->
+                                                        </div>
+                                                        <div class="txt_top">
+                                                            <div class="txt_main" v-if="data.MAINSTYCD.substr(7,1)=='2'">R&D</div>
+                                                            <div class="txt_main" v-else>MAIN</div>
                                                         </div>
                                                         <div class="txt_bottom">
                                                             <div>{{ data.OUTDT }}</div>
@@ -415,17 +417,17 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(colorData,index) in data.color" :key="index">
-                                                                <td>{{ colorData.COLCD }}</td>
-                                                                <td>{{ colorData.PQTY }}</td>
-                                                                <td>{{ colorData.INQTY }}</td>
-                                                                <td>{{ colorData.CHINASQTY }}</td>
-                                                                <td>{{ colorData.ONLINESQTY }}</td>
-                                                                <td>{{ colorData.PSQTY }}</td>
-                                                                <td>{{ colorData.SQTY }}</td>
-                                                                <td>{{ colorData.TOTSQTY }}</td>
-                                                                <td>{{ colorData.STOCK }}</td>
-                                                                <td v-if="colorData.SALES">{{ colorData.SALES }}%</td>
-                                                                <td v-else>{{ colorData.SALES }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.COLCD }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.PQTY }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.INQTY }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.CHINASQTY }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.ONLINESQTY }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.PSQTY }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.SQTY }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.TOTSQTY }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}">{{ colorData.STOCK }}</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}" v-if="colorData.SALES">{{ colorData.SALES }}%</td>
+                                                                <td :class="{'bg_point_col12': colorData.STYCD != colorData.MAINSTYCD}" v-else>{{ colorData.SALES }}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -441,10 +443,6 @@
                 </div>
             </div>
         </div>
-        
-
-        
-    
   </div>
 </template>
 
@@ -956,6 +954,8 @@ export default {
                 this.storeColorListData.push(({ COLCD:"금액", PQTY:PQTYAMT, INQTY:INAMT, CHINASQTY:CHINAAMT, ONLINESQTY:ONLINEAMT, PSQTY:PSILAMT, SQTY:SILAMT, TOTSQTY:TOTSILAMT, STOCK:STOCKAMT, SALES:"" }))
 
                 this.$set(this.style20Data[i], 'color', this.storeColorListData)
+
+                console.log("style20Data >>> ", this.style20Data);
             }
         },
         rej => {

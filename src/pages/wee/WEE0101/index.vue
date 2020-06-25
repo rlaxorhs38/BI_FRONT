@@ -40,9 +40,9 @@
         <ul class="tab_list">
           <!--활성화 class on-->
           <li class="on"><a href="javascript:void(0);" @click="link('WEE0101')">복종별 판매 및 할인율</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
           <li><a href="javascript:void(0);" @click="link('WEE0201')">주간판매 BEST 20</a></li>
           <li><a href="javascript:void(0);" @click="link('WEE0301')">신상품 반응조사</a></li>
-          <li><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
         </ul>
       </div>
     </div>
@@ -804,7 +804,6 @@ export default {
     this.startYear = moment(this.calStartDate).format("YYYY");
     this.startMonth = moment(this.calStartDate).format("M");
 
-    console.log("1 data >>> "+this.data+" / "+this.selectSucd)
     if(this.data) {
       this.selectedSUCD = this.data.selectSucd
     } else {

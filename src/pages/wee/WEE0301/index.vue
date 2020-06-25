@@ -40,9 +40,9 @@
         <ul class="tab_list">
           <!--활성화 class on-->
           <li><a href="javascript:void(0);" @click="link('WEE0101')">복종별 판매 및 할인율</a></li>
+          <li><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
           <li><a href="javascript:void(0);" @click="link('WEE0201')">주간판매 BEST 20</a></li>
           <li class="on"><a href="javascript:void(0);" @click="link('WEE0301')">신상품 반응조사</a></li>
-          <li><a href="javascript:void(0);" @click="link('WEE0401')">주간판매 동향</a></li>
         </ul>
       </div>
     </div>
@@ -192,7 +192,7 @@
                                         <tbody class="tbody_s">
                                             <tr class="bg_point_col19">
                                                 <td colspan="3">TTL</td>
-                                                <td class="bg_point_col19">{{ styleTotData.MCNT | currency }}M</td>
+                                                <td class="bg_point_col19">{{ styleListData.length | currency }}M</td>
                                                 <td>{{ styleTotData.TOTPQTY | currency }}</td>
                                                 <td>{{ styleTotData.INQTY | currency }}</td>
                                                 <td>{{ styleTotData.CHINASQTY | currency }}</td>
@@ -258,12 +258,12 @@
                                                         <div :key="index">{{ detail.UNSTOCKED | currency }}</div>
                                                     </template>
                                                 </td>
-                                                <td class="vt">
+                                                <td class="vt txt_bold">
                                                     <template v-for="(detail,index) in data.total">
                                                         <div :key="index">{{ detail.SQTY | currency }}</div>
                                                     </template>
                                                 </td>
-                                                <td class="vt">
+                                                <td class="vt txt_bold">
                                                     <template v-for="(detail,index) in data.total">
                                                         <div :key="index">{{ detail.SALES }}%</div>
                                                     </template>
@@ -278,7 +278,7 @@
                                                         <div :key="index">{{ detail.SALDT }}</div>
                                                     </template>
                                                 </td>
-                                                <td class="vt">
+                                                <td class="vt txt_bold" >
                                                     <template v-for="(detail,index) in data.total">
                                                         <div :key="index">{{ detail.DAYQTY }}</div>
                                                     </template>
@@ -314,11 +314,11 @@
                                                 <td>{{ data.sttl.DOMPQTY | currency }}</td>
                                                 <td>{{ data.sttl.DOMQTY | currency }}</td>
                                                 <td>{{ data.sttl.UNSTOCKED | currency }}</td>
-                                                <td>{{ data.sttl.SQTY | currency }}</td>
-                                                <td>{{ data.sttl.SALES }}%</td>
+                                                <td class="txt_bold">{{ data.sttl.SQTY | currency }}</td>
+                                                <td class="txt_bold">{{ data.sttl.SALES }}%</td>
                                                 <td></td>
-                                                <td>{{ data.sttl.SALDT }}</td>
-                                                <td>{{ data.sttl.DAYQTY }}</td>
+                                                <td></td>
+                                                <td class="txt_bold">{{ data.sttl.DAYQTY }}</td>
                                                 <td>{{ data.sttl.STOCK | currency }}</td>
                                             </tr>
                                             </template>
@@ -561,6 +561,8 @@ export default {
                 await Promise.all(promises)
 
                 this.getStylTTL()
+
+                console.log("styleListData >>> ", this.styleListData)
             }
         },
         rej => {
@@ -588,11 +590,11 @@ export default {
                 } else {
                     this.styleDetailData = JSON.parse("[" + res + "]")
                 }
-
+                
                 for(let i=0; i<this.styleDetailData.length; i++) {
                     let today = moment().format("YYYYMMDD")
                     // 판매일수
-                    this.styleDetailData[i].SALDT = moment(today).diff(this.styleDetailData[i].OUTDT , "days")
+                    this.styleDetailData[i].SALDT = moment(this.standardDate).diff(this.styleDetailData[i].OUTDT , "days")
                     // 일평균 판매량
                     this.styleDetailData[i].DAYQTY = (this.styleDetailData[i].SQTY/this.styleDetailData[i].SALDT).toFixed(1)
                 }
