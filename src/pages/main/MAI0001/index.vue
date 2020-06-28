@@ -13,6 +13,9 @@
           <input type="password" style="margin-left: 30px; padding-left:10px; width:150px; height:50px; line-height: 50px;" placeholder="패스워드" v-model="pwnum" @keyup.enter="login()">
           <input type="button" style="margin-left: 10px; line-height: 50px; width:80px; border-radius:5px;" value="입력" @click="login()">
         </div>
+        <div v-if="dev" style="height: 102px; line-height: 102px;">
+          <input type="button" style="margin-left: 10px; line-height: 50px; width:80px; border-radius:5px;" value="lotate" @click="link2()">
+        </div>
       </div>  
     </header>
     <div class="container">
@@ -36,6 +39,7 @@
                 <div class="sub_btns">
                   <a href="javascript:void(0);" @click="link('/NewStyleMain')" class="btn_sub">스타일</a>
                   <a href="javascript:void(0);" @click="link('/StoreMain')" class="btn_sub">매장</a>
+                  <a href="javascript:void(0);" @click="link('/WeeklyReport')" class="btn_sub">주간보고</a>
                 </div>
                 <a href="javascript:void(0);" @click="link('/SalesMain')" class="btn_main">
                   <i class="material-icons">business_center</i>영업
@@ -45,7 +49,7 @@
             <li>
               <div class="btns">
                 <a href="javascript:void(0);" @click="link('/WeeklyClothSale')" class="btn_main">
-                  <i class="material-icons">insert_drive_file</i>주간보고
+                  <i class="material-icons">insert_drive_file</i>주간회의
                 </a>
               </div>
             </li>
@@ -125,6 +129,7 @@ export default {
   },
   mounted() {
     this.deptnum = sessionStorage.getItem("empcd")
+    sessionStorage.setItem("loatation", false)
   },
   methods: {
     login(){
@@ -134,6 +139,7 @@ export default {
         
         sessionStorage.setItem("token" , "smzH^8^N9}N`B[t.")
         sessionStorage.setItem("empcd" , this.deptnum)
+        sessionStorage.setItem("loatation", false)
         
         window.location.reload()
       } else {
@@ -141,6 +147,7 @@ export default {
       }
     },
     link(val) {
+      sessionStorage.setItem("loatation", false)
       this.$router.push(val);
       
       /* 이전 소스 - 운영 반영 후 이상 없을 시 삭제 필요
@@ -170,6 +177,13 @@ export default {
         alert("권한이 없습니다.")
       }
       */
+    },
+    link2() {
+      sessionStorage.setItem("loatation", true)
+      this.$router.push({
+        // name: "MAI0002"
+        name: "FIN0101"
+      })
     }
   },
   computed: {

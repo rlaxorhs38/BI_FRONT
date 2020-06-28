@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import MAI0001 from '@/pages/main/MAI0001'
-import MAI0002 from '@/pages/main/MAI0002'
 import FIN0001 from '@/pages/financial/FIN0001'
 import FIN0101 from '@/pages/financial/FIN0101'
 import FIN0201 from '@/pages/financial/FIN0201'
@@ -26,7 +25,7 @@ import STY0201 from '@/pages/style/STY0201'
 import NEWSTY0001 from '@/pages/style/NEWSTY0001'
 import NEWSTY0101 from '@/pages/style/NEWSTY0101'
 import STO0001 from '@/pages/store/STO0001'
-// import STO0003 from '@/pages/store/STO0003'
+import STO0003 from '@/pages/store/STO0003'
 import STO0003_1 from '@/pages/store/STO0003_1'
 import CRM0001 from '@/pages/crm/CRM0001'
 import PRO0101 from '@/pages/product/PRO0101'
@@ -37,6 +36,7 @@ import BUY0102 from '@/pages/buy/BUY0102'
 import ONL0101 from '@/pages/online/ONL0101'
 import ONL0102 from '@/pages/online/ONL0102'
 import ONL0103 from '@/pages/online/ONL0103'
+import ONL0104 from '@/pages/online/ONL0104'
 import HUM0001 from '@/pages/hum/HUM0001'
 import HUM0002 from '@/pages/hum/HUM0002'
 import HUM0003 from '@/pages/hum/HUM0003'
@@ -50,7 +50,7 @@ import WEE0101 from '@/pages/wee/WEE0101'
 import WEE0201 from '@/pages/wee/WEE0201'
 import WEE0301 from '@/pages/wee/WEE0301'
 import WEE0401 from '@/pages/wee/WEE0401'
-// import T0001 from '@/pages/test/T0001'
+import WEE0501 from '@/pages/wee/WEE0501'
 import ERR0001 from '@/pages/error/common'
 import STORE from '@/store'
 import req2svr from "./req2svr";
@@ -65,6 +65,8 @@ const getCookie = function(name) {
 const deleteCookie = function(name) {
   document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
+
+const toName = {};
 
 const requireAuth = (to, from, next) => {
   if (to.path == "/") {
@@ -85,6 +87,8 @@ const requireAuth = (to, from, next) => {
       deleteCookie("token")
     }
   }
+  
+  toName.name = to.name;
   checkAuthToken(to, from, next)
 }
 
@@ -98,25 +102,25 @@ const checkAuthToken = (to, from, next) => {
     STORE.commit('setEmpCd', empcd)
   }
 
-  // 로컬 테스트 용 start(배포시 전체 주석 처리)
+  // 개발서버 및 로컬 테스트 용 start(배포시 전체 주석 처리)
   if (!empcd && !token) {
     token = "smzH^8^N9}N`B[t."
     // empcd = "1180206" // all : 문무홍(1180206)
-    empcd = "1190410" // all : 권희진(1180502)
+    empcd = "1180502" // all : 권희진(1180502)
     // empcd = "1040308" // 사업부, 브랜드 제한
+    empcd = "1190410" // BIGR010_DEV 테이블 전체 권한
+    empcd = "1190405" 
     STORE.commit('setAuthToken', token)
     STORE.commit('setEmpCd', empcd)
     sessionStorage.setItem("token" , token)
     sessionStorage.setItem("empcd" , empcd)
   }
-  // 로컬 테스트 용 end
+  // 개발서버 및 로컬 테스트 용 end
 
   if(token == null || token == "undefined" || empcd == null || empcd == "undefined") {
     alert("접속권한이 없습니다.")
     history.back()
   } else {
-    // alert("시스템 점검중 입니다.")
-    // next("/Error")
     authCheckToken(next, isRoot, to.path)
   }
 }
@@ -826,6 +830,53 @@ const getYearCodeList = (next, isRoot, path) => {
   })
 }
 
+const authCheckURL = function(next, isRoot, path) {  
+    
+    let currentPage = _.find(STORE.getters.getAuthProCd, {PROCD: toName.name})
+
+    if (path == "/") {
+      next()
+    } else if ( currentPage && currentPage.VIEWYN == 1 ) {
+      next()
+    } else {
+      // 로컬용 고도화 페이지 예외처리(신규 페이지라 DB에 등록이 안되어 있음) start
+      if(path == "/NewDailyReport"
+      || path == "/NewDailyReportSales"
+      || path == "/NewDailyReportCash"
+      || path == "/NewDailyReportProfit"
+      || path == "/NewDailyReportStock"
+      || path == "/NewDailyReportSalesPart"
+      || path == "/NewDailyReportCashPart"
+      || path == "/NewDailyReportProfitPart"
+      || path == "/NewDailyReportStockPart"
+      || path == "/HumSeList"
+      || path == "/HumSeDetail"
+      || path == "/NewStyleMain"
+      || path == "/NewStyleProductDetail"
+      || path == "/WeeklyClothSale"
+      || path == "/WeeklyBest20"
+      || path == "/WeeklyResearch"
+      || path == "/WeeklyProgress"
+      || path == "/StoreSalesStatus"
+      || path == "/StoreSalesStatus2"
+      || path == "/OnLineSale"
+      || path == "/OnLineSaleDetail"
+      || path == "/DailyReportDetail"
+      || path == "/StoreMain"
+      || path == "/WeeklyReport"
+      || path == "/Error") {
+        next()
+      } else {
+        alert("권한이 없습니다.")
+      }
+      // 로컬용 고도화 페이지 예외처리(신규 페이지라 DB에 등록이 안되어 있음) end
+
+      // 운영용
+      // alert("권한이 없습니다.")
+    }
+}
+
+/* 이전 소스 - 운영 반영 후 이상 없을 시 삭제 필요
 const authCheckURL = function(next, isRoot, path) {
     let DailyReport = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0001"})
     let SalesMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0002"})
@@ -833,29 +884,19 @@ const authCheckURL = function(next, isRoot, path) {
     let ProductMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0004"})
     let BuyMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0005"})
     let OnLineMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0006"})
-    let Human = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0007"})
-    let Weekly = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0008"})
-    let Sale = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0009"})
+    let Human = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0007"})    
+    
+    let currentPage = _.find(STORE.getters.getAuthProCd, {PROCD: toName.name})
 
-    if (path == "/" || path == "/Main") {
+    console.log(currentPage);
+    
+
+    if (path == "/") {
       next()
-    } else if ( (path == "/DailyReportDetail"
-    || path == "/OnLineSale"
-    || path == "/StoreSalesStatus2") && Sale ) {
+    } else if ( DailyReport ) {
       next()
-    } else if ( (path == "/DailyReportDetail"
-    || path == "/NewDailyReport"
-    || path == "/NewDailyReportSales"
-    || path == "/NewDailyReportCash"
-    || path == "/NewDailyReportProfit"
-    || path == "/NewDailyReportStock"
-    || path == "/NewDailyReportSalesPart"
-    || path == "/NewDailyReportCashPart"
-    || path == "/NewDailyReportProfitPart"
-    || path == "/NewDailyReportStockPart" ) && DailyReport ) {
-      next()
-    } else if ( (path == "/SalesMain" || path == "/NewStyleMain" || path == "/StoreMain"
-      || path == "/NewStyleProductDetail"
+    } else if ( (path == "/SalesMain" || path == "/StyleMain" || path == "/StoreMain"
+      || path == "/StyleProductDetail"
       || path == "/StyleProductStatus"
       || path == "/StyleDesignerDetail") && SalesMain ) {
       next()
@@ -871,16 +912,10 @@ const authCheckURL = function(next, isRoot, path) {
       next()
     } else if( (path == "/HumMain" 
       || path == "/HumSdList" 
-      || path == "/HumSeList" 
       || path == "/HumRegionSdList" 
       || path == "/HumSdSalesList" 
       || path == "/HumSdDetail" 
       || path == "/HumOcSdDetail") && Human ) {
-      next()
-    } else if( (path == "/WeeklyClothSale"
-      || path == "/WeeklyBest20"
-      || path == "/WeeklyResearch"
-      || path == "/WeeklyProgress") && Weekly ) {
       next()
     } else if (path == "/Error") { 
       next()
@@ -891,6 +926,7 @@ const authCheckURL = function(next, isRoot, path) {
       // }
     }
 }
+*/
 
 export default new Router({
   routes: [
@@ -898,26 +934,13 @@ export default new Router({
     // { name: 'Test', component: T0001, path: '/Test'},
     // 메인화면
     { name: 'MAI0001', component: MAI0001, path: '/', beforeEnter: requireAuth },
-    { name: 'MAI0002', component: MAI0002, path: '/Main', beforeEnter: requireAuth },
-
-    // 매출 
-    // // 일매출
-    { name: 'FIN0101', component: FIN0101, path: '/DailyReportDetail', beforeEnter: requireAuth,
-    props: (route) => ({ data: route.params.data }) },
-    // // 온라인 
-    { name: 'ONL0103', component: ONL0103, path: '/OnLineSale', beforeEnter: requireAuth,
-      props: (route) => ({ data: route.params.data })
-    },
-    // // 월매출
-    { name: 'STO0003_1', component: STO0003_1, path: '/StoreSalesStatus2', beforeEnter: requireAuth },
-    
     // 재무
     { name: 'FIN0001', component: FIN0001, path: '/DailyReport', beforeEnter: requireAuth },
+    { name: 'FIN0101', component: FIN0101, path: '/DailyReportDetail', beforeEnter: requireAuth },
     { name: 'FIN0201', component: FIN0201, path: '/DailyReportSales', beforeEnter: requireAuth },
     { name: 'FIN0301', component: FIN0301, path: '/DailyReportProfit', beforeEnter: requireAuth },
     { name: 'FIN0401', component: FIN0401, path: '/DailyReportCash', beforeEnter: requireAuth },
     { name: 'FIN0501', component: FIN0501, path: '/DailyReportStock', beforeEnter: requireAuth },
-    
     // 재무 고도화
     { name: 'NEWFIN0001', component: NEWFIN0001, path: '/NewDailyReport', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
@@ -946,10 +969,8 @@ export default new Router({
     { name: 'NEWFIN0502', component: NEWFIN0502, path: '/NewDailyReportStockPart', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
     },
-    
     // 영업
     { name: 'SAL0001', component: SAL0001, path: '/SalesMain', beforeEnter: requireAuth },
-    
     // 스타일
     { name: 'STY0001', component: STY0001, path: '/StyleMain', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
@@ -969,13 +990,12 @@ export default new Router({
     // { name: 'STY0201', component: STY0201, path: '/StyleDesignerDetail', beforeEnter: requireAuth },
     // 매장
     { name: 'STO0001', component: STO0001, path: '/StoreMain', beforeEnter: requireAuth },
-    // { name: 'STO0003', component: STO0003, path: '/StoreSalesStatus', beforeEnter: requireAuth,
-    //   props: (route) => ({ data: route.params.data })
-    // },
-    
+    { name: 'STO0003', component: STO0003, path: '/StoreSalesStatus', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data })
+    },
+    { name: 'STO0003_1', component: STO0003_1, path: '/StoreSalesStatus2', beforeEnter: requireAuth },
     // CRM
     { name: 'CRM0001', component: CRM0001, path: '/Crm', beforeEnter: requireAuth },
-    
     // 생산
     { name: 'PRO0101', component: PRO0101, path: '/ProductMain', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
@@ -986,7 +1006,6 @@ export default new Router({
     { name: 'PRO0103', component: PRO0103, path: '/ProductYearDetail', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
     },
-    
     // 구매
     { name: 'BUY0101', component: BUY0101, path: '/BuyMain', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
@@ -994,7 +1013,6 @@ export default new Router({
     { name: 'BUY0102', component: BUY0102, path: '/BuyDetail', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
     },
-    
     // 온라인
     { name: 'ONL0101', component: ONL0101, path: '/OnLineMain', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
@@ -1002,9 +1020,16 @@ export default new Router({
     { name: 'ONL0102', component: ONL0102, path: '/OnLineDetail', beforeEnter: requireAuth,
       props: (route) => ({ data: route.params.data })
     },
-    
     // 인재DB메인
     { name: 'HUM0001', component: HUM0001, path: '/HumMain', beforeEnter: requireAuth },
+    // 온라인 판매 현황
+    { name: 'ONL0103', component: ONL0103, path: '/OnLineSale', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data })
+    },
+    // 온라인 월별 판매 현황
+    { name: 'ONL0104', component: ONL0104, path: '/OnLineSaleDetail', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data })
+    },
     // 전체 SD LIST
     { name: 'HUM0002', component: HUM0002, path: '/HumSdList', beforeEnter: requireAuth },
     // 전체 시니어 LIST
@@ -1027,24 +1052,27 @@ export default new Router({
     { name: 'HUM0401', component: HUM0401, path: '/HumSeDetail', beforeEnter: requireAuth },
     // 시니어 타사 Detail 기본정보
     { name: 'HUM0501', component: HUM0501, path: '/HumSeDetail2', beforeEnter: requireAuth },
-
     // 주간보고(복종별 판매 및 할인율)
-    { name: 'WEE0101', component: WEE0101, path: '/WeeklyClothSale', beforeEnter: requireAuth, 
-      props: (route) => ({ data: route.params.data })
+    { name: 'WEE0101', component: WEE0101, path: '/WeeklyClothSale', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
     },
     // 주간보고(주간판매 BEST 20)
-    { name: 'WEE0201', component: WEE0201, path: '/WeeklyBest20', beforeEnter: requireAuth, 
-      props: (route) => ({ data: route.params.data })
+    { name: 'WEE0201', component: WEE0201, path: '/WeeklyBest20', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
     },
     // 주간보고(신상품 반응조사)
-    { name: 'WEE0301', component: WEE0301, path: '/WeeklyResearch', beforeEnter: requireAuth, 
-      props: (route) => ({ data: route.params.data })
+    { name: 'WEE0301', component: WEE0301, path: '/WeeklyResearch', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
     },
     // 주간보고(주간판매 추이)
-    { name: 'WEE0401', component: WEE0401, path: '/WeeklyProgress', beforeEnter: requireAuth, 
-      props: (route) => ({ data: route.params.data })
+    { name: 'WEE0401', component: WEE0401, path: '/WeeklyProgress', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
+    },
+    // 주간보고(영업)
+    { name: 'WEE0501', component: WEE0501, path: '/WeeklyReport', beforeEnter: requireAuth,
+      props: (route) => ({ data: route.params.data }) 
     },
     // ERROR
-    { name: 'Error', component: ERR0001, path: '/Error' }
+    { name: 'Error', component: ERR0001, path: '/Error'}
   ]
 })
