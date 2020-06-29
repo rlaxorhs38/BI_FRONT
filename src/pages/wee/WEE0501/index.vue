@@ -104,7 +104,9 @@
 
                         <tbody id="sales_status" class="tbody_s">
                             <tr v-for="(data , index) in dr_S" :key="index">
-                                  <td class="tc" name="BRCD" rowspan="3" v-if="(index+1)%3==1" style="font-weight:bold;">{{ data.BRCD }}</td>
+                                  <td class="tc" name="BRCD" rowspan="3" v-if="(data.BRCD!='SO')&&(data.BRCD!='TOTAL')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
+                                  <td class="tc" name="BRCD" rowspan="4" v-else-if="(data.BRCD=='SO')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
+                                  <td class="tc" name="BRCD" rowspan="4" v-else-if="(data.BRCD=='TOTAL')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
                                   <td class="tc" name="SALEGU2"      v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">{{ data.SALEGU2 }}</td>
                                   <td class="tr" name="MONPLNAMT"    v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
                                     <span v-if="data.MONPLNAMT!=0&&data.MONPLNAMT!=''">{{ data.MONPLNAMT | currency }}</span>
@@ -515,10 +517,10 @@ export default {
               this.dr_S.push(res);
             } else {
               this.dr_S = JSON.parse("[" + res + "]");
-              console.log("getSaleListByBrand >>> ", this.dr_S)
+              
             }
             for(var i in this.dr_S) {
-              this.dr_S[i].SALEGU2 = this.dr_S[i].SALEGU == "1"?"정상":"이월"
+              this.dr_S[i].SALEGU2 = this.dr_S[i].SALEGU == "1"?"정상":this.dr_S[i].SALEGU == "2"?"이월":"2년차"
               this.dr_S[i].WEEKRATE = ""
               this.dr_S[i].MONRATE = ""
               this.dr_S[i].MONPLNAMT = Number(this.dr_S[i].MONPLNAMT) != 0 ? Number(this.dr_S[i].MONPLNAMT):''
@@ -534,13 +536,14 @@ export default {
 
             let brand_tot = {}
             let temp = 0;
+            /*
             for(let i = 0; i < loop_index; i++) {
               let index = i*2+temp
               brand_tot = {
                 COMCD: this.dr_S[index].COMCD, SUCD: this.dr_S[index].SUCD, BRCD: this.dr_S[index].BRCD, 
                 YYYY: this.dr_S[index].YYYY, MM: this.dr_S[index].MM, WEEK: this.dr_S[index].WEEK,
                 FROM_SALEDT: this.dr_S[index].FROM_SALEDT, TO_SALEDT: this.dr_S[index].TO_SALEDT, 
-                SALEGU: '3', SALEGU2: '합계', MONPLNAMT: this.dr_S[index].MONPLNAMT+this.dr_S[index+1].MONPLNAMT, 
+                SALEGU: '0', SALEGU2: '합계', MONPLNAMT: this.dr_S[index].MONPLNAMT+this.dr_S[index+1].MONPLNAMT, 
                 PREWEEKAMT: this.dr_S[index].PREWEEKAMT+this.dr_S[index+1].PREWEEKAMT, WEEKPLNAMT: this.dr_S[index].WEEKPLNAMT+this.dr_S[index+1].WEEKPLNAMT, 
                 WEEKAMT: this.dr_S[index].WEEKAMT+this.dr_S[index+1].WEEKAMT, 
                 WEEKRATE: this.getRate((this.dr_S[index].WEEKAMT+this.dr_S[index+1].WEEKAMT), (this.dr_S[index].WEEKPLNAMT+this.dr_S[index+1].WEEKPLNAMT)*100, 1), 
@@ -553,6 +556,37 @@ export default {
               }
               this.dr_S.splice(index+2, 0, brand_tot);
               temp += 1;
+            }
+
+            */
+            
+            let brand_list = ["MI", "MO", "FO", "IT", "SO"]
+            for(let i in brand_list) {
+              let index = _.findIndex(this.dr_S, {BRCD: brand_list[i], SALEGU: '1'});
+              brand_tot = {
+                COMCD: this.dr_S[index].COMCD, SUCD: this.dr_S[index].SUCD, BRCD: this.dr_S[index].BRCD, 
+                YYYY: this.dr_S[index].YYYY, MM: this.dr_S[index].MM, WEEK: this.dr_S[index].WEEK,
+                FROM_SALEDT: this.dr_S[index].FROM_SALEDT, TO_SALEDT: this.dr_S[index].TO_SALEDT, 
+                SALEGU: '0', SALEGU2: '합계',
+                MONPLNAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONPLNAMT):0; }), 
+                PREWEEKAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.PREWEEKAMT):0; }), 
+                WEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKPLNAMT):0; }), 
+                WEEKAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKAMT):0; }), 
+                WEEKRATE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKPLNAMT):0; })*100, 1), 
+                PREMONAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.PREMONAMT):0; }), 
+                MONSUMPLNAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONSUMPLNAMT):0; }), 
+                MONAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONAMT):0; }), 
+                MONRATE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONSUMPLNAMT):0; })*100, 1), 
+                WEEKAVERAGE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.PREWEEKAMT):0; })-1, 2), 
+                MONAVERAGE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.PREMONAMT):0; })-1, 2), 
+                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.NEXTWEEKPLNAMT):0; })
+              }
+              if(brand_list[i] != 'SO') {
+                this.dr_S.splice(index+2, 0, brand_tot);
+              } else {
+                this.dr_S.splice(index+3, 0, brand_tot);
+              }
+
             }
 
             this.TOT_dr_S = [
@@ -593,23 +627,41 @@ export default {
               {
                 COMCD: '', SUCD:'', BRCD: 'TOTAL', YYYY: this.dr_S[0].YYYY, MM: this.dr_S[0].MM, WEEK: this.dr_S[0].WEEK,
                 FROM_SALEDT: this.dr_S[0].FROM_SALEDT, TO_SALEDT: this.dr_S[0].TO_SALEDT, 
-                SALEGU: '3', SALEGU2: '합계', 
+                SALEGU: '3', SALEGU2: '2년차', 
                 MONPLNAMT:      _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.MONPLNAMT):0; }), 
                 PREWEEKAMT:     _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.PREWEEKAMT):0; }), 
                 WEEKPLNAMT:     _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.WEEKPLNAMT):0; }), 
                 WEEKAMT:        _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.WEEKAMT):0; }), 
-                WEEKRATE:       this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.WEEKPLNAMT):0; }), 1),
+                WEEKRATE: '', 
                 PREMONAMT:      _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.PREMONAMT):0; }), 
                 MONSUMPLNAMT:   _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.MONSUMPLNAMT):0; }), 
                 MONAMT:         _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.MONAMT):0; }), 
-                MONRATE:        this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.MONSUMPLNAMT):0; }), 1), 
-                WEEKAVERAGE:    this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.PREWEEKAMT):0; }), 2), 
-                MONAVERAGE:     this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.PREMONAMT):0; }), 2), 
+                MONRATE: '', 
+                WEEKAVERAGE:    _.meanBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.WEEKAVERAGE):0; }), 
+                MONAVERAGE:     _.meanBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.MONAVERAGE):0; }), 
+                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == '3'? Number(o.NEXTWEEKPLNAMT):0; })
+              },
+              {
+                COMCD: '', SUCD:'', BRCD: 'TOTAL', YYYY: this.dr_S[0].YYYY, MM: this.dr_S[0].MM, WEEK: this.dr_S[0].WEEK,
+                FROM_SALEDT: this.dr_S[0].FROM_SALEDT, TO_SALEDT: this.dr_S[0].TO_SALEDT, 
+                SALEGU: '0', SALEGU2: '합계', 
+                MONPLNAMT:      _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONPLNAMT):0; }), 
+                PREWEEKAMT:     _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.PREWEEKAMT):0; }), 
+                WEEKPLNAMT:     _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.WEEKPLNAMT):0; }), 
+                WEEKAMT:        _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.WEEKAMT):0; }), 
+                WEEKRATE:       this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.WEEKPLNAMT):0; }), 1),
+                PREMONAMT:      _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.PREMONAMT):0; }), 
+                MONSUMPLNAMT:   _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONSUMPLNAMT):0; }), 
+                MONAMT:         _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONAMT):0; }), 
+                MONRATE:        this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONSUMPLNAMT):0; }), 1), 
+                WEEKAVERAGE:    this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.PREWEEKAMT):0; }), 2), 
+                MONAVERAGE:     this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.PREMONAMT):0; }), 2), 
                 NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == '3'? Number(o.NEXTWEEKPLNAMT):0; })
               }
             ]
 
             this.dr_S = _.concat(this.dr_S, this.TOT_dr_S);
+            console.log("getSaleListByBrand >>> ", this.dr_S)
           }
         },
         rej => {
@@ -659,8 +711,8 @@ export default {
             for(let i in list) {
               this.dr_P.push({
                 BRCD: list[i].BRCD,
-                PROGRESS: list[i].PROGRESS.split(' ').join('&nbsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
-                PLAN: list[i].PLAN.split(' ').join('&nbsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
+                PROGRESS: list[i].PROGRESS.split(' ').join('&nbsp;').split('  ').join('&emsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
+                PLAN: list[i].PLAN.split(' ').join('&nbsp;').split('  ').join('&emsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
               })
             }
             if(this.dr_P.length != 0) {
