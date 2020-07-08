@@ -602,6 +602,10 @@ address {
   background-color: #f2f8fe !important;
 }
 
+.bg_point_col22{
+  background-color: #71B700 !important;
+}
+
 .point_col22 {
   color: #71B700 !important;
 }
@@ -611,6 +615,30 @@ address {
 
 .bg_point_col23 {
   background-color: #EBFCFF !important;
+}
+
+.point_col24 {
+  color: #DAEEFA !important;
+}
+
+.bg_point_col24 {
+  background-color: #DAEEFA !important;
+}
+
+.point_box24 {
+  border: 1px solid #DAEEFA !important;
+}
+
+.point_col25 {
+  color: #F7E700 !important;
+}
+
+.bg_point_col25 {
+  background-color: #F7E700 !important;
+}
+
+.point_box25 {
+  border: 1px solid #F7E700 !important;
 }
 
 .alink {
@@ -8267,4 +8295,9 @@ author : hj
 
 .fs14 {
   font-size: 14px !important;
+}
+
+.fixedHeader {
+	position: sticky;
+	top: 0;
 }
