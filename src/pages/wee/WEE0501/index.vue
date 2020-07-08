@@ -42,128 +42,128 @@
     </header>
     <!-- box2 -->
     <div class="cont_box">
-        <div class="tit">
-            <div class="tab">
-                <ul>
-                    <li class="on">
-                      <span style="display: block; position: relative; padding: 0 20px; border-right: 1px solid #dee2e6; font-size: 20px; line-height: 59px;">1. 브랜드별 매출실적</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="layout_spacer"></div>
-            <div>
-              <span class="txt" style="height: 30px; line-height: 40px;">&lt; {{ standardStartDate }} ~ {{ standardEndDate }}	&gt;</span>
-              <span class="txt">&#91;단위 : 백만원&#93;</span>
-            </div>
+      <div class="tit">
+        <div class="tab">
+          <ul>
+            <li class="on">
+              <span style="display: block; position: relative; padding: 0 20px; border-right: 1px solid #dee2e6; font-size: 20px; line-height: 59px;">1. 브랜드별 매출실적</span>
+            </li>
+          </ul>
         </div>
-        <div class="container">
-            <div class="content">
-                <!-- 테이블 -->
-                <iframe id="txtArea1" style="display:none;" />
-                <div class="tbl_sheet yellow np">
-                    <table id="exceldown_tbody" class="tbl tbl_center tbl_scroll_horizontally">
-                        <colgroup style="width: 1%">
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                          <col />
-                        </colgroup>
-                        <thead>
-                          <tr>
-                            <th scope="col" rowspan="2">브랜드</th>
-                            <th scope="col" rowspan="2">유형</th>
-                            <th scope="col" rowspan="2">{{month}}월목표</th>
-                            <th scope="col" colspan="4">주간실적({{month}}.{{Number(standardStartDate.substr(8))}}~{{Number(standardEndDate.substr(8))}})</th>
-                            <th scope="col" colspan="4">월누계실적({{month}}.1~{{Number(standardEndDate.substr(8))}})</th>
-                            <th scope="col" colspan="2">신장율</th>
-                            <th scope="col" rowspan="2">차주목표({{Number(nextStartDate.substr(4, 2))}}.{{Number(nextStartDate.substr(6))}}~{{Number(nextEndDate.substr(6))}})</th>
-                          </tr>
-                          <tr>
-                            <th class="tc">전년</th>
-                            <th class="tc">목표</th>
-                            <th class="tc">실적</th>
-                            <th class="tc">달성율</th>
-                            <th class="tc">전년</th>
-                            <th class="tc">목표</th>
-                            <th class="tc">실적</th>
-                            <th class="tc">달성율</th>
-                            <th class="tc">주간</th>
-                            <th class="tc">월누계</th>
-                          </tr>
-                        </thead>
+        <div class="layout_spacer"></div>
+        <div>
+          <span class="txt" style="height: 30px; line-height: 40px;">&lt; {{ standardStartDate }} ~ {{ standardEndDate }}	&gt;</span>
+          <span class="txt">&#91;단위 : 백만원&#93;</span>
+        </div>
+      </div>
+      <div class="container">
+        <div class="content">
+          <!-- 테이블 -->
+          <iframe id="txtArea1" style="display:none;" />
+          <div class="tbl_sheet yellow np">
+            <table id="exceldown_tbody" class="tbl tbl_center tbl_scroll_horizontally">
+              <colgroup style="width: 1%">
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col" rowspan="2">브랜드</th>
+                  <th scope="col" rowspan="2">유형</th>
+                  <th scope="col" rowspan="2">{{month}}월목표</th>
+                  <th scope="col" colspan="4">주간실적({{month}}.{{Number(standardStartDate.substr(8))}}~{{Number(standardEndDate.substr(8))}})</th>
+                  <th scope="col" colspan="4">월누계실적({{month}}.1~{{Number(standardEndDate.substr(8))}})</th>
+                  <th scope="col" colspan="2">신장율</th>
+                  <th scope="col" rowspan="2">차주목표({{Number(nextStartDate.substr(4, 2))}}.{{Number(nextStartDate.substr(6))}}~{{Number(nextEndDate.substr(6))}})</th>
+                </tr>
+                <tr>
+                  <th class="tc">전년</th>
+                  <th class="tc">목표</th>
+                  <th class="tc">실적</th>
+                  <th class="tc">달성율</th>
+                  <th class="tc">전년</th>
+                  <th class="tc">목표</th>
+                  <th class="tc">실적</th>
+                  <th class="tc">달성율</th>
+                  <th class="tc">주간</th>
+                  <th class="tc">월누계</th>
+                </tr>
+              </thead>
 
-                        <tbody id="sales_status" class="tbody_s">
-                            <tr v-for="(data , index) in dr_S" :key="index">
-                                  <td class="tc" name="BRCD" rowspan="3" v-if="(data.BRCD!='SO')&&(data.BRCD!='TOTAL')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
-                                  <td class="tc" name="BRCD" rowspan="4" v-else-if="(data.BRCD=='SO')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
-                                  <td class="tc" name="BRCD" rowspan="4" v-else-if="(data.BRCD=='TOTAL')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
-                                  <td class="tc" name="SALEGU2"      v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">{{ data.SALEGU2 }}</td>
-                                  <td class="tr" name="MONPLNAMT"    v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <span v-if="data.MONPLNAMT!=0&&data.MONPLNAMT!=''">{{ data.MONPLNAMT | currency }}</span>
-                                  </td>
-                                  <td class="tr" name="PREWEEKAMT"   v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <span v-if="data.PREWEEKAMT!=0&&data.PREWEEKAMT!=''">{{ data.PREWEEKAMT | currency }}</span>
-                                  </td>
-                                  <td class="tr" name="WEEKPLNAMT"   v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <span v-if="data.WEEKPLNAMT!=0&&data.WEEKPLNAMT!=''">{{ data.WEEKPLNAMT | currency }}</span>
-                                  </td>
-                                  <td class="tr" name="WEEKAMT"      v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <span v-if="data.WEEKAMT!=0&&data.WEEKAMT!=''">{{ data.WEEKAMT | currency }}</span>
-                                  </td>
-                                  <td class="tr" name="WEEKRATE"
-                                      v-bind:style="{'font-weight':(index+1)%3==0?'bold':'', 'background-color':(index+1)%3==0?'black':'', 'color':(index+1)%3==0?'white':''}"
-                                      >
-                                      <span>{{ data.WEEKRATE }}</span><span v-if="data.SALEGU=='3'">%</span>
-                                    </td>
-                                  <td class="tr" name="PREMONAMT"    v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <span v-if="data.PREMONAMT!=0&&data.PREMONAMT!=''">{{ data.PREMONAMT | currency }}</span>
-                                  </td>
-                                  <td class="tr" name="MONSUMPLNAMT" v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <span v-if="data.MONSUMPLNAMT!=0&&data.MONSUMPLNAMT!=''">{{ data.MONSUMPLNAMT | currency }}</span>
-                                  </td>
-                                  <td class="tr" name="MONAMT"       v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <span v-if="data.MONAMT!=0&&data.MONAMT!=''">{{ data.MONAMT | currency }}</span>
-                                  </td>
-                                  <td class="tr" name="MONRATE"
-                                      v-bind:style="{'font-weight':(index+1)%3==0?'bold':'', 'background-color':(index+1)%3==0?'black':'', 'color':(index+1)%3==0?'white':''}"
-                                    >
-                                      <span>{{ data.MONRATE }}</span><span v-if="data.SALEGU=='3'">%</span>
-                                  </td>
-                                  <td class="tc" name="WEEKAVERAGE"  v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <i class="material-icons" :class="[Number(data.WEEKAVERAGE) > 0 ? 'col_danger' : 'col_primary']" v-if="Number(data.WEEKAVERAGE)!=0&&data.WEEKAVERAGE!=''">
-                                      {{ Number(data.WEEKAVERAGE) > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}
-                                    </i>
-                                    <span v-if="Number(data.WEEKAVERAGE)!=0&&data.WEEKAVERAGE!=''" :class="[Number(data.WEEKAVERAGE) > 0 ? 'col_danger' : 'col_primary']">
-                                      {{ (Math.abs(data.WEEKAVERAGE)).toFixed(1) }}%
-                                    </span>
-                                  </td>
-                                  <td class="tc" name="MONAVERAGE"  v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <i class="material-icons" :class="[Number(data.MONAVERAGE) > 0 ? 'col_danger' : 'col_primary']" v-if="Number(data.MONAVERAGE)!=0&&data.MONAVERAGE!=''">
-                                      {{ Number(data.MONAVERAGE) > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}
-                                    </i>
-                                    <span v-if="Number(data.MONAVERAGE)!=0&&data.MONAVERAGE!=''" :class="[Number(data.MONAVERAGE) > 0 ? 'col_danger' : 'col_primary']">
-                                      {{ (Math.abs(data.MONAVERAGE)).toFixed(1) }}%
-                                    </span>
-                                  </td>
-                                  <td class="tc" name="NEXTWEEKPLNAMT" v-bind:style="{'font-weight':(index+1)%3==0?'bold':''}">
-                                    <span v-if="data.NEXTWEEKPLNAMT!=0&&data.NEXTWEEKPLNAMT!=''">{{ data.NEXTWEEKPLNAMT | currency }}</span>
-                                  </td>
-                              </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+              <tbody id="sales_status" class="tbody_s">
+                  <tr v-for="(data , index) in dr_S" :key="index">
+                        <td class="tc" name="BRCD" rowspan="3" v-if="(data.BRCD!='SO')&&(data.BRCD!='TOTAL')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
+                        <td class="tc" name="BRCD" rowspan="4" v-else-if="(data.BRCD=='SO')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
+                        <td class="tc" name="BRCD" rowspan="4" v-else-if="(data.BRCD=='TOTAL')&&data.SALEGU=='1'" style="font-weight:bold;">{{ data.BRCD }}</td>
+                        <td class="tc" name="SALEGU2"      v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">{{ data.SALEGU2 }}</td>
+                        <td class="tr" name="MONPLNAMT"    v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <span v-if="data.MONPLNAMT!=0&&data.MONPLNAMT!=''">{{ data.MONPLNAMT | currency }}</span>
+                        </td>
+                        <td class="tr" name="PREWEEKAMT"   v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <span v-if="data.PREWEEKAMT!=0&&data.PREWEEKAMT!=''">{{ data.PREWEEKAMT | currency }}</span>
+                        </td>
+                        <td class="tr" name="WEEKPLNAMT"   v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <span v-if="data.WEEKPLNAMT!=0&&data.WEEKPLNAMT!=''">{{ data.WEEKPLNAMT | currency }}</span>
+                        </td>
+                        <td class="tr" name="WEEKAMT"      v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <span v-if="data.WEEKAMT!=0&&data.WEEKAMT!=''">{{ data.WEEKAMT | currency }}</span>
+                        </td>
+                        <td class="tr" name="WEEKRATE"
+                            v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':'', 'background-color':data.SALEGU=='0'?'black':'', 'color':data.SALEGU=='0'?'white':''}"
+                            >
+                            <span>{{ data.WEEKRATE }}</span><span v-if="data.SALEGU=='0'">%</span>
+                          </td>
+                        <td class="tr" name="PREMONAMT"    v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <span v-if="data.PREMONAMT!=0&&data.PREMONAMT!=''">{{ data.PREMONAMT | currency }}</span>
+                        </td>
+                        <td class="tr" name="MONSUMPLNAMT" v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <span v-if="data.MONSUMPLNAMT!=0&&data.MONSUMPLNAMT!=''">{{ data.MONSUMPLNAMT | currency }}</span>
+                        </td>
+                        <td class="tr" name="MONAMT"       v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <span v-if="data.MONAMT!=0&&data.MONAMT!=''">{{ data.MONAMT | currency }}</span>
+                        </td>
+                        <td class="tr" name="MONRATE"
+                            v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':'', 'background-color':data.SALEGU=='0'?'black':'', 'color':data.SALEGU=='0'?'white':''}"
+                          >
+                            <span>{{ data.MONRATE }}</span><span v-if="data.SALEGU=='0'">%</span>
+                        </td>
+                        <td class="tc" name="WEEKAVERAGE"  v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <i class="material-icons" :class="[Number(data.WEEKAVERAGE) > 0 ? 'col_danger' : 'col_primary']" v-if="Number(data.WEEKAVERAGE)!=0&&data.WEEKAVERAGE!=''">
+                            {{ Number(data.WEEKAVERAGE) > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}
+                          </i>
+                          <span v-if="Number(data.WEEKAVERAGE)!=0&&data.WEEKAVERAGE!=''" :class="[Number(data.WEEKAVERAGE) > 0 ? 'col_danger' : 'col_primary']">
+                            {{ (Math.abs(data.WEEKAVERAGE)).toFixed(1) }}%
+                          </span>
+                        </td>
+                        <td class="tc" name="MONAVERAGE"  v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <i class="material-icons" :class="[Number(data.MONAVERAGE) > 0 ? 'col_danger' : 'col_primary']" v-if="Number(data.MONAVERAGE)!=0&&data.MONAVERAGE!=''">
+                            {{ Number(data.MONAVERAGE) > 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}
+                          </i>
+                          <span v-if="Number(data.MONAVERAGE)!=0&&data.MONAVERAGE!=''" :class="[Number(data.MONAVERAGE) > 0 ? 'col_danger' : 'col_primary']">
+                            {{ (Math.abs(data.MONAVERAGE)).toFixed(1) }}%
+                          </span>
+                        </td>
+                        <td class="tc" name="NEXTWEEKPLNAMT" v-bind:style="{'font-weight':data.SALEGU=='0'?'bold':''}">
+                          <span v-if="data.NEXTWEEKPLNAMT!=0&&data.NEXTWEEKPLNAMT!=''">{{ data.NEXTWEEKPLNAMT | currency }}</span>
+                        </td>
+                    </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </div>
     <div class="cont_box" style="margin-bottom: 20px;">
         <div class="tit">
@@ -206,6 +206,113 @@
             </div>
         </div>
     </div>
+    <template v-for="(data,index) in dr_C">
+      <div class="cont_box" style="margin-bottom: 20px;" :key="index">
+        <div class="tit">
+          <div class="tab">
+            <ul>
+              <li class="on">
+                <span style="display: block; position: relative; padding: 0 20px; border-right: 1px solid #dee2e6; font-size: 20px; line-height: 59px;">{{data.BRCD}}. 담당별 매장실적 달성율</span>
+              </li>
+            </ul>
+          </div>
+          <div class="layout_spacer"></div>
+        </div>
+        <div class="container">
+          <div class="content">
+            <!-- 테이블 -->
+            <div class="tbl_sheet yellow np">
+              <table id="exceldown_tbody" class="tbl tbl_center tbl_scroll_horizontally">
+                <colgroup style="width: 1%">
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col" rowspan="2">순번</th>
+                    <th scope="col" rowspan="2">담당자</th>
+                    <th scope="col" rowspan="2">매장명</th>
+                    <th scope="col" rowspan="2">매니저</th>
+                    <th scope="col" rowspan="2">매출목표</th>
+                    <th scope="col" colspan="3">주간매출({{Number(standardStartDate.substr(8))}}일 ~ {{Number(standardEndDate.substr(8))}}일)</th>
+                    <th scope="col" colspan="5">월누계실적(1일 ~ {{Number(standardEndDate.substr(8))}}일)</th>
+                    <th scope="col" rowspan="2">M/S</th>
+                  </tr>
+                  <tr>
+                    <th class="tc">매출</th>
+                    <th class="tc">전년동일</th>
+                    <th class="tc">신장율</th>
+                    <th class="tc">누계</th>
+                    <th class="tc">전년동기간</th>
+                    <th class="tc">신장율</th>
+                    <th class="tc">진도율</th>
+                    <th class="tc">전년월마감</th>
+                  </tr>
+                </thead>
+
+                <tbody id="sales_status" class="tbody_s">
+                  <tr v-for="(data2 , index2) in data.DATA" :key="index2">
+                    <td class="tc" name="index" >{{ index2+1 }}</td>
+                    <td class="tc" name="ERPNM" v-if="rowSpan(index, index2)" :rowspan="rowSpanNum(data2.MEMP)">{{ data2.ERPNM }}</td>
+                    <td class="tl" name="VDSNM" v-if="data2.VDCD.indexOf('ZZ') == -1" >{{ data2.VDSNM }}</td>
+                    <td class="tc bg_point_col24" name="VDSNM" v-else colspan="2">TTL</td>
+                    <td class="tc" name="HNAME" v-if="data2.VDCD.indexOf('ZZ') == -1" >
+                      {{ data2.HNAME }}
+                      <span v-if="data2.BIRTH!=''&&data2.BIRTH!=null">({{ data2.BIRTH | currency }}")</span>
+                    </td>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="PLNAMT" >{{ data2.PLNAMT | currency }}</td>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="NOWAMT" >{{ data2.NOWAMT | currency }}</td>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="LASTAMT" >{{ data2.LASTAMT | currency }}</td>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="WEEKRATE" >
+                      <span v-if="Number(data2.WEEKRATE)!=0">{{ Number(data2.WEEKRATE) | currency }} %</span>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="MONSUMAMT" >{{ data2.MONSUMAMT | currency }}</td>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="LASTMONSUMAMT" >{{ data2.LASTMONSUMAMT | currency }}</td>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="MONRATE" >
+                      <span v-if="Number(data2.MONRATE)!=0">{{ Number(data2.MONRATE) | currency }} %</span>
+                    </td>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="MONAVG" >
+                      <span v-if="Number(data2.MONSUMAMT)!=0&&Number(data2.PLNAMT)!=0">{{ Math.round(data2.MONSUMAMT/data2.PLNAMT*100) | currency }} %</span>
+                      <span v-else-if="Number(data2.MONSUMAMT)==0">0</span>
+                      <span v-else-if="Number(data2.PLNAMT)==0"></span>
+                    </td>
+                    <td class="tr" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="ENDMONAMT" >{{ data2.ENDMONAMT | currency }}</td>
+                    <td class="tc" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="MS" >{{ data2.MS }}</td>
+                  </tr>
+                </tbody>
+
+                <tfoot>
+                  <tr class="tbl_total" style="border-top: 1px solid #ced4da;" v-for="(totalData , index3) in getTotData(data.BRCD)" :key="index3">
+                    <th scope="col" colspan="4"><strong>합계</strong></th>
+                    <td class="tr"><strong>{{ totalData.PLNAMT | currency}}</strong></td>
+                    <td class="tr bg_point_col25"><strong>{{ totalData.NOWAMT | currency}}</strong></td>
+                    <td class="tr"><strong>{{ totalData.LASTAMT | currency}}</strong></td>
+                    <td class="tr"><strong>{{ totalData.WEEKRATE | currency}}</strong></td>
+                    <td class="tr bg_point_col25"><strong>{{ totalData.MONSUMAMT | currency}}</strong></td>
+                    <td class="tr"><strong>{{ totalData.LASTMONSUMAMT | currency}}</strong></td>
+                    <td class="tr"><strong>{{ totalData.MONRATE | currency}}</strong></td>
+                    <td class="tr"><strong>{{ totalData.MONAVG | currency}}</strong></td>
+                    <td class="tr"><strong>{{ totalData.ENDMONAMT | currency}}</strong></td>
+                    <td class="tr"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -246,8 +353,11 @@ export default {
       TOT_dr_S: [],
       weekList: [],
       dr_P: [],
+      dr_C: [],
+      dr_SC: [],
       seasonYear: null,
       thisWeeks: null,
+      brandList: null,
       /*
       clickYn: false,
       selectedSUCD: null,
@@ -284,8 +394,12 @@ export default {
     }
   },
   created() {
+    this.brandList = ["MI", "MO", "FO", "IT", "SO"];
     this.calDefaultDate = moment().day('Sunday').format('YYYY-MM-DD')
     this.standardStartDate = moment(this.calDefaultDate).subtract(6, 'days').format('YYYY-MM-DD')
+    if(moment(this.standardStartDate, 'YYYY-MM-DD').format('MM') != moment().format('MM')) {
+      this.standardStartDate = moment().format('YYYY-MM') + "-01"
+    }
     this.standardEndDate = this.calDefaultDate
     this.year = moment(this.calDefaultDate).format("YYYY");
     this.month = moment(this.calDefaultDate).format("M");
@@ -297,19 +411,19 @@ export default {
       this.yearList.push({CODE: String(code), CODENM: (cuerrentYear - (4 - i))})
     }
     this.seasonYear = this.yearList[this.yearList.length-1].CODE
-    //this.seasonEndYear = this.yearList[this.yearList.length-1]
 
     for (let i = 1; i < 13; i++) {
-      //code = this.$store.getters.getMonthCode(i)
       this.monthList.push({CODE: String(i), CODENM: String(i)+"월"})
     }
 
     this.getWeek(this.year, this.month)
+    console.log("weekList >>> ", this.weekList, " / ", moment(this.standardStartDate).format("YYYYMMDD"));
     let weekIndex = _.findIndex(this.weekList, ['startDay', moment(this.standardStartDate).format("YYYYMMDD")]);
     this.thisWeeks = this.weekList[weekIndex]
     this.week = this.thisWeeks.weekend
     this.nextStartDate = this.weekList[weekIndex+1].startDay;
     this.nextEndDate = this.weekList[weekIndex+1].endDay;
+
   },
   mounted() {
     this.loadData()
@@ -351,12 +465,52 @@ export default {
     }
   },
   methods: {
-    totalClass: function (ITEM) {      
-      return {
-        'bg_point_col20': ITEM === 'TOTAL'
+    rowSpan: function (index, index2) {   
+      if(index2 == 0) {
+        return true;
+      }   
+      if(this.dr_C[index].DATA[index2].MEMP != this.dr_C[index].DATA[index2-1].MEMP) {
+        return true;
+      } else {
+        return false;
       }
+      // /console.log("false")
     },
-    bold(id, idx) {
+    rowSpanNum: function (memp) {   
+      let data = _.find(this.dr_SC, ['MEMP', memp]);
+      return data.DATA.length;
+    },
+    subSum: function (index, index2) {   
+      console.log(index, " / ", index2)
+      if(index2 == (this.dr_C[index].DATA.length-1)) {
+        console.log("true1 ")
+        return true;
+      }
+      if(this.dr_C[index].DATA[index2].MEMP != this.dr_C[index].DATA[index2+1].MEMP) {
+        console.log("true2 ", this.dr_C[index].DATA[index2].MEMP, " / ", this.dr_C[index].DATA[index2+1].MEMP)
+        return true;
+      } else {
+        console.log("false ", this.dr_C[index].DATA[index2].MEMP, " / ", this.dr_C[index].DATA[index2+1].MEMP)
+        return false;
+      }
+      // /console.log("false")
+    },
+    getTotData: function (brcd) {      
+      let objects = _.find(this.dr_C, ['BRCD', brcd]).DATA;
+      return [{
+        'BRCD': brcd,
+        'PLNAMT': _.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.PLNAMT); }),
+        'NOWAMT': _.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.NOWAMT); }),
+        'LASTAMT': _.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.LASTAMT); }),
+        'WEEKRATE': Math.round((_.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.NOWAMT); })/_.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.LASTAMT); })-1)*100),
+        'MONSUMAMT': _.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.MONSUMAMT); }),
+        'LASTMONSUMAMT': _.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.LASTMONSUMAMT); }),
+        'ENDMONAMT': _.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.ENDMONAMT); }),
+        'MONRATE': Math.round((_.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.MONSUMAMT); })/_.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.LASTMONSUMAMT); })-1)*100),
+        'MONAVG': Math.round(_.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.MONSUMAMT); })/_.sumBy(objects, function(o) { return o.VDCD.indexOf('ZZ')==0?0:Number(o.PLNAMT); })*100),
+      }]
+    },
+    bold(id, idx) { 
       let tr = $("#sales_status > tr").filter(":eq(" + idx + ")")
       let td = tr.find("td[name="+id+"]")
       
@@ -401,11 +555,15 @@ export default {
             weekend += 1
             this.weekList.push({
               weekend: weekend, weekendStr: weekend+"주차",
-              startDay: start_day, endDay: end_day
+              startDay: yyyy+""+mm+"01", endDay: moment( yyyy+""+mm+"01", "YYYYMMDD").endOf('month').format('YYYYMMDD')
             })
           }
         }
       }
+      this.weekList.push({
+        weekend: '0', weekendStr: "월마감",
+        startDay: start_day, endDay: end_day
+      })
     },
     getThisWeek: function (week) {
       this.week = week;
@@ -425,6 +583,7 @@ export default {
       }
       */
       this.getProgressData();
+      this.getTakeChargeList();
     },
     changeDate() {
       console.log("changeDate_year >>>", this.year)
@@ -450,60 +609,6 @@ export default {
     },
     getSaleListByBrand() {
       this.dr_S = []
-      /*
-      this.dr_S = [
-        {
-          COMCD: '1', SUCD:'1', BRCD: 'MI', YYYY: '2020', MM: '6', WEEK: '2',
-          FROM_SALEDT: '20200608', TO_SALEDT: '20200614', 
-          SALEGU: '1', SALEGU2: '정상', MONPLNAMT: 2950, 
-          PREWEEKAMT: 551, WEEKPLNAMT: 763.5, WEEKAMT: 540, WEEKRATE: '', 
-          PREMONAMT: 1059, MONSUMPLNAMT: 1337, MONAMT: 1102, MONRATE: '', 
-          WEEKAVERAGE: '-2.0', MONAVERAGE: '4.1', NEXTWEEKPLNAMT: 1234
-        },
-        {
-          COMCD: '1', SUCD:'1', BRCD: 'MI', YYYY: '2020', MM: '6', WEEK: '2',
-          FROM_SALEDT: '20200608', TO_SALEDT: '20200614', 
-          SALEGU: '2', SALEGU2: '이월', MONPLNAMT: 0, 
-          PREWEEKAMT: 0, WEEKPLNAMT: 0, WEEKAMT: 0, WEEKRATE: '0', 
-          PREMONAMT: 0, MONSUMPLNAMT: 0, MONAMT: 0, MONRATE: '0', 
-          WEEKAVERAGE: '0', MONAVERAGE: '0', NEXTWEEKPLNAMT: 0
-        },
-        {
-          COMCD: '1', SUCD:'12', BRCD: 'MO', YYYY: '2020', MM: '6', WEEK: '2',
-          FROM_SALEDT: '20200608', TO_SALEDT: '20200614', 
-          SALEGU: '1', SALEGU2: '정상', MONPLNAMT: 3120, 
-          PREWEEKAMT: 480, WEEKPLNAMT: 742, WEEKAMT: 602, WEEKRATE: '', 
-          PREMONAMT: 1475, MONSUMPLNAMT: 1717, MONAMT: 1821, MONRATE: '', 
-          WEEKAVERAGE: '25.4', MONAVERAGE: '23.5', NEXTWEEKPLNAMT: 1234
-        },
-        {
-          COMCD: '1', SUCD:'12', BRCD: 'MO', YYYY: '2020', MM: '6', WEEK: '2',
-          FROM_SALEDT: '20200608', TO_SALEDT: '20200614', 
-          SALEGU: '2', SALEGU2: '이월', MONPLNAMT: 1550, 
-          PREWEEKAMT: 394, WEEKPLNAMT: 368, WEEKAMT: 279, WEEKRATE: '', 
-          PREMONAMT: 1170, MONSUMPLNAMT: 853, MONAMT: 960, MONRATE: '', 
-          WEEKAVERAGE: '-29.2', MONAVERAGE: '-17.9', NEXTWEEKPLNAMT: 1234
-        },
-        {
-          COMCD: '1', SUCD:'21', BRCD: 'FO', YYYY: '2020', MM: '6', WEEK: '2',
-          FROM_SALEDT: '20200608', TO_SALEDT: '20200614', 
-          SALEGU: '1', SALEGU2: '정상', MONPLNAMT: 0, 
-          PREWEEKAMT: 0, WEEKPLNAMT: 0, WEEKAMT: 0, WEEKRATE: '', 
-          PREMONAMT: 0, MONSUMPLNAMT: 0, MONAMT: 0, MONRATE: '', 
-          WEEKAVERAGE: '', MONAVERAGE: '', NEXTWEEKPLNAMT: 0
-        },
-        {
-          COMCD: '1', SUCD:'21', BRCD: 'FO', YYYY: '2020', MM: '6', WEEK: '2',
-          FROM_SALEDT: '20200608', TO_SALEDT: '20200614', 
-          SALEGU: '2', SALEGU2: '이월', MONPLNAMT: 1110, 
-          PREWEEKAMT: 434, WEEKPLNAMT: 500, WEEKAMT: 495, WEEKRATE: '', 
-          PREMONAMT: 769, MONSUMPLNAMT: 570, MONAMT: 575, MONRATE: '', 
-          WEEKAVERAGE: '14.1', MONAVERAGE: '-25.2', NEXTWEEKPLNAMT: 1234
-        }
-      ];
-      */
-
-      
 
       this.req2svr.getSaleListByBrand(this.year, this.month, this.week).then(
         res => {
@@ -572,11 +677,11 @@ export default {
                 PREWEEKAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.PREWEEKAMT):0; }), 
                 WEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKPLNAMT):0; }), 
                 WEEKAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKAMT):0; }), 
-                WEEKRATE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKPLNAMT):0; })*100, 1), 
+                WEEKRATE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKPLNAMT):0; }), 1), 
                 PREMONAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.PREMONAMT):0; }), 
                 MONSUMPLNAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONSUMPLNAMT):0; }), 
                 MONAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONAMT):0; }), 
-                MONRATE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONSUMPLNAMT):0; })*100, 1), 
+                MONRATE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONSUMPLNAMT):0; }), 1), 
                 WEEKAVERAGE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.PREWEEKAMT):0; })-1, 2), 
                 MONAVERAGE: this.getRate(_.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.PREMONAMT):0; })-1, 2), 
                 NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.BRCD==brand_list[i]?Number(o.NEXTWEEKPLNAMT):0; })
@@ -672,31 +777,13 @@ export default {
     },
     getProgressData() {
       this.dr_P = []
-      /*
-      let list = [
-        {
-          BRCD: 'MI',
-          PROGRESS:"*롯데울산 SD 대상 면접 : 6/9(화)\n*본방 10월 상품 품평회 : 6/10(수) 매장 SD                  <b>(5개점 - 롯/본,잠,영,현/무,목,신/강)</b>\n                                   6/11(목) 본사\n*현대매입부 미팅 : 6/11(목)\n*영남지역 상품본부 및 부산지역 매장 방문 : 6/12(금)      <b>상품본부 김상인 칩바이어</b>",
-          PLAN: "*롯데본점 바이어상담 : 6/16(화)\n*갤/센터시티, 신/충청 매장점검 : 6/18(목)\n*롯데포항 매장점검 및 바이어 상담 : 6/18 (목)\n*현대매입부 미팅 : 6/19(금)"
-        },
-        {
-          BRCD: 'MO',
-          PROGRESS:"*시즌오프 진행 中\n*현대대전점 물량 카운팅, 물류방문 (6/10)\n*롯데청주 S/D(매니져) 인수인계 : 6/11(목) 폐점후",
-          PLAN: "*시즌오프 진행 中\n*현대 대전점 매장 셋팅 (6/17, 대전 출장)\n*NC강서 팀장, 부서장 미팅 (6/19)"
-        },
-        {
-          BRCD: 'FO',
-          PROGRESS:"*2년차 시즌오프 진행(6/10~14 실적 6,774pcs, 484백만원)\n*매장라운딩(시즌오프 점검, 망원, 가산, NC수원)\n*대덕, 전주점 부동산 담보 변경(서류발송 완료)",
-          PLAN: "* 2년차 시즌오프 물량 추가 출고\n* 물류 방문 재고 비가용 재고 점검(ND, 불량 외)\n* 한섬팩토리 시장조사(시즌오프 20일 예정)"
-        }
-      ];
-      */
       
       this.req2svr.getProgressData(this.year, this.month, this.week).then(
         res => {
           if (res.MACHBASE_ERROR) {
             console.log("res", res)
             alert(res["EXECUTE ERROR"]);
+            this.dr_S = []
           } else {
             let count = (JSON.stringify(res).match(/{/g) || []).length;
             let list = []
@@ -711,8 +798,8 @@ export default {
             for(let i in list) {
               this.dr_P.push({
                 BRCD: list[i].BRCD,
-                PROGRESS: list[i].PROGRESS.split(' ').join('&nbsp;').split('  ').join('&emsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
-                PLAN: list[i].PLAN.split(' ').join('&nbsp;').split('  ').join('&emsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
+                PROGRESS: list[i].PROGRESS.replace(/ /gi, "&nbsp;").split('	').join('&emsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
+                PLAN: list[i].PLAN.replace(/ /gi, "&nbsp;").split('	').join('&emsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
               })
             }
             if(this.dr_P.length != 0) {
@@ -730,6 +817,84 @@ export default {
       
       
 
+    },
+    getTakeChargeList() {
+      this.dr_C = []
+      
+      this.req2svr.getTakeChargeList(this.year, this.twinNum(this.month), this.week).then(
+        res => {
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res)
+          } else {
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            let list = []
+            if(count < 1) {
+            } else if(count == 1) {
+              list.push(res);
+            } else {
+              list = JSON.parse("[" + res + "]");
+            }
+            if(list.length != 0) {
+              this.getStoreSaleByCharge(list);
+            }
+          }
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      );
+    },
+    getStoreSaleByCharge(chargeList) {
+      
+      this.req2svr.getStoreSaleByCharge(this.year, this.twinNum(this.month), this.week).then(
+        res => {
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res)
+          } else {
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            let list = []
+            if(count < 1) {
+            } else if(count == 1) {
+              list.push(res);
+              console.log("getStoreSaleByCharge >>> ", list)
+            } else {
+              list = JSON.parse("[" + res + "]");
+              console.log("getStoreSaleByCharge2 >>> ", list)
+            }
+            if(list.length != 0) {
+              let chargeObjList = new Array();
+              console.log(this.brandList);
+              for(let k = 0; k < this.brandList.length; k++) {
+                let chargeObj = new Object();
+                chargeObj["BRCD"] = this.brandList[k]
+                chargeObj["DATA"] = new Array();
+                for(let j = 0; j < list.length; j ++) {
+                  if(chargeObj.BRCD == list[j].BRCD) {
+                    chargeObj.DATA.push(list[j])
+                  }
+                }
+                chargeObjList.push(chargeObj);
+              }
+
+              for(var i = 0; i < chargeList.length; i++) {
+                chargeList[i]["DATA"] = new Array();
+                for(var j = 0; j < list.length; j++) {
+                  if(chargeList[i].COMCD == list[j].COMCD && chargeList[i].SUCD == list[j].SUCD && chargeList[i].MEMP == list[j].MEMP) {
+                    chargeList[i]["DATA"].push(list[j]);
+                  }
+                }
+              }
+              console.log("chargeList >>>", chargeList)
+              console.log("chargeObjList >>>", chargeObjList)
+              this.dr_C = chargeObjList;
+              this.dr_SC = chargeList;
+            }
+          }
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      );
     },
     link(val) {
       //this.$router.push(val)
