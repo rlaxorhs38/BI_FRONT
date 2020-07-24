@@ -55,5 +55,14 @@ export default {
         end_date : end_date
       }
     }).then(x => x.data)
+  },
+  geJasaSaleList(sucd, basedt, gubun) {
+    return axios.get(apiUrl() + "online/geJasaSaleList", {
+      params : { 
+        sucd : sucd,
+        basedt : basedt,
+        gubun : gubun
+      }
+    }).then(x => x.data)
   }
 }
