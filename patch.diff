@@ -1,0 +1,4406 @@
+From 0fe66b6969b038c94b9ff8e2673d9b1c03057d83 Mon Sep 17 00:00:00 2001
+From: "hanui.shin" <gksmldia@gmail.com>
+Date: Fri, 5 Jun 2020 15:24:15 +0900
+Subject: [PATCH] =?UTF-8?q?=EB=B8=8C=EB=9E=9C=EB=93=9C=20=EA=B3=A0?=
+ =?UTF-8?q?=EC=A0=95?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ src/config/apiUrl.js                   |    3 +-
+ src/pages/financial/FIN0102/index.vue  |   26 +-
+ src/pages/financial/FIN0102/req2svr.js |   10 +
+ src/pages/main/MAI0001/index.vue       |    6 +-
+ src/pages/main/MAI0001/index_prd.vue   |  147 ++++
+ src/pages/online/ONL0103/index.vue     |    5 +-
+ src/pages/store/STO0001/index.vue      |   38 +-
+ src/pages/store/STO0001_loc/index.vue  | 1121 ++++++++++++++++++++++++
+ src/pages/store/STO0001_loc/req2svr.js |  170 ++++
+ src/pages/store/STO0003_1/index.vue    |  933 +++++++++++++-------
+ src/pages/store/STO0004/index.vue      |   13 +-
+ src/router/index.js                    |  153 ++--
+ src/router/index_loc.js                | 1072 ++++++++++++++++++++++
+ 13 files changed, 3233 insertions(+), 464 deletions(-)
+ create mode 100644 src/pages/main/MAI0001/index_prd.vue
+ create mode 100644 src/pages/store/STO0001_loc/index.vue
+ create mode 100644 src/pages/store/STO0001_loc/req2svr.js
+ create mode 100644 src/router/index_loc.js
+
+diff --git a/src/config/apiUrl.js b/src/config/apiUrl.js
+index be5f9e5..1241e96 100644
+--- a/src/config/apiUrl.js
++++ b/src/config/apiUrl.js
+@@ -1,7 +1,8 @@
+ let url
+ 
+ if (process.env.NODE_ENV === 'production') {
+-    url = 'http://bidev.sisun.com:8081/api/'
++    url = 'http://bi.sisun.com/api/'
++    // url = 'http://bidev.sisun.com:8081/api/'
+ }else{
+     // url = 'http://bidev.sisun.com:8081/api/'
+     url = 'http://localhost:3000/api/'
+diff --git a/src/pages/financial/FIN0102/index.vue b/src/pages/financial/FIN0102/index.vue
+index ce4e313..5295b7c 100644
+--- a/src/pages/financial/FIN0102/index.vue
++++ b/src/pages/financial/FIN0102/index.vue
+@@ -585,32 +585,8 @@ export default {
+         start_date = moment(this.selectDate).format("YYYY")+"0101";
+       }
+       let end_date = moment(this.selectDate).format("YYYYMMDD");
+-      // 매장 매출순위 팝업 리스트 개수
+-      // 당일매출 순위
+-      let sql = "SELECT ROWNUM() RN, VDCD, VDSNM, SUCD, SALE_TOT, QTY_TOT, "
+-      sql += "JAMT, JQTY, DCAMT, DCQTY, GAMT, GQTY, "
+-      sql += "R_JAMT, R_JQTY, R_DCAMT, R_DCQTY, R_GAMT, R_GQTY, "
+-      sql += "ADVDEPAMT FROM ( "
+-      sql += "SELECT VDCD, VDSNM, SUCD, SUM(JAMT+DCAMT+GAMT+ADVDEPAMT) AS SALE_TOT, SUM(JQTY+DCQTY+GQTY) AS QTY_TOT, "
+-      sql += "SUM(JSAMT) JAMT, SUM(JSQTY) JQTY, SUM(DCSAMT) DCAMT, SUM(DCSQTY) DCQTY, SUM(GSAMT) GAMT, SUM(GSQTY) GQTY, "
+-      sql += "SUM(JRAMT) R_JAMT, SUM(JRQTY) R_JQTY, SUM(DCRAMT) R_DCAMT, SUM(DCRQTY) R_DCQTY, SUM(GRAMT) R_GAMT, SUM(GRQTY) R_GQTY, "
+-      sql += "SUM(ADVDEPAMT) ADVDEPAMT "
+-      sql += "FROM BISL060 "
+-      // sql += "WHERE " + this.tabType + " = '" + this.dr_H.MCODE + "' "
+-      sql += "WHERE SALEDT BETWEEN '"+ start_date +"' AND '"+ end_date +"' "
+-      sql += "AND CREATEDATE = (SELECT MAX(CREATEDATE) FROM BISL060) ";
+-      sql += "GROUP BY VDCD, VDSNM, SUCD "
+-      if(this.dr_H.MCODE == 'A') {
+-        sql += "HAVING " + this.tabType + " IN ('1', '12', '21', '4', '3', '5') "
+-      } else if(this.dr_H.MCODE == '3') {
+-        sql += "HAVING " + this.tabType + " IN ('" + this.dr_H.MCODE + "', '5') "
+-      } else {
+-        sql += "HAVING " + this.tabType + " = '" + this.dr_H.MCODE + "' "
+-      }
+-      sql += "ORDER BY SALE_TOT DESC "
+-      sql += ")"
+ 
+-      this.req2svr.getData(sql).then(
++      this.req2svr.getStoreList(start_date, end_date, this.tabType, this.dr_H.MCODE).then(
+         res => {
+           this.listData = []
+           if (res.MACHBASE_ERROR) {
+diff --git a/src/pages/financial/FIN0102/req2svr.js b/src/pages/financial/FIN0102/req2svr.js
+index 5a5e6da..702b88c 100644
+--- a/src/pages/financial/FIN0102/req2svr.js
++++ b/src/pages/financial/FIN0102/req2svr.js
+@@ -15,5 +15,15 @@ export default {
+         date : date
+       }
+     }).then(x => x.data)
++  },
++  getStoreList(start_date, end_date, tabType, code) {
++    return axios.get(apiUrl() + "fin/getStoreList2", {
++      params : { 
++        start_date : start_date,
++        end_date : end_date,
++        tabType : tabType,
++        code : code
++      }
++    }).then(x => x.data)
+   }
+ }
+diff --git a/src/pages/main/MAI0001/index.vue b/src/pages/main/MAI0001/index.vue
+index b1f21c9..272853a 100644
+--- a/src/pages/main/MAI0001/index.vue
++++ b/src/pages/main/MAI0001/index.vue
+@@ -73,17 +73,17 @@
+             <li>
+               <div class="btns">
+                   <a href="javascript:void(0);" @click="link('/OnLineMain')" class="btn_main">
+-                      <i class="material-icons">shopping_cart</i>온라인
++                      <i class="material-icons">shopping_cart</i>온라인 
+                   </a>
+               </div>
+             </li>
+-            <li>
++            <!-- <li>
+               <div class="btns">
+                 <a href="javascript:void(0);" @click="link('/NewDailyReport')" class="btn_main">
+                   <i class="material-icons">assessment</i>재무
+                 </a>
+               </div>
+-            </li>
++            </li> -->
+             <li>
+               <div class="btns">
+                 <div class="sub_btns">
+diff --git a/src/pages/main/MAI0001/index_prd.vue b/src/pages/main/MAI0001/index_prd.vue
+new file mode 100644
+index 0000000..a9e19e4
+--- /dev/null
++++ b/src/pages/main/MAI0001/index_prd.vue
+@@ -0,0 +1,147 @@
++<template>
++  <!-- 20.03.02 구매,생산 메뉴를 가려 달라는 요청에 의해 div테그 주석처리 -->
++  <!-- <div class="wrap main" style="height: -webkit-fill-available;"> -->
++
++  <div class="wrap main">
++    <!-- header -->
++    <header class="header">
++      <!-- Title -->
++      <div class="main_title">
++        <div class="logo"><img src="@/assets/images/img_logo_b.png" alt="sisun" /></div>
++        <strong class="txt">BI Service</strong>
++      </div>  
++    </header>
++    <div class="container">
++      <div class="content">
++        <div class="main_btn_list">
++          <ul class="list">
++            <li>
++              <div class="btns">
++                <div class="sub_btns">
++                  <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_sub">일매출</a>
++                  <a href="javascript:void(0);" @click="link('/OnLineSale')" class="btn_sub">온라인</a>
++                  <!-- <a href="javascript:void(0);" @click="link('/StoreSalesStatus2')" class="btn_sub">월매출</a> -->
++                </div>
++                <a href="javascript:void(0);" @click="link('/DailyReportDetail')" class="btn_main">
++                  <i class="material-icons">today</i>매출
++                </a>                            
++              </div>
++            </li>
++            <li>
++              <div class="btns">
++                <div class="sub_btns">
++                  <a href="javascript:void(0);" @click="link('/NewStyleMain')" class="btn_sub">스타일</a>
++                  <a href="javascript:void(0);" @click="link('/StoreMain')" class="btn_sub">매장</a>
++                </div>
++                <a href="javascript:void(0);" @click="link('/SalesMain')" class="btn_main">
++                  <i class="material-icons">business_center</i>영업
++                </a>                            
++              </div>
++            </li>
++            <li>
++              <div class="btns">
++                <a href="javascript:void(0);" @click="link('/WeeklyClothSale')" class="btn_main">
++                  <i class="material-icons">insert_drive_file</i>주간보고
++                </a>
++              </div>
++            </li>
++            <li>
++              <div class="btns">
++                <a href="javascript:void(0);" @click="link('/Crm')" class="btn_main">
++                  <i class="material-icons">supervisor_account</i>CRM
++                </a>
++              </div>
++            </li>
++            <!-- <li>
++              <div class="btns">
++                <a href="javascript:void(0);" @click="link('/ProductMain')" class="btn_main">
++                  <i class="material-icons">list_alt</i>생산
++                </a>
++              </div>
++            </li>
++            <li>
++              <div class="btns">
++                <a href="javascript:void(0);" @click="link('/BuyMain')" class="btn_main">
++                  <i class="material-icons">local_mall</i>구매
++                </a>
++              </div>
++            </li> -->
++            <li>
++              <div class="btns">
++                  <a href="javascript:void(0);" @click="link('/OnLineMain')" class="btn_main">
++                      <i class="material-icons">shopping_cart</i>온라인
++                  </a>
++              </div>
++            </li>
++            <li>
++              <div class="btns">
++                <div class="sub_btns">
++                  <a href="javascript:void(0);" @click="link('/NewDailyReport')" class="btn_sub">재무종합</a>
++                  <a href="javascript:void(0);" @click="link('/NewDailyReportSales')" class="btn_sub">매출</a>
++                  <a href="javascript:void(0);" @click="link('/NewDailyReportCash')" class="btn_sub">현금</a>
++                  <a href="javascript:void(0);" @click="link('/NewDailyReportProfit')" class="btn_sub">영업이익B</a>
++                </div>
++                <a href="javascript:void(0);" @click="link('/NewDailyReport')" class="btn_main">
++                  <i class="material-icons">assessment</i>재무
++                </a>                            
++              </div>
++            </li>
++            <li>
++              <div class="btns">
++                <a href="javascript:void(0);" @click="link('/HumMain')" class="btn_main">
++                  <i class="material-icons">perm_contact_calendar</i>인재DB
++                </a>
++              </div>
++            </li>
++          </ul>
++        </div>            
++      </div>
++    </div>
++  </div>
++</template>
++
++<script>
++export default {
++  name: "main",
++  methods: {
++    link(val) {
++      this.$router.push(val)
++
++      /* 이전 소스 - 운영 반영 후 이상 없을 시 삭제 필요
++      let DailyReport = _.find(this.authGbnCd, {GBNCD: "BI0001"})
++      let SalesMain = _.find(this.authGbnCd, {GBNCD: "BI0002"})
++      let Crm = _.find(this.authGbnCd, {GBNCD: "BI0003"})
++      let ProductMain = _.find(this.authGbnCd, {GBNCD: "BI0004"})
++      let BuyMain = _.find(this.authGbnCd, {GBNCD: "BI0005"})
++      let OnLineMain = _.find(this.authGbnCd, {GBNCD: "BI0006"})
++      let Human = _.find(this.authGbnCd, {GBNCD: "BI0007"})
++
++      if((val == "/NewDailyReport") && DailyReport){
++        this.$router.push(val);
++      } else if((val == "/SalesMain" || val == "/NewStyleMain" || val == "/StoreMain") && SalesMain){
++        this.$router.push(val);
++      } else if(val == "/Crm" && Crm && Crm.GBNCD){
++        this.$router.push(val);
++      } else if(val == "/ProductMain" && ProductMain){
++        this.$router.push(val);
++      } else if(val == "/BuyMain" && BuyMain){
++        this.$router.push(val);
++      } else if(val == "/OnLineMain" && OnLineMain){
++        this.$router.push(val);
++      } else if(val == "/HumMain" && Human) {
++        this.$router.push(val);
++      } else {
++        alert("권한이 없습니다.")
++      }
++      */
++    }
++  },
++  computed: {
++    /* 메뉴 권한코드(이전 소스 - 운영 반영 후 이상 없을 시 삭제 필요)
++    authGbnCd() {
++      return this.$store.getters.getAuthGbnCd
++    }
++    */
++  }
++}
++</script>
+\ No newline at end of file
+diff --git a/src/pages/online/ONL0103/index.vue b/src/pages/online/ONL0103/index.vue
+index 52f54e6..943792b 100644
+--- a/src/pages/online/ONL0103/index.vue
++++ b/src/pages/online/ONL0103/index.vue
+@@ -81,7 +81,8 @@
+                     <dl class="list_obj">
+                       <dt class="tit">당월 온라인 매출 비중</dt>
+                       <dd class="txt" v-if="data.DAYRAT">
+-                        {{ ((Number(data.MONJASA) + Number(data.MONOUT))/data.MONTOT*100).toFixed(1) }} %
++                        {{ getMakeRate(data.MONJASA, data.MONOUT, data.MONTOT) }} %
++                        <!-- {{ ((Number(data.MONJASA) + Number(data.MONOUT))/data.MONTOT*100).toFixed(1) }} % -->
+                       </dd>
+                       <dd class="txt" v-else>
+                         0 %
+@@ -474,7 +475,7 @@ export default {
+           return ((Number(jasa) + Number(out))/Number(tot)*100).toFixed(1)
+         }
+       }
+-      return 0;
++      return "0.0";
+     },
+     getMakeDataDate(){
+       this.req2svr.getMakeDataDate().then(
+diff --git a/src/pages/store/STO0001/index.vue b/src/pages/store/STO0001/index.vue
+index 74747bc..6ee4fad 100644
+--- a/src/pages/store/STO0001/index.vue
++++ b/src/pages/store/STO0001/index.vue
+@@ -40,7 +40,6 @@
+             </span>
+           </label>
+         </div>
+-        <button v-if="choice === 2" type="button" class="btn_n point_col1 point_box1 txt_bold pl20 pr20 ml10" @click="toSalesStatus">월 평균 매출 현황</button>
+         <div class="layout_spacer"></div>
+         <div style="margin-right: 10px;"><small class="txt_s">데이터 기준일 : {{ makeDataDate }}</small></div>
+         <!-- groups -->
+@@ -141,12 +140,12 @@
+                             <option v-for="data in regionData" :key="data.RENNM" :value="data.RENNM">{{ data.RENNM }}({{ data.CNT }})</option>
+                           </select>
+                         </div>
+-                        <!-- <div class="select_box" style="width:30%;">
++                        <div class="select_box" style="width:30%;">
+                           <select class="select input_s" v-model="selectStoreSU" @change="changeStoreSU">
+                             <option :value="0">사업부</option>
+                             <option v-for="data in storeSUData" :key="data.SUCD" :value="data.SUCD">{{ data.CODNM }}({{ data.CNT }})</option>
+                           </select>
+-                        </div> -->
++                        </div>
+                         <div class="select_box" style="width:40%;">
+                           <select class="select input_s" v-model="selectStoreType" @change="changeStoreType">
+                             <option :value="0">매장 구분</option>
+@@ -328,7 +327,7 @@ export default {
+       this.m_options[i] = 12 - i;
+     }
+     this.m_options = _.sortBy(this.m_options)
+-    console.log(this.authCodeList)
++    
+     this.selectedCODE = this.authCodeList[0].MCODE
+   },
+   computed: {
+@@ -378,8 +377,8 @@ export default {
+       drawer: null,
+       y_options: [],
+       m_options: [],
+-      selectedCODE: "1",
+-      selectedMapCODE: "1",
++      selectedCODE: null,
++      selectedMapCODE: null,
+       choice: 2,
+       year: "",
+       month: "",
+@@ -433,8 +432,8 @@ export default {
+         // this.getStoreOptionData()
+         // this.getSelectVDCDStoreInfo()
+         // 데이터를 순차적으로 가져와야 하므로 Promiss 적용
+-        // return this.getRegionData().then(() => this.getStoreSUData())
+-        return this.getRegionData().then(() => this.getStoreTypeData())
++        return this.getRegionData().then(() => this.getStoreSUData())
++        .then(() => this.getStoreTypeData())
+         .then(() => this.getStoreOptionData())
+         .then(() => this.getSelectVDCDStoreInfo())
+     },
+@@ -875,8 +874,8 @@ export default {
+       // this.getStoreOptionData()
+       // this.getSelectVDCDStoreInfo()
+       // 데이터를 순차적으로 가져와야 하므로 Promiss 적용
+-      // this.getRegionData().then(() => this.getStoreSUData())
+-      this.getRegionData().then(() => this.getStoreTypeData())
++      this.getRegionData().then(() => this.getStoreSUData())
++      .then(() => this.getStoreTypeData())
+       .then(() => this.getStoreOptionData())
+       .then(() => this.getSelectVDCDStoreInfo())
+       // this.getSelectVDCDStoreInfo()
+@@ -993,10 +992,7 @@ export default {
+       this.storeTypeData = []
+       this.storeOptionData = []
+       this.selectRegion = "전국"
+-      this.selectedMapCODE = this.selectedCODE
+-      this.mapOrgStoreList = []
+-      this.mapRegionData = []
+-      this.loadData()
++      this.loadData().then(() => this.selectedMapCODE = this.selectedCODE)
+     },
+     chageDate() {
+       this.loadData()
+@@ -1049,20 +1045,6 @@ export default {
+     toMain() {
+       this.$router.replace("/")
+     },
+-    toSalesStatus() {
+-      // this.$router.replace("/StoreSalesStatus")
+-      this.$router.push({
+-          name: 'STO0003',
+-          params: {
+-            data: {
+-              selectedCODE: this.selectedCODE, // 사업부 코드
+-              choice: this.choice, // 월간
+-              year: this.year, // 년도
+-              month: this.month, // 월
+-            }
+-          }
+-        })
+-    },
+     chageStore() {
+       this.toStoreDetail(this.store, this.choice)
+     },
+diff --git a/src/pages/store/STO0001_loc/index.vue b/src/pages/store/STO0001_loc/index.vue
+new file mode 100644
+index 0000000..74747bc
+--- /dev/null
++++ b/src/pages/store/STO0001_loc/index.vue
+@@ -0,0 +1,1121 @@
++﻿<template>
++  <div class="wrap">
++    <!-- side menu -->
++    <div class="layout_drawer" :class="{on: drawer}">
++      <h1 class="tit_drawer teamSelector" @click="toMain"><img src="@/assets/images/img_logo.png" alt="sisun" /></h1>
++      <side-menu @click="drawer = !drawer"></side-menu>
++    </div>
++
++    <!-- drawer button -->
++    <div role="button" class="btn_drawer" @click.stop="drawer = !drawer">
++      <i v-show="!drawer" class="material-icons">menu</i>
++      <i v-show="drawer" class="material-icons">arrow_back_ios</i>
++    </div>
++    <div class="layout_obfuscator"></div>
++    <!-- header -->
++    <header class="header">
++      <div class="header_inner">
++        <!-- tabs -->
++        <div class="toggle_group">
++          <label v-for="data in CODECardsList" :key="data.MCODE" class="tg_btn" :class="{'is-checked': selectedCODE == data.MCODE}">
++            <input
++              type="radio"
++              id="option-1"
++              class="tg_radio"
++              name="options"
++              :value="data.MCODE"
++              v-model="selectedCODE"
++              style="display:none"
++              @click="changeCODE(data.MCODE)"
++              :disabled="!data.VISIBLE"
++            >
++            <span class="btn_n txt_label">
++              {{ data.CODNM }}
++              <!-- <svg xmlns="http://www.w3.org/2000/svg" width="160" height="50" class="svg_bl">
++                <path
++                  class="A"
++                  d="M53.06 21.13H56v8.83h-2.94zM26.02 28h-.05l-3.82-7H19v8.84h2.83l.02-6.03h.05l3.2 6.03h1.77l3.3-6.03h.04v6.03h2.58V21h-3.25L26 28zm78.4-2.9h-5.9v-4.07h-2.47v8.92h2.47v-3.8h5.9v3.8h2.5v-8.92h-2.5v4.07zM118.1 21l-4.87 9h2.08l1.45-2.45h4.74l1.45 2.45H125l-4.9-9zm1 2.43l.38.65-.4-.65zm-1.8 3.07l1.75-3.07 1.76 3.07zm18.8-5.5h-2l-4.87 9h2.08l1.45-2.45h4.74l1.4 2.45h2.1zm-2.78 5.5l1.76-3.07 1.76 3.07zm-55.6-3.95c2.1 0 2.88.88 3.24 1.42h2.44c-.44-1.26-2.35-3-5.68-3C74 21 71 23.17 71 25.46s2.86 4.46 6.73 4.46c2.6 0 4.8-1 5.68-2.9H81c-.55.87-1.6 1.2-3.24 1.2-2.53 0-4-1.3-4-2.77-.05-1.28 1.13-2.9 3.97-2.9z"
++                ></path>
++              </svg> -->
++            </span>
++          </label>
++        </div>
++        <button v-if="choice === 2" type="button" class="btn_n point_col1 point_box1 txt_bold pl20 pr20 ml10" @click="toSalesStatus">월 평균 매출 현황</button>
++        <div class="layout_spacer"></div>
++        <div style="margin-right: 10px;"><small class="txt_s">데이터 기준일 : {{ makeDataDate }}</small></div>
++        <!-- groups -->
++        <div class="groups">
++          <div class="toggle_group tg_sty01">
++            <label class="tg_btn" :class="{'is-checked': choice === 1}">
++              <input
++                type="radio"
++                id="option-d"
++                class="tg_radio"
++                name="select"
++                :value="1"
++                v-model="choice"
++                style="display:none"
++                @click="chageType(1)"
++              />
++              <span class="btn_n txt_label">일간</span>
++            </label>
++            <label class="tg_btn" :class="{'is-checked': choice === 2}">
++              <input
++                type="radio"
++                id="option-m"
++                class="tg_radio"
++                name="select"
++                :value="2"
++                v-model="choice"
++                style="display:none"
++                @click="chageType(2)"
++              />
++              <span class="btn_n txt_label">월간</span>
++            </label>
++            <label class="tg_btn" :class="{'is-checked': choice === 3}">
++              <input
++                type="radio"
++                id="option-a"
++                class="tg_radio"
++                name="select"
++                :value="3"
++                v-model="choice"
++                style="display:none"
++                @click="chageType(3)"
++              />
++              <span class="btn_n txt_label">누적</span>
++            </label>
++          </div>
++          <!-- date -->
++          <div v-show="choice == 1" class="input_group input_icon_group" style="width:210px;">
++            <form action="#">
++              <label class="btn_icon_nl" for="date">
++                <i class="material-icons">calendar_today</i>
++              </label>
++              <div class="input_text" type="text" id="date">
++                <date-pick
++                  v-model="date"
++                  @input="chageDate"
++                  startWeekOnSunday
++                  :inputAttributes="{readonly: true}"
++                ></date-pick>
++              </div>
++            </form>
++          </div>
++          <!-- select -->
++          <div v-show="choice == 2 || choice == 3" class="select_box" style="min-width:120px;">
++            <select class="select" v-model="year" @change="chageDate">
++              <option v-for="data in y_options" :key="data" :value="data">{{ data }}년</option>
++            </select>
++          </div>
++          <!-- select -->
++          <div v-show="choice == 2" class="select_box" style="min-width:90px;">
++            <select class="select" v-model="month" @change="chageDate">
++              <option v-for="data in m_options" :key="data" :value="data">{{ data }}월</option>
++            </select>
++          </div>
++          <!-- select -->
++          <div class="select_box" style="min-width:200px;">
++            <select class="select" v-model="store" @change="chageStore">
++              <option :value="0">매장 선택</option>
++              <option v-for="data in selectStoreNameSortList" :key="data.VDCD" :value="data.VDCD">{{ data.VDSNM }}</option>
++            </select>
++          </div>
++        </div>
++      </div>
++    </header>
++    <div class="container">
++      <div class="content">
++        <div class="row">
++          <div class="col_md_5">
++            <div class="cont_box map_view">
++              <div class="list_box_s shop_info">
++                <div class="view col_md_9">
++                  <dl class="list_var">
++                    <dt class="tit">매장</dt>
++                    <dd class="txt">
++                      <div class="groups">
++                        <div class="select_box" style="width:40%;">
++                          <select class="select input_s" v-model="selectRegion" @change="changeRegion">
++                            <option value="전국">전국({{ totalRegionCount }})</option>
++                            <option v-for="data in regionData" :key="data.RENNM" :value="data.RENNM">{{ data.RENNM }}({{ data.CNT }})</option>
++                          </select>
++                        </div>
++                        <!-- <div class="select_box" style="width:30%;">
++                          <select class="select input_s" v-model="selectStoreSU" @change="changeStoreSU">
++                            <option :value="0">사업부</option>
++                            <option v-for="data in storeSUData" :key="data.SUCD" :value="data.SUCD">{{ data.CODNM }}({{ data.CNT }})</option>
++                          </select>
++                        </div> -->
++                        <div class="select_box" style="width:40%;">
++                          <select class="select input_s" v-model="selectStoreType" @change="changeStoreType">
++                            <option :value="0">매장 구분</option>
++                            <option v-for="data in storeTypeData" :key="data.SHGUNM" :value="data.SHGUNM">{{ data.SHGUNM }}({{ data.CNT }})</option>
++                          </select>
++                        </div>
++                        <div class="select_box" style="width:35%;">
++                          <select class="select input_s" v-model="selectStoreOption" @change="changeStoreOption">
++                            <option :value="0">매장 형태</option>
++                            <option v-for="data in storeOptionData" :key="data.SHTPNM" :value="data.SHTPNM">{{ data.SHTPNM }}({{ data.CNT }})</option>
++                          </select>
++                        </div>
++                      </div>
++                    </dd>
++                  </dl>
++                </div>
++                <div class="view col_md_3">
++                  <dl class="list_var">
++                    <dt class="tit">매출합계</dt>
++                    <dd class="txt">
++                      <strong>{{Math.round(selectTotalAMT/1000000) | currency}}</strong><small class="txt">백만원</small>
++                    </dd>
++                  </dl>
++                </div>
++              </div>
++              <!-- <map-view style="height:697px" v-if="showMap" :points="points" :selectPoints="selectPoints" :regionCount="regionCount"></map-view> -->
++              <map-view style="height:697px"
++                :CODE="this.selectedMapCODE"
++                :selectRegion="selectRegion"
++                :orgPoints="mapOrgStoreList"
++                :selectPoints="mapSelectStoreList"
++                :selectPoint="selectStorePoint"
++                :selectRegionData="mapRegionData"
++                @toDetail="mapSelectToStoreDetail"></map-view>
++            </div>
++          </div>
++          <div class="col_md_7">
++            <div class="row row_box">
++              <div class="col_md_6">
++                <div class="cont_box">
++                  <div class="tit">
++                    <strong class="tit_txt">매출 TOP 10</strong>
++                    <div class="layout_spacer"></div>
++                    <button class="btn_icon btn_s btn_edge_sty01" @click="clickAddButton(true)"><i class="material-icons">add</i></button>
++                  </div>
++                  <div class="cont">
++                    <div class="list_num list_stripe list_sty01 mb20">
++                      <ul class="list">
++                        <li v-for="(b_store, index) in storeBest10List" :key="b_store.VDCD">
++                          <div class="inner teamSelector" @click="toStoreDetail(b_store.VDCD)">
++                            <span class="num_box">{{index+1}}</span>
++                            <div class="txt_name" >
++                              {{ b_store.VDSNM }}
++                              <div class="chip_view">
++                                <span class="chip chip_sty04"><span class="chip_text">{{b_store.SHTPNM}}</span></span>
++                                <span class="chip chip_sty05" v-show="b_store.SHGUNM != b_store.SHTPNM"><span class="chip_text">{{b_store.SHGUNM}}</span></span>
++                              </div>
++                            </div>
++                            <span class="txt_result">{{Math.round(b_store.TSAMT/1000) | currency }} 천원</span>
++                          </div>
++                          <button
++                            type="button"
++                            class="btn_icon btn_s btn_round"
++                            :disabled="b_store.LAT == '' || b_store.LNG == '' || b_store.LAT == 0 || b_store.LNG == 0"
++                            @click="toStorePoint(b_store)"
++                          ><i class="material-icons">pin_drop</i></button>
++                        </li>
++                      </ul>
++                    </div>
++                  </div>
++                </div>
++              </div>
++              <div class="col_md_6">
++                <div class="cont_box">
++                  <div class="tit">
++                    <strong class="tit_txt">매출 WORST 10</strong>
++                    <div class="layout_spacer"></div>
++                    <button class="btn_icon btn_s btn_edge_sty01" @click="clickAddButton(false)"><i class="material-icons">add</i></button>
++                  </div>
++                  <div class="cont">
++                    <div class="list_num list_stripe mb20">
++                      <ul class="list">
++                        <li v-for="(w_store, index) in storeWorst10List" :key="w_store.VDCD">
++                          <div class="inner teamSelector" @click="toStoreDetail(w_store.VDCD)">
++                            <span class="num_box">{{index+1}}</span>
++                            <div class="txt_name">
++                              {{ w_store.VDSNM }}
++                              <div class="chip_view">
++                                <span class="chip chip_sty04"><span class="chip_text">{{w_store.SHTPNM}}</span></span>
++                                <span class="chip chip_sty05" v-show="w_store.SHGUNM != w_store.SHTPNM"><span class="chip_text">{{w_store.SHGUNM}}</span></span>
++                              </div>
++                            </div>
++                            <span class="txt_result">{{Math.round(w_store.TSAMT/1000) | currency }} 천원</span>
++                          </div>
++                          <button
++                            type="button"
++                            class="btn_icon btn_s btn_round"
++                            :disabled="w_store.LAT == '' || w_store.LNG == '' || w_store.LAT == 0 || w_store.LNG == 0"
++                            @click="toStorePoint(w_store)"
++                          ><i class="material-icons">pin_drop</i></button>
++                        </li>
++                      </ul>
++                    </div>
++                  </div>
++                </div>
++              </div>
++            </div>
++          </div>
++        </div>
++      </div>
++    </div>
++    <storeListPopup
++      v-if="isStoreListPopup"
++      :data="listPopupData"
++      @close="closeListPopup"
++    ></storeListPopup>
++    <store-month-detail-popup
++      v-if="isStoreMonthDetailVisible"
++      @close="closePopup"
++      @changeSelectType="changeSelectType"
++      :data="detailPopupData"
++    />
++    <store-daily-detail-popup
++      v-if="isStoreDailyDetailVisible"
++      @close="closePopup"
++      @changeSelectType="changeSelectType"
++      :data="detailPopupData"
++    />
++    <store-cumulative-detail-popup
++      v-if="isStoreCumulativeDetailVisible"
++      @close="closePopup"
++      @changeSelectType="changeSelectType"
++      :data="detailPopupData"
++    />
++  </div>
++</template>
++
++<script>
++import moment from "moment"
++import req2svr from "./req2svr"
++import mapView from '@/components/mapView'
++import sideMenu from '@/components/sideMenu'
++import datePick from "vue-date-pick"
++
++import storeListPopup from '@/pages/store/STO0002'
++import storeMonthDetailPopup from '@/pages/store/STO0101'
++import storeDailyDetailPopup from '@/pages/store/STO0102'
++import storeCumulativeDetailPopup from '@/pages/store/STO0103'
++
++export default {
++  name: "STO0001",
++  components: {
++    sideMenu,
++    mapView,
++    datePick,
++    storeListPopup,
++    storeMonthDetailPopup,
++    storeDailyDetailPopup,
++    storeCumulativeDetailPopup
++  },
++  props: {
++  },
++  mounted() {
++    this.loadData()
++  },
++  created() {
++    this.date = moment().subtract(1, "days").format("YYYY-MM-DD")
++
++    this.year = moment().format("YYYY")
++    this.month = moment().format("M")
++
++    let year = moment().format("YYYY")
++    for (var i = 0; i < 3; i++) {
++      this.y_options[i] = year - i;
++    }
++    this.y_options = _.sortBy(this.y_options)
++
++    for (var i = 0; i < 12; i++) {
++      this.m_options[i] = 12 - i;
++    }
++    this.m_options = _.sortBy(this.m_options)
++    console.log(this.authCodeList)
++    this.selectedCODE = this.authCodeList[0].MCODE
++  },
++  computed: {
++    req2svr: () => req2svr,
++    CODECardsList() {
++      let STOList = this.$store.getters.getSTOList
++      for(var i=0; i<STOList.length; i++){
++        let data = _.find(this.authCodeList, {MCODE:STOList[i].MCODE})
++        if (data) {
++          STOList[i].VISIBLE = true
++        } else {
++          STOList[i].VISIBLE = false
++        }
++      }
++      return STOList
++    },
++    isTabTypeSU() {
++      return this.$store.getters.getSTOList[0].GBNCD == "S" ? true : false
++    },
++    tabType() {
++      return this.$store.getters.getSTOList[0].GBNCD == "S" ? "SUCD" : "BRCD"
++    },
++    authCodeList() {
++      if (this.isTabTypeSU) {
++        return this.$store.getters.getAuthSUCDCode[1]
++      }
++      return this.$store.getters.getAuthBRCDCode[1]
++    },
++    totalRegionCount() {
++      return _.sumBy(this.regionData, function(o) { return Number(o.CNT) })
++    },
++    storeBest10List() {
++      let filterList = _.filter(this.selectStoreList, function(o) { return o.TSAMT != null })
++      return _.orderBy(filterList, function(o) { return o.TSAMT }, 'desc').slice(0, 10)
++    },
++    storeWorst10List() {
++      let filterList = _.filter(this.selectStoreList, function(o) { return o.TSAMT != null })
++      return _.orderBy(filterList, function(o) { return o.TSAMT }, 'asc').slice(0, 10)
++    },
++    selectStoreNameSortList() {
++      let filterList = _.filter(this.selectStoreList, function(o) { return o.TSAMT != null })
++      return _.orderBy(filterList, function(o) { return o.VDSNM }, 'asc')
++    }
++  },
++  data() {
++    return {
++      drawer: null,
++      y_options: [],
++      m_options: [],
++      selectedCODE: "1",
++      selectedMapCODE: "1",
++      choice: 2,
++      year: "",
++      month: "",
++      date: "",
++      store: 0,
++      selectRegion: "전국",
++      regionData: [],
++      selectPriority: 0,
++      selectSubPriority: 0,
++      selectStorePoint: {},
++      selectStoreSU: 0,
++      storeSUData: [],
++      selectStoreType: 0,
++      storeTypeData: [],
++      selectStoreOption: 0,
++      storeOptionData: [],
++      selectTotalAMT: 0,
++      mapRegionData: [],
++      mapOrgStoreList: [],
++      mapSelectStoreList: [],
++      selectStoreList: [
++        { LAT: "", LNG: "", ADDR1: "", ADDR2: "", RENCD: "", RENNM: "", SHGU: "", SHGUNM: "", SHTP: "", SHTPNM: "", TELNO: "", VDCD: "", VDSNM: "", ZIPCODE: "", TSAMT: 0 }
++      ],
++      isStoreMonthDetailVisible: false,
++      isStoreDailyDetailVisible: false,
++      isStoreCumulativeDetailVisible: false,
++      detailPopupData: {},
++      isStoreListPopup: false,
++      listPopupData: {},
++      makeDataDate: null,
++      yesterday : moment().subtract(1, "days").format("YYYYMMDD"),
++      selectedStoreVDCDList: []
++    }
++  },
++  methods: {
++    loadData() {
++      if (this.CODECardsList.length <= 0) {
++        return
++      }
++      // if(this.choice != 3){
++      //   this.selectStoreSU = 0
++      //   this.selectStoreType = 0
++      //   this.selectStoreOption = 0
++      // }
++        this.selectPriority = 0
++        this.selectSubPriority = 0
++        this.getMakeDataDate()
++        // this.getRegionData()
++        // this.getStoreSUData()
++        // this.getStoreTypeData()
++        // this.getStoreOptionData()
++        // this.getSelectVDCDStoreInfo()
++        // 데이터를 순차적으로 가져와야 하므로 Promiss 적용
++        // return this.getRegionData().then(() => this.getStoreSUData())
++        return this.getRegionData().then(() => this.getStoreTypeData())
++        .then(() => this.getStoreOptionData())
++        .then(() => this.getSelectVDCDStoreInfo())
++    },
++    getTotalAMT() {
++      this.selectedStoreVDCDList = _.map(this.selectStoreList, 'VDCD')
++      if(this.choice == 1) {
++        this.getDailyTotalAMT()
++        this.getDailyStoreList()
++      } else if(this.choice == 3) {
++        this.getCumulativeTotalAMT()
++        this.getCumulativeStoreList()
++      } else {
++        this.getMonthTotalAMT()
++        this.getMonthStoreList()
++      }
++    },
++    getMakeDataDate(){
++      this.req2svr.getMakeDataDate().then(
++        res => {
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            this.makeDataDate = res.CREATEDATE;
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      );
++    },
++    getRegionData() {
++      this.regionData = []
++
++      return this.req2svr.getRegionData(this.choice, this.tabType, this.selectedCODE, this.date, this.year, this.month, this.yesterday).then(
++        res => {
++          this.regionData = []
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              this.regionData.push(res);
++            } else {
++              this.regionData = JSON.parse("[" + res + "]")
++            }
++            this.mapRegionData = _.cloneDeep(this.regionData)
++            // this.selectRegion = "전국"
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getSelectRegionData() {
++      this.mapRegionData = []
++
++      return this.req2svr.getSelectRegionData(this.choice, this.tabType, this.selectedCODE, this.date, this.year, this.month, this.yesterday,
++        this.selectRegion, this.selectStoreType, this.selectStoreOption, this.selectStoreSU).then(
++        res => {
++          this.mapRegionData = []
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              this.mapRegionData.push(res);
++            } else {
++              this.mapRegionData = JSON.parse("[" + res + "]")
++            }
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getStoreSUData() {      
++      return this.req2svr.getStoreSUData(this.choice, this.tabType, this.selectedCODE, this.date, this.year, this.month, this.yesterday,
++        this.selectRegion).then(
++        res => {
++          // this.storeSUData = []
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              if(this.storeSUData.length == 0){
++                this.storeSUData.push(res)
++                this.storeSUData[0].CODNM = this.$store.getters.getSUCDCODNM(res.SUCD)
++              }else{
++                this.storeSUData.forEach(storeSUData =>{
++                  if(storeSUData.SUCD === String(res.SUCD)){
++                    storeSUData.CNT = res.CNT
++                  }else{
++                    storeSUData.CNT = 0
++                  }
++                  return storeSUData
++                })
++              }
++            } else {
++              if(this.storeSUData.length == 0){
++                this.storeSUData = JSON.parse("[" + res + "]")
++                for (let i=0;i<this.storeSUData.length;i++) {
++                  this.storeSUData[i].CODNM = this.$store.getters.getSUCDCODNM(this.storeSUData[i].SUCD)
++                }
++              }else{
++                let tempData = JSON.parse("[" + res + "]")
++                this.storeSUData.forEach(storeSUData =>{
++                  let suData = tempData.find(tempData => tempData.SUCD === storeSUData.SUCD)
++                  if(suData)
++                    storeSUData.CNT = suData.CNT
++                  else
++                    storeSUData.CNT = 0
++                  return storeSUData
++                })
++              }
++            }
++          }
++          // this.selectStoreSU = 0
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getStoreTypeData() {
++      return this.req2svr.getStoreTypeData(this.choice, this.tabType, this.selectedCODE, this.date, this.year, this.month, this.yesterday,
++        this.selectRegion, this.selectStoreSU).then(
++        res => {
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++            //데이터가 없을 때 모든 CNT를 0으로 변경
++            this.storeTypeData.forEach(storeTypeData =>{
++              storeTypeData.CNT = 0
++            })
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              if(this.storeTypeData.length == 0){
++                this.storeTypeData.push(res)
++              }else{
++                this.storeTypeData.forEach(storeTypeData =>{
++                  if(storeTypeData.SHGUNM === String(res.SHGUNM)){
++                    storeTypeData.CNT = res.CNT
++                  }else{
++                    storeTypeData.CNT = 0
++                  }
++                })
++              }
++            } else {
++              if(this.storeTypeData.length == 0){
++                this.storeTypeData = JSON.parse("[" + res + "]")
++              }else{
++                let tempData = JSON.parse("[" + res + "]")
++                this.storeTypeData.forEach(storeTypeData =>{
++                  let typeData = tempData.find(tempData => tempData.SHGUNM === storeTypeData.SHGUNM)
++                  if(typeData)
++                    storeTypeData.CNT = typeData.CNT
++                  else
++                    storeTypeData.CNT = 0
++                })
++              }
++            }
++          }
++          // this.selectStoreType = 0
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getStoreOptionData() {
++      return this.req2svr.getStoreOptionData(this.choice, this.tabType, this.selectedCODE, this.date, this.year, this.month, this.yesterday,
++        this.selectRegion, this.selectStoreType, this.selectStoreSU).then(
++        res => {
++          // this.storeOptionData = []
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++            //데이터가 없을 때 모든 CNT를 0으로 변경
++            this.storeOptionData.forEach(storeOptionData =>{
++              storeOptionData.CNT = 0
++            })
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              if(this.storeOptionData.length == 0){
++                this.storeOptionData.push(res)
++              }else{
++                this.storeOptionData.forEach(storeOptionData =>{
++                  if(storeOptionData.SHTPNM === String(res.SHTPNM)){
++                    storeOptionData.CNT = res.CNT
++                  }else{
++                    storeOptionData.CNT = 0
++                  }
++                })
++              }
++            } else {
++              if(this.storeOptionData.length == 0){
++                this.storeOptionData = JSON.parse("[" + res + "]")
++              }else{
++                let tempData = JSON.parse("[" + res + "]")
++                this.storeOptionData.forEach(storeOptionData =>{
++                  let typeData = tempData.find(tempData => tempData.SHTPNM === storeOptionData.SHTPNM)
++                  if(typeData)
++                    storeOptionData.CNT = typeData.CNT
++                  else
++                    storeOptionData.CNT = 0
++                })
++              }
++            }
++          }
++          // this.selectStoreOption = 0
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getSelectVDCDStoreInfo() {
++      this.selectTotalAMT = 0
++      this.selectStoreList = [
++        { LAT: "", LNG: "", ADDR1: "", ADDR2: "", RENCD: "", RENNM: "", SHGU: "", SHGUNM: "", SHTP: "", SHTPNM: "", TELNO: "", VDCD: "", VDSNM: "", ZIPCODE: "", TSAMT: 0}
++      ]
++
++      let region = _.find(this.regionData, {RENNM: this.selectRegion})
++      let type = _.find(this.storeTypeData, {SHGUNM: this.selectStoreType})
++      let option = _.find(this.storeOptionData, {SHTPNM: this.selectStoreOption})
++      let su = _.find(this.storeSUData, {SUCD: this.selectStoreSU})
++      
++      if (!region && !type && !option && !su) {
++        this.mapOrgStoreList = []
++        this.mapSelectStoreList = []
++        this.mapRegionData = _.cloneDeep(this.regionData)
++      } else {
++        this.getSelectRegionData()
++      }
++
++      return this.req2svr.getSelectVDCDStoreInfo(this.choice, this.tabType, this.selectedCODE, this.date, this.year, this.month, this.yesterday,
++        this.selectRegion, this.selectStoreType, this.selectStoreOption, this.selectStoreSU).then(
++        res => {
++          this.selectStoreList = [
++            { LAT: "", LNG: "", ADDR1: "", ADDR2: "", RENCD: "", RENNM: "", SHGU: "", SHGUNM: "", SHTP: "", SHTPNM: "", TELNO: "", VDCD: "", VDSNM: "", ZIPCODE: "", TSAMT: 0}
++          ]
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              this.selectStoreList = []
++              this.selectStoreList.push(res)
++            } else {
++              this.selectStoreList = JSON.parse("[" + res + "]")
++            }
++            if (!region && !type && !option && !su) {
++              this.mapOrgStoreList = _.cloneDeep(this.selectStoreList)
++            } else {
++              this.mapSelectStoreList = _.cloneDeep(this.selectStoreList)
++            }            
++            this.getTotalAMT()
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getDailyStoreList() {      
++      this.req2svr.getDailyStoreList(this.tabType, this.selectedCODE, this.date, this.selectedStoreVDCDList.toString()).then(
++        res => {
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              let data = _.find(this.selectStoreList, { VDCD: res.VDCD })
++              if (data) {
++                data.TSAMT = Number(res.TSAMT)
++              }
++            } else {
++              let list = JSON.parse("[" + res + "]")
++              for (let i=0;i<this.selectStoreList.length;i++) {
++                let data = _.find(list, { VDCD: this.selectStoreList[i].VDCD })
++                if (data) {
++                  this.selectStoreList[i].TSAMT = Number(data.TSAMT)
++                }
++              }
++            }
++            this.selectStoreList.sort(function(a, b) {
++              return b["TSAMT"] - a["TSAMT"]
++            })
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getMonthStoreList() {
++      this.req2svr.getMonthStoreList(this.tabType, this.selectedCODE, this.year, this.month, this.selectedStoreVDCDList.toString()).then(
++        res => {
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              let data = _.find(this.selectStoreList, { VDCD: res.VDCD })
++              if (data) {
++                data.TSAMT = Number(res.TSAMT) + Number(data.ADVDEPAMT)
++              }
++            } else {
++              let list = JSON.parse("[" + res + "]")
++              for (let i=0;i<this.selectStoreList.length;i++) {
++                let data = _.find(list, { VDCD: this.selectStoreList[i].VDCD })
++                if (data) {
++                  this.selectStoreList[i].TSAMT = Number(data.TSAMT) + Number(data.ADVDEPAMT)
++                }
++              }
++            }
++            this.selectStoreList.sort(function(a, b) {
++              return b["TSAMT"] - a["TSAMT"]
++            })
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getCumulativeStoreList() {
++      this.req2svr.getCumulativeStoreList(this.tabType, this.selectedCODE, this.year, this.month, this.selectedStoreVDCDList.toString()).then(
++        res => {
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            let count = (JSON.stringify(res).match(/{/g) || []).length;
++            if(count < 1) {
++            } else if(count == 1) {
++              let data = _.find(this.selectStoreList, { VDCD: res.VDCD })
++              if (data) {
++                data.TSAMT = Number(res.TSAMT) + Number(data.ADVDEPAMT)
++              }
++            } else {
++              let list = JSON.parse("[" + res + "]")
++              for (let i=0;i<this.selectStoreList.length;i++) {
++                let data = _.find(list, { VDCD: this.selectStoreList[i].VDCD })
++                if (data) {
++                  this.selectStoreList[i].TSAMT = Number(data.TSAMT) + Number(data.ADVDEPAMT)
++                }
++              }
++            }
++            this.selectStoreList.sort(function(a, b) {
++              return b["TSAMT"] - a["TSAMT"]
++            })
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getDailyTotalAMT() {
++      this.selectTotalAMT = 0
++
++      this.req2svr.getDailyTotalAMT(this.tabType, this.selectedCODE, this.date, this.selectedStoreVDCDList.toString()).then(
++        res => {
++          this.selectTotalAMT = 0
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            this.selectTotalAMT = res.AMT
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getMonthTotalAMT() {
++      this.selectTotalAMT = 0
++
++      this.req2svr.getMonthTotalAMT(this.tabType, this.selectedCODE, this.year, this.month, this.selectedStoreVDCDList.toString()).then(
++        res => {
++          this.selectTotalAMT = 0
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            this.selectTotalAMT = Number(res.TSAMT) + Number(res.ADVDEPAMT)
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    getCumulativeTotalAMT() {
++      this.selectTotalAMT = 0
++
++      let month = this.month
++      if (this.month.toString().length == 1) {
++          month = "0" + this.month
++      }
++      
++      if (this.year != moment().format("YYYY")) {
++        month = "12"
++      }
++
++      this.req2svr.getCumulativeTotalAMT(this.tabType, this.selectedCODE, this.year, this.month, this.selectedStoreVDCDList.toString()).then(
++        res => {
++          this.selectTotalAMT = 0
++          if (res.MACHBASE_ERROR) {
++            console.log("res", res)
++          } else {
++            this.selectTotalAMT = Number(res.TSAMT) + Number(res.ADVDEPAMT)
++          }
++        },
++        rej => {
++          console.log("rej", rej);
++        }
++      )
++    },
++    changeRegion() {
++      // this.selectStoreSU = 0
++      // this.selectStoreType = 0
++      // this.selectStoreOption = 0
++      this.selectPriority = 0
++      this.selectSubPriority = 0
++      // this.getStoreSUData()
++      // this.getStoreTypeData()
++      // this.getStoreOptionData()
++      // this.getSelectVDCDStoreInfo()
++      // 데이터를 순차적으로 가져와야 하므로 Promiss 적용
++      // this.getRegionData().then(() => this.getStoreSUData())
++      this.getRegionData().then(() => this.getStoreTypeData())
++      .then(() => this.getStoreOptionData())
++      .then(() => this.getSelectVDCDStoreInfo())
++      // this.getSelectVDCDStoreInfo()
++    },
++    changeSelectOption() {
++      if (this.selectStoreSU == 0) {
++        if (this.selectPriority == 1) {
++          this.selectPriority = 0
++        }
++        if (this.selectSubPriority == 1) {
++          this.selectSubPriority = 0
++        }
++        this.getStoreSUData()
++      }
++      if (this.selectStoreType == 0) {
++        if (this.selectPriority == 2) {
++          this.selectPriority = 0
++        }
++        if (this.selectSubPriority == 2) {
++          this.selectSubPriority = 0
++        }
++        this.getStoreTypeData()
++      }
++      if (this.selectStoreOption == 0) {
++        if (this.selectPriority == 3) {
++          this.selectPriority = 0
++        }
++        if (this.selectSubPriority == 3) {
++          this.selectSubPriority = 0
++        }
++        this.getStoreOptionData()
++      }
++    },
++    changeStoreSU() {
++      // if (this.selectPriority == 0) {
++      //   this.selectPriority = 1
++      // } else if (this.selectSubPriority == 0) {
++      //   this.selectSubPriority = 1
++      // }
++      // if (this.selectPriority == 1) {
++      //   this.selectSubPriority = 0
++      //   // this.selectStoreType = 0
++      //   this.getStoreTypeData()
++      //   // this.selectStoreOption = 0
++      //   this.getStoreOptionData()
++      // } else if (this.selectSubPriority == 1) {
++      //   if (this.selectPriority == 3) {
++      //     this.selectStoreType = 0
++      //     this.getStoreTypeData()
++      //   } else if (this.selectPriority == 2) {
++      //     // this.selectStoreOption = 0
++      //     this.getStoreOptionData()
++      //   }
++      // }
++      this.getStoreTypeData()
++      .then(() => this.getStoreOptionData())
++      .then(() => this.getSelectVDCDStoreInfo())
++    },
++    changeStoreType() {
++      // if (this.selectPriority == 0) {
++      //   this.selectPriority = 2
++      // } else if (this.selectSubPriority == 0) {
++      //   this.selectSubPriority = 2
++      // }
++      // if (this.selectPriority == 2) {
++      //   this.selectSubPriority = 0
++      //   // this.selectStoreSU = 0
++      //   this.getStoreSUData()
++      //   // this.selectStoreOption = 0
++      //   this.getStoreOptionData()
++      // } else if (this.selectSubPriority == 2) {
++      //   if (this.selectPriority == 3) {
++      //     // this.selectStoreSU = 0
++      //     this.getStoreSUData()
++      //   } else if (this.selectPriority == 1) {
++      //     // this.selectStoreOption = 0
++      //     this.getStoreOptionData()
++      //   }
++      // }
++      // this.changeSelectOption()
++      this.getStoreOptionData()
++      .then(() => this.getSelectVDCDStoreInfo())
++    },
++    changeStoreOption() {
++      // if (this.selectPriority == 0) {
++      //   this.selectPriority = 3
++      // } else if (this.selectSubPriority == 0) {
++      //   this.selectSubPriority = 3        
++      // }
++      // if (this.selectPriority == 3) {
++      //   this.selectSubPriority = 0
++      //   // this.selectStoreSU = 0
++      //   this.getStoreSUData()
++      //   // this.selectStoreType = 0
++      //   this.getStoreTypeData()
++      // } else if (this.selectSubPriority == 3) {
++      //   if (this.selectPriority == 2) {
++      //     // this.selectStoreSU = 0
++      //     this.getStoreSUData()
++      //   } else if (this.selectPriority == 1) {
++      //     // this.selectStoreType = 0
++      //     this.getStoreTypeData()
++      //   }
++      // }
++      // this.changeSelectOption()
++      this.getSelectVDCDStoreInfo()
++    },
++    changeCODE(code) {
++      this.selectedCODE = code
++      this.selectStoreSU = 0
++      this.selectStoreType = 0
++      this.selectStoreOption = 0
++      this.storeSUData = []
++      this.storeTypeData = []
++      this.storeOptionData = []
++      this.selectRegion = "전국"
++      this.selectedMapCODE = this.selectedCODE
++      this.mapOrgStoreList = []
++      this.mapRegionData = []
++      this.loadData()
++    },
++    chageDate() {
++      this.loadData()
++    },
++    chageType(value) {
++      this.choice = value
++      // this.date = moment().format("YYYY-MM-DD")
++      this.date = moment().subtract(1, "days").format("YYYY-MM-DD")
++      this.year = moment().format("YYYY")
++      this.month = moment().format("M")
++      this.loadData()
++    },
++    clickAddButton(isBest) {
++      this.listPopupData = {
++        CODE: this.selectedCODE, year: this.year, month: this.month, date: this.date,
++        alignType: isBest, dateTab: this.choice,
++        selectRegion: this.selectRegion != '전국' ? this.selectRegion : null,
++        selectStoreType: this.selectStoreType != 0 ? this.selectStoreType : null,
++        selectStoreSU: this.selectStoreSU != 0 ? this.selectStoreSU : null,
++        selectStoreOption: this.selectStoreOption != 0 ? this.selectStoreOption : null,
++        selectStoreList: this.selectStoreList
++      }
++      this.isStoreListPopup = true
++    },
++    closePopup() {
++      this.store = 0
++      this.isStoreMonthDetailVisible = false
++      this.isStoreDailyDetailVisible = false
++      this.isStoreCumulativeDetailVisible = false
++      
++    },
++    closeListPopup() {
++      this.isStoreListPopup = false
++    },
++    changeSelectType(value) {
++      if (value == 1) {
++        this.isStoreMonthDetailVisible = false
++        this.isStoreDailyDetailVisible = true
++        this.isStoreCumulativeDetailVisible = false
++      } else if (value == 3) {
++        this.isStoreMonthDetailVisible = false
++        this.isStoreDailyDetailVisible = false
++        this.isStoreCumulativeDetailVisible = true
++      } else {
++        this.isStoreMonthDetailVisible = true
++        this.isStoreDailyDetailVisible = false
++        this.isStoreCumulativeDetailVisible = false
++      }
++    },
++    toMain() {
++      this.$router.replace("/")
++    },
++    toSalesStatus() {
++      // this.$router.replace("/StoreSalesStatus")
++      this.$router.push({
++          name: 'STO0003',
++          params: {
++            data: {
++              selectedCODE: this.selectedCODE, // 사업부 코드
++              choice: this.choice, // 월간
++              year: this.year, // 년도
++              month: this.month, // 월
++            }
++          }
++        })
++    },
++    chageStore() {
++      this.toStoreDetail(this.store, this.choice)
++    },
++    mapSelectToStoreDetail(VDCD) {
++      this.toStoreDetail(VDCD, this.choice)
++    },
++    toStoreDetail(VDCD, choice) {
++      choice = choice ? choice : this.choice
++      VDCD = VDCD ? VDCD : this.store
++      this.detailPopupData = {VDCD: VDCD, CODE: this.selectedCODE, year: this.year, month: this.month, date: this.date, storeList: this.selectStoreList, selectStoreSU: this.selectStoreSU != 0 ? this.selectStoreSU : null}
++      if (choice == 3) {
++        this.isStoreMonthDetailVisible = false
++        this.isStoreDailyDetailVisible = false
++        this.isStoreCumulativeDetailVisible = true
++      } else if (choice == 1) {
++        this.isStoreMonthDetailVisible = false
++        this.isStoreDailyDetailVisible = true
++        this.isStoreCumulativeDetailVisible = false
++      } else {
++        this.isStoreMonthDetailVisible = true
++        this.isStoreDailyDetailVisible = false
++        this.isStoreCumulativeDetailVisible = false
++      }
++    },
++    toStorePoint(data) {
++      if (data.LAT != '' && data.LNG != '') {
++        this.selectStorePoint = data
++      }
++    }
++  },
++  filters: {
++    currency: function(value) {
++      var x
++      if (value) {
++        x = value.toString();
++        var pattern = /(-?\d+)(\d{3})/;
++        while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
++      } else {
++        x = 0
++      }
++      if (x == Number.POSITIVE_INFINITY || x == Number.NEGATIVE_INFINITY || x == "NaN") {
++        x = 0
++      }
++      return x;
++    },
++    nanToDot: function(value) {
++      let x = value ? value : 0;
++      if (x == Number.POSITIVE_INFINITY || x == Number.NEGATIVE_INFINITY || x == "NaN") {
++        x = 0
++      }
++      return x
++    }
++  }
++}
++</script>
++
+diff --git a/src/pages/store/STO0001_loc/req2svr.js b/src/pages/store/STO0001_loc/req2svr.js
+new file mode 100644
+index 0000000..646930f
+--- /dev/null
++++ b/src/pages/store/STO0001_loc/req2svr.js
+@@ -0,0 +1,170 @@
++import axios from 'axios'
++import apiUrl from '@/config/apiUrl'
++
++export default {
++  getMakeDataDate() {
++    return axios.get(apiUrl() + "store/getMakeDataDate").then(x => x.data)
++  },
++  getRegionData(choice, tabType, selectedCODE, date, year, month, yesterday) {
++    return axios.get(apiUrl() + "store/getRegionData", {
++      params : { 
++        choice : choice,
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        date : date,
++        year : year,
++        date : date,
++        month : month,
++        yesterday : yesterday
++      }
++    }).then(x => x.data)
++  },
++  getSelectRegionData(choice, tabType, selectedCODE, date, year, month, yesterday, selectRegion, selectStoreType, selectStoreOption, selectStoreSU) {
++    return axios.get(apiUrl() + "store/getSelectRegionData", {
++      params : { 
++        choice : choice,
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        date : date,
++        year : year,
++        date : date,
++        month : month,
++        yesterday : yesterday,
++        selectRegion : selectRegion,
++        selectStoreType : selectStoreType,
++        selectStoreOption : selectStoreOption,
++        selectStoreSU : selectStoreSU
++      }
++    }).then(x => x.data)
++  },
++  getStoreSUData(choice, tabType, selectedCODE, date, year, month, yesterday, selectRegion) {
++    return axios.get(apiUrl() + "store/getStoreSUData", {
++      params : { 
++        choice : choice,
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        date : date,
++        year : year,
++        date : date,
++        month : month,
++        yesterday : yesterday,
++        selectRegion : selectRegion
++      }
++    }).then(x => x.data)
++  },
++  getStoreTypeData(choice, tabType, selectedCODE, date, year, month, yesterday, selectRegion, selectStoreSU) {
++    return axios.get(apiUrl() + "store/getStoreTypeData", {
++      params : { 
++        choice : choice,
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        date : date,
++        year : year,
++        date : date,
++        month : month,
++        yesterday : yesterday,
++        selectRegion : selectRegion,
++        selectStoreSU : selectStoreSU
++      }
++    }).then(x => x.data)
++  },
++  getStoreOptionData(choice, tabType, selectedCODE, date, year, month, yesterday, selectRegion, selectStoreType, selectStoreSU) {
++    return axios.get(apiUrl() + "store/getStoreOptionData", {
++      params : { 
++        choice : choice,
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        date : date,
++        year : year,
++        date : date,
++        month : month,
++        yesterday : yesterday,
++        selectRegion : selectRegion,
++        selectStoreType : selectStoreType,
++        selectStoreSU : selectStoreSU
++      }
++    }).then(x => x.data)
++  },
++  getSelectVDCDStoreInfo(choice, tabType, selectedCODE, date, year, month, yesterday, selectRegion, selectStoreType, selectStoreOption, selectStoreSU) {
++    return axios.get(apiUrl() + "store/getSelectVDCDStoreInfo", {
++      params : { 
++        choice : choice,
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        date : date,
++        year : year,
++        date : date,
++        month : month,
++        yesterday : yesterday,
++        selectRegion : selectRegion,
++        selectStoreType : selectStoreType,
++        selectStoreOption : selectStoreOption,
++        selectStoreSU : selectStoreSU
++      }
++    }).then(x => x.data)
++  },
++  getDailyStoreList(tabType, selectedCODE, date, selectStoreList) {
++    return axios.get(apiUrl() + "store/getDailyStoreList", {
++      params : { 
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        date : date,
++        selectStoreList : selectStoreList
++      }
++    }).then(x => x.data)
++  },
++  getMonthStoreList(tabType, selectedCODE, year, month, selectStoreList) {
++    return axios.get(apiUrl() + "store/getMonthStoreList", {
++      params : { 
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        year : year,
++        month : month,
++        selectStoreList : selectStoreList
++      }
++    }).then(x => x.data)
++  },
++  getCumulativeStoreList(tabType, selectedCODE, year, month, selectStoreList) {
++    return axios.get(apiUrl() + "store/getCumulativeStoreList", {
++      params : { 
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        year : year,
++        month : month,
++        selectStoreList : selectStoreList
++      }
++    }).then(x => x.data)
++  },
++  getDailyTotalAMT(tabType, selectedCODE, date, selectStoreList) {
++    return axios.get(apiUrl() + "store/getDailyTotalAMT", {
++      params : { 
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        date : date,
++        selectStoreList : selectStoreList
++      }
++    }).then(x => x.data)
++  },
++  getMonthTotalAMT(tabType, selectedCODE, year, month, selectStoreList) {
++    return axios.get(apiUrl() + "store/getMonthTotalAMT", {
++      params : { 
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        year : year,
++        month : month,
++        selectStoreList : selectStoreList
++      }
++    }).then(x => x.data)
++  },
++  getCumulativeTotalAMT(tabType, selectedCODE, year, month, selectStoreList) {
++    return axios.get(apiUrl() + "store/getCumulativeTotalAMT", {
++      params : { 
++        tabType : tabType,
++        selectedCODE : selectedCODE,
++        year : year,
++        month : month,
++        selectStoreList : selectStoreList
++      }
++    }).then(x => x.data)
++  }
++}
+diff --git a/src/pages/store/STO0003_1/index.vue b/src/pages/store/STO0003_1/index.vue
+index 5f9487b..2573192 100644
+--- a/src/pages/store/STO0003_1/index.vue
++++ b/src/pages/store/STO0003_1/index.vue
+@@ -20,7 +20,7 @@
+                     <i class="material-icons">arrow_back_ios</i>
+                 </button>
+                 <!-- Title -->
+-                <h2 class="layout_title">전년 대비 월 평균 매출 현황<small class="txt_date"><strong class="point_col1">{{ SelectCodeName }} 사업부</strong></small></h2>
++                <h2 class="layout_title">월매출<small class="txt_date"><strong class="point_col1">{{ SelectCodeName }} 사업부</strong></small></h2>
+                 <div class="layout_spacer"></div>
+                 <!-- groups -->
+                 <div class="groups">
+@@ -182,14 +182,14 @@
+                     </ul>
+                 </div>
+                 <div class="row">
+-                    <div class="col_md_8">
++                    <div class="col_md_4">
+                         <div class="cont_box">
+                             <div class="tit">
+                                 <strong class="tit_txt">신장매장 및 감소매장</strong>
+                                 <div class="layout_spacer"></div>
+                                 <span class="txt">(단위 : 백만원)</span>
+                             </div>
+-                            <div class="cont" style="height:310px;">
++                            <div class="cont" style="height:340px;">
+                                 <div class="graph_area">
+                                     <!-- 그래프 1 -->
+                                     <div class="graph_view" style="width:50%;">
+@@ -202,7 +202,7 @@
+                                         </div>
+                                         <!-- 그래프 -->
+                                         <div class="graph">
+-                                            <div id="chartdiv1" style="width: 100%; height:120px;">
++                                            <div id="chartdiv1" style="width: 100%; height:230px;">
+                                             </div>
+                                         </div>
+                                     </div>
+@@ -217,7 +217,7 @@
+                                         </div>
+                                         <!-- 그래프 -->
+                                         <div class="graph">
+-                                            <div id="chartdiv2" style="width: 100%; height:120px;"></div>
++                                            <div id="chartdiv2" style="width: 100%; height:230px;"></div>
+                                         </div>
+                                     </div>
+                                     <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
+@@ -234,8 +234,8 @@
+                             </div>
+                         </div>
+                     </div>
+-                    <div class="col_md_4">
+-                        <div class="cont_box">
++                    <div class="col_md_8">
++                        <!-- <div class="cont_box">
+                             <div class="tit">
+                                 <strong class="tit_txt">신규 및 철수매장</strong>
+                                 <div class="layout_spacer"></div>
+@@ -243,7 +243,7 @@
+                             </div>
+                             <div class="cont" style="height: 310px;">
+                                 <div class="graph_area">
+-                                    <!-- 그래프 1 -->
++                                    
+                                     <div class="graph_view" style="width:50%;">
+                                         <div class="graph_result gr_s">
+                                             <span class="point_col1">신규매장</span>
+@@ -252,7 +252,7 @@
+                                             <div id="chartdiv3" style="width: 100%; height: 220px;"></div>
+                                         </div>
+                                     </div>
+-                                    <!-- 그래프 2 -->
++                                    
+                                     <div class="graph_view" style="width:50%;">
+                                         <div class="graph_result gr_s">
+                                             <span style="color: #FF8A97;">철수매장</span>
+@@ -263,212 +263,210 @@
+                                     </div>
+                                 </div>
+                             </div>
+-                        </div>
+-                    </div>
+-                </div>
+-                <!-- box2 -->
+-                <div class="cont_box">
+-                    <div class="tit">
+-                        <div class="tab">
+-                            <ul>
+-                                <li :class="{on: tab == 0}"><a href="javascript:void(0);" @click="chageTab(0)">지표별 매장 요약</a></li>
+-                                <li :class="{on: tab == 1}"><a href="javascript:void(0);" @click="chageTab(1)">유통형태별 매장 요약</a></li>
+-                            </ul>
+-                        </div>
+-                        <div class="layout_spacer"></div>
+-                        <span class="txt">(단위 : 백만원)</span>
+-                    </div>
+-                    <div class="cont" v-show="tab == 0">
+-                        <div class="graph_box">
+-                            <!-- 타이틀 있을때 -->
++                        </div> -->
++                        <div class="cont_box">
+                             <div class="tit">
+-                                구분
+-                                <div class="select_box">
+-                                    <select class="select select_s" v-model="selectGubun" @change="changeGubun()">
+-                                        <option value="0">매장수</option>
+-                                        <option value="1">({{year}}.{{month}}){{month}}월 누계</option>
+-                                        <option value="2">월평균</option>
+-                                        <option value="3">매장별 평균</option>
+-                                    </select>
++                                <div class="tab">
++                                    <ul>
++                                        <li :class="{on: tab == 0}"><a href="javascript:void(0);" @click="chageTab(0)">지표별 매장 요약</a></li>
++                                        <li :class="{on: tab == 1}"><a href="javascript:void(0);" @click="chageTab(1)">유통형태별 매장 요약</a></li>
++                                    </ul>
+                                 </div>
++                                <div class="layout_spacer"></div>
++                                <span class="txt">(단위 : 백만원)</span>
+                             </div>
++                            <div class="cont" v-show="tab == 0">
++                                <div class="graph_box">
++                                    <!-- 타이틀 있을때 -->
++                                    <div class="tit" style="padding: 8px 0;">
++                                        구분
++                                        <div class="select_box">
++                                            <select class="select select_s" v-model="selectGubun" @change="changeGubun()">
++                                                <option value="0">매장수</option>
++                                                <option value="1">월누계</option>
++                                                <option value="2">월평균</option>
++                                                <option value="3">매장별 평균</option>
++                                            </select>
++                                        </div>
++                                    </div>
+ 
+-                            <!-- 기본 그래프만 넣을때 -->
+-                            <div class="graph_area gv_line">
+-                                <!-- 그래프 1 -->
+-                                <div class="graph_view np col_md_5">
+-                                    <!-- 칩 -->
+-                                    <span class="chip chip_m"><span class="chip_text txt_bold">유통형태별 비중</span></span>
+-                                    <!-- 그래프 -->
+-                                    <div class="graph" style="height: 330px;width:1000px;">
+-                                        <div class="col_md_6" style="position:relative; left:70px">
+-                                            <div class="graph">
+-                                                <div id="chartdiv5" style="width: 100%; height: 330px;">
++                                    <!-- 기본 그래프만 넣을때 -->
++                                    <div class="graph_area gv_line" style="padding-bottom: 8px;">
++                                        <!-- 그래프 1 -->
++                                        <div class="graph_view np col_md_4">
++                                            <!-- 칩 -->
++                                            <span class="chip chip_m"><span class="chip_text txt_bold">유통형태별 비중</span></span>
++                                            <!-- 그래프 -->
++                                            <div class="graph" style="">
++                                                <!-- <div class="col_md_6" style="position:relative; left:70px">
++                                                    <div class="graph">
++                                                        <div id="chartdiv5" style="width: 100%; height: 330px;">
++                                                        </div>
++                                                    </div>
++                                                </div> -->
++                                                <div class="" style="width: 100%">
++                                                    <div class="graph">
++                                                        <div id="chartdiv6" style="width: 100%; height: 205px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+-                                        <div class="col_md_6" style="position:relative; left:-80px">
++                                        <!-- 그래프 2 -->
++                                        <div class="graph_view np col_md_7">
++                                            <!-- 칩 -->
++                                            <!-- 구분 select opction에 따라 명칭 변경 -->
++                                            <span class="chip chip_m" style=" border-color: #00C0D0;">
++                                                <span class="chip_text txt_bold" style="color: #00C0D0;" v-if="selectGubun == 0">매장수 비교</span>
++                                                <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 1">{{month}}월 누계 비교(백만원)</span>
++                                                <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 2">월평균 비교</span>
++                                                <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 3">매장별 평균 비교</span>
++                                            </span>
++                                            <!-- 그래프 -->
+                                             <div class="graph">
+-                                                <div id="chartdiv6" style="width: 100%; height: 330px;">
+-                                                </div>
+-                                            </div>
+-                                        </div>
+-                                    </div>
+-                                </div>
+-                                <!-- 그래프 2 -->
+-                                <div class="graph_view np col_md_7">
+-                                    <!-- 칩 -->
+-                                    <!-- 구분 select opction에 따라 명칭 변경 -->
+-                                    <span class="chip chip_m" style=" border-color: #00C0D0;">
+-                                        <span class="chip_text txt_bold" style="color: #00C0D0;" v-if="selectGubun == 0">매장수 비교</span>
+-                                        <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 1">{{month}}월 누계 비교(백만원)</span>
+-                                        <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 2">월평균 비교</span>
+-                                        <span class="chip_text txt_bold" style="color: #00C0D0;" v-else-if="selectGubun == 3">매장별 평균 비교</span>
+-                                    </span>
+-                                    <!-- 그래프 -->
+-                                    <div class="graph" style="height: 280px;">
+-                                        <div class="col_md_3">
+-                                            <!-- 텍스트 값 -->
+-                                            <div class="graph_result">
+-                                                <dl>
+-                                                    <dt class="tit">백화점</dt>
+-                                                </dl>
++                                                <div id="chartdiv7" style="width: 100%; height: 200px;"></div>
+                                             </div>
+-                                            <div class="graph">
+-                                                <div id="chartdiv7" style="width: 100%; height: 200px;">
++                                            <!-- <div class="graph" style="height: 170px;">
++                                                <div class="col_md_3">
++                                                    <div class="graph_result">
++                                                        <dl>
++                                                            <dt class="tit">백화점</dt>
++                                                        </dl>
++                                                    </div>
++                                                    <div class="graph">
++                                                        <div id="chartdiv7" style="width: 100%; height: 150px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
+-                                            </div>
+-                                        </div>
+-                                        <div class="col_md_3">
+-                                            <!-- 텍스트 값 -->
+-                                            <div class="graph_result">
+-                                                <dl>
+-                                                    <dt class="tit">몰</dt>
+-                                                </dl>
+-                                            </div>
+-                                            <div class="graph">
+-                                                <div id="chartdiv8" style="width: 100%; height: 200px;">
++                                                <div class="col_md_3">
++                                                    <div class="graph_result">
++                                                        <dl>
++                                                            <dt class="tit">몰</dt>
++                                                        </dl>
++                                                    </div>
++                                                    <div class="graph">
++                                                        <div id="chartdiv8" style="width: 100%; height: 150px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
+-                                            </div>
+-                                        </div>
+-                                        <div class="col_md_3">
+-                                            <!-- 텍스트 값 -->
+-                                            <div class="graph_result">
+-                                                <dl>
+-                                                    <dt class="tit">대리점</dt>
+-                                                </dl>
+-                                            </div>
+-                                            <div class="graph">
+-                                                <div id="chartdiv9" style="width: 100%; height: 200px;">
++                                                <div class="col_md_3">
++                                                    <div class="graph_result">
++                                                        <dl>
++                                                            <dt class="tit">대리점</dt>
++                                                        </dl>
++                                                    </div>
++                                                    <div class="graph">
++                                                        <div id="chartdiv9" style="width: 100%; height: 150px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
+-                                            </div>
+-                                        </div>
+-                                        <div class="col_md_3">
+-                                            <!-- 텍스트 값 -->
+-                                            <div class="graph_result">
+-                                                <dl>
+-                                                    <dt class="tit">온라인 및 기타</dt>
+-                                                </dl>
+-                                            </div>
+-                                            <div class="graph">
+-                                                <div id="chartdiv10" style="width: 100%; height: 200px;">
++                                                <div class="col_md_3">
++                                                    <div class="graph_result">
++                                                        <dl>
++                                                            <dt class="tit">온라인 및 기타</dt>
++                                                        </dl>
++                                                    </div>
++                                                    <div class="graph">
++                                                        <div id="chartdiv10" style="width: 100%; height: 150px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
++                                            </div> -->
++                                            <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
++                                            <div class="graph_category" style="padding: 10px 0;">
++                                                <ul>
++                                                    <li><span class="ico_dot" style="background-color:#00D8E1;"></span>{{ year-1 }}년</li>
++                                                    <li><span class="ico_dot" style="background-color:#00BECF;"></span>{{ year }}년</li>
++                                                    <!-- <li><span class="ico_dot" style="background-color:#C6C6C7;"></span>증가</li>
++                                                    <li><span class="ico_dot" style="background-color:#FFA89F;"></span>감소</li> -->
++                                                </ul>
+                                             </div>
+                                         </div>
+                                     </div>
+-                                    <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
+-                                    <div class="graph_category">
+-                                        <ul>
+-                                            <li><span class="ico_dot" style="background-color:#00D8E1;"></span>{{ year-1 }}년</li>
+-                                            <li><span class="ico_dot" style="background-color:#00BECF;"></span>{{ year }}년</li>
+-                                            <li><span class="ico_dot" style="background-color:#C6C6C7;"></span>증가</li>
+-                                            <li><span class="ico_dot" style="background-color:#FFA89F;"></span>감소</li>
+-                                        </ul>
+-                                    </div>
+                                 </div>
+                             </div>
+-                        </div>
+-                    </div>
+ 
+-                    <div class="cont" style="height:440px;" v-show="tab == 1">
+-                        <div class="graph_box">
+-                            <!-- 타이틀 있을때 -->
+-                            <div class="tit">구분
+-                                <div class="select_box">
+-                                    <select class="select select_s" v-model="selectShtpGubun" @change="changeShtpGubun()">
+-                                        <option value="전체">유통형태 전체</option>
+-                                        <option value="백화점">백화점</option>
+-                                        <option value="몰">몰</option>
+-                                        <option value="대리점">대리점</option>
+-                                        <option value="기타">온라인 및 기타</option>
+-                                    </select>
+-                                </div>
+-                            </div>
++                            <div class="cont" v-show="tab == 1">
++                                <div class="graph_box">
++                                    <!-- 타이틀 있을때 -->
++                                    <div class="tit" style="padding: 8px 0;">구분
++                                        <div class="select_box">
++                                            <select class="select select_s" v-model="selectShtpGubun" @change="changeShtpGubun()">
++                                                <option value="전체">유통형태 전체</option>
++                                                <option value="백화점">백화점</option>
++                                                <option value="몰">몰</option>
++                                                <option value="대리점">대리점</option>
++                                                <option value="기타">온라인 및 기타</option>
++                                            </select>
++                                        </div>
++                                    </div>
+ 
+-                            <!-- 기본 그래프만 넣을때 -->
+-                            <div class="graph_area">
+-                                <!-- 그래프 2 -->
+-                                <div class="graph_view np">
+-                                    <!-- 그래프 -->
+-                                    <div class="graph">
+-                                        <div class="col_md_3">
+-                                            <!-- 텍스트 값 -->
+-                                            <div class="graph_result">
+-                                                <dl>
+-                                                    <dt class="tit">매장수</dt>
+-                                                </dl>
+-                                            </div>
++                                    <!-- 기본 그래프만 넣을때 -->
++                                    <div class="graph_area" style="padding-bottom: 8px;">
++                                        <!-- 그래프 2 -->
++                                        <div class="graph_view np">
++                                            <!-- 그래프 -->
+                                             <div class="graph">
+-                                                <div id="chartdiv11" style="width: 100%; height: 240px;">
++                                                <div class="col_md_3" style="padding: 0px 10px 3px;">
++                                                    <!-- 텍스트 값 -->
++                                                    <div class="graph_result">
++                                                        <dl>
++                                                            <dt class="tit">매장수</dt>
++                                                        </dl>
++                                                    </div>
++                                                    <div class="graph">
++                                                        <div id="chartdiv11" style="width: 100%; height: 200px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
+-                                            </div>
+-                                        </div>
+-                                        <div class="col_md_3">
+-                                            <!-- 텍스트 값 -->
+-                                            <div class="graph_result">
+-                                                <dl>
+-                                                    <dt class="tit">{{month}}월 누계</dt>
+-                                                </dl>
+-                                            </div>
+-                                            <div class="graph">
+-                                                <div id="chartdiv12" style="width: 100%; height: 240px;">
++                                                <div class="col_md_3" style="padding: 0px 10px 3px;">
++                                                    <!-- 텍스트 값 -->
++                                                    <div class="graph_result">
++                                                        <dl>
++                                                            <dt class="tit">{{month}}월 누계</dt>
++                                                        </dl>
++                                                    </div>
++                                                    <div class="graph">
++                                                        <div id="chartdiv12" style="width: 100%; height: 200px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
+-                                            </div>
+-                                        </div>
+-                                        <div class="col_md_3">
+-                                            <!-- 텍스트 값 -->
+-                                            <div class="graph_result">
+-                                                <dl>
+-                                                    <dt class="tit">월 평균</dt>
+-                                                </dl>
+-                                            </div>
+-                                            <div class="graph">
+-                                                <div id="chartdiv13" style="width: 100%; height: 240px;">
++                                                <div class="col_md_3" style="padding: 0px 10px 3px;">
++                                                    <!-- 텍스트 값 -->
++                                                    <div class="graph_result">
++                                                        <dl>
++                                                            <dt class="tit">월 평균</dt>
++                                                        </dl>
++                                                    </div>
++                                                    <div class="graph">
++                                                        <div id="chartdiv13" style="width: 100%; height: 200px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
+-                                            </div>
+-                                        </div>
+-                                        <div class="col_md_3">
+-                                            <!-- 텍스트 값 -->
+-                                            <div class="graph_result">
+-                                                <dl>
+-                                                    <dt class="tit">매장별 평균</dt>
+-                                                </dl>
+-                                            </div>
+-                                            <div class="graph">
+-                                                <div id="chartdiv14" style="width: 100%; height: 240px;">
++                                                <div class="col_md_3" style="padding: 0px 10px 3px;">
++                                                    <!-- 텍스트 값 -->
++                                                    <div class="graph_result">
++                                                        <dl>
++                                                            <dt class="tit">매장별 평균</dt>
++                                                        </dl>
++                                                    </div>
++                                                    <div class="graph">
++                                                        <div id="chartdiv14" style="width: 100%; height: 200px;">
++                                                        </div>
++                                                    </div>
+                                                 </div>
+                                             </div>
++                                            <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
++                                            <div class="graph_category" style="padding: 10px 0;">
++                                                <ul>
++                                                    <li><span class="ico_dot" style="background-color:#8BBEF9;"></span>{{ year-1 }}년</li>
++                                                    <li><span class="ico_dot" style="background-color:#3F93F5;"></span>{{ year }}년</li>
++                                                    <!-- <li><span class="ico_dot" style="background-color:#C6C6C7;"></span>증가</li>
++                                                    <li><span class="ico_dot" style="background-color:#FFA89F;"></span>감소</li> -->
++                                                </ul>
++                                            </div>
+                                         </div>
+                                     </div>
+-                                    <!-- 카테고리/도트색상은 그래프와 동일하게 스타일로 넣어주기 -->
+-                                    <div class="graph_category">
+-                                        <ul>
+-                                            <li><span class="ico_dot" style="background-color:#8BBEF9;"></span>{{ year-1 }}년</li>
+-                                            <li><span class="ico_dot" style="background-color:#3F93F5;"></span>{{ year }}년</li>
+-                                            <li><span class="ico_dot" style="background-color:#C6C6C7;"></span>증가</li>
+-                                            <li><span class="ico_dot" style="background-color:#FFA89F;"></span>감소</li>
+-                                        </ul>
+-                                    </div>
+                                 </div>
+                             </div>
+                         </div>
+@@ -594,6 +592,12 @@ export default {
+       monthSalesPopupData: {},
+       salesTotal: [],
+       selectedCODE: "1",
++      gubuns: [
++            {category_en: "department", category_ko: "백화점"},
++            {category_en: "mall",       category_ko: "몰"},
++            {category_en: "agency",     category_ko: "대리점"},
++            {category_en: "online",     category_ko: "온라인및기타"}
++        ]
+     }
+   },
+   methods: {
+@@ -667,7 +671,7 @@ export default {
+                             SUNM: "전체"
+                         }
+                         // this.salesTotal.unshift(totOnj)
+-                        console.log("salesTotal >>> ", this.salesTotal);
++                        // console.log("salesTotal >>> ", this.salesTotal);
+                     }
+                 }
+             },
+@@ -764,7 +768,10 @@ export default {
+ 
+                     let cnt = _.get(listData, '0.CNT')
+                     let money = Math.round(_.get(listData, '0.MONCHANGE')/1000000)
+-                    this.getInDeCreaseStore(cnt,money)
++
++                    let wthdr_cnt = _.get(listData, '1.CNT')
++                    let wthdr_money = Math.round(_.get(listData, '1.MONCHANGE')/1000000)
++                    this.getInDeCreaseStore(cnt,money,wthdr_cnt,Math.abs(wthdr_money))
+                 }
+             },
+             rej => {
+@@ -773,7 +780,7 @@ export default {
+         )
+     },
+     
+-    getInDeCreaseStore(cnt,money) {
++    getInDeCreaseStore(cnt,money,cntWthdr,moneyWthdr) {
+         // 신장매장 및 감소매장
+         this.req2svr.getInDeCreaseStore(this.selectSucd, this.year, this.month).then(
+             res => {
+@@ -800,19 +807,26 @@ export default {
+                     let cntDe = _.filter(this.listData, function(v){return v.AMT != 0 && v.MONCHANGERR < 0}).length
+                     let cntNew = cnt
+ 
+-                    this.storeCntData.push({category:"신장매장", in20under:cntIn20Under, in50under:cntIn50Under, in50over:cntIn50Over, de:0, minus_de:0, new:0, tot:this.currency(cntIn20Under+cntIn50Under+cntIn50Over)})
+-                    this.storeCntData.push({category:"감소매장", in20under:0, in50under:0, in50over:0, de:cntDe, minus_de:this.currency("-"+cntDe), new:0, tot:this.currency("-"+cntDe)})
+-                    this.storeCntData.push({category:"신규매장", in20under:0, in50under:0, in50over:0, de:0, minus_de:0, new:cntNew, tot:this.currency(cntNew)})
++                    // this.storeCntData.push({category:"신장/신규", in20under:cntIn20Under, in50under:cntIn50Under, in50over:cntIn50Over, new:cntNew, de:'', minus_de:'', wthdr:'', minus_wthdr:'', tot:this.currency(cntIn20Under+cntIn50Under+cntIn50Over+Number(cntNew))})
++                    // this.storeCntData.push({category:"감소/철수", in20under:'', in50under:'', in50over:'', new:'', de:cntDe, minus_de:this.currency("-"+cntDe), wthdr:Number(cntWthdr), minus_wthdr:this.currency("-"+cntWthdr), tot:this.currency("-"+(cntDe+Number(cntWthdr)))})
++                    
++                    this.storeCntData.push({category:"신장", in20under:cntIn20Under, in50under:cntIn50Under, in50over:cntIn50Over, tot:this.currency(cntIn20Under+cntIn50Under+cntIn50Over)})
++                    this.storeCntData.push({category:"감소", de:cntDe, minus_de:this.currency("-"+cntDe), tot:this.currency("-"+cntDe)})
++                    this.storeCntData.push({category:"신규", new:cntNew, tot:this.currency(cntNew)})
++                    this.storeCntData.push({category:"철수", wthdr:Number(cntWthdr), minus_wthdr:this.currency("-"+cntWthdr), tot:this.currency("-"+cntWthdr)})
+ 
+                     // 전체 매장수는 신장매장+감소매장+신규매장은 제외
+                     this.storeTotCnt = 0
+                     for(let i=0; i<this.storeCntData.length; i++) {
+-                        this.storeTotCnt += 
+-                        Number(this.storeCntData[i].in20under) + 
+-                        Number(this.storeCntData[i].in50under) + 
+-                        Number(this.storeCntData[i].in50over) + 
+-                        Number(this.storeCntData[i].de) +
+-                        Number(this.storeCntData[i].new)
++                        // this.storeTotCnt += 
++                        // this.storeCntData[i].in20under?Number(this.storeCntData[i].in20under):0 + 
++                        // this.storeCntData[i].in50under?Number(this.storeCntData[i].in50under):0 + 
++                        // this.storeCntData[i].in50over?Number(this.storeCntData[i].in50over):0 + 
++                        // this.storeCntData[i].de?Number(this.storeCntData[i].de):0 +
++                        // this.storeCntData[i].new?Number(this.storeCntData[i].new):0
++                        if(!this.storeCntData[i].wthdr) {
++                            this.storeTotCnt += Number(Math.abs(this.storeCntData[i].tot.replace(/,/g,"")))
++                        }
+                     }
+ 
+                     // 금액
+@@ -822,21 +836,28 @@ export default {
+                     let moneyDe = _(this.listData).filter(v => v.AMT != 0 && v.MONCHANGERR < 0).sumBy(({AMT}) => + Number(AMT))
+                     let moneyNew = money
+ 
+-                    this.storeMoneyData.push({category:"신장매장", in20under:Math.round(moneyIn20Under/1000000), in50under:Math.round(moneyIn50Under/1000000), in50over:Math.round(moneyIn50Over/1000000), de:0, minus_de:0, new:0, tot:this.currency(Math.round(moneyIn20Under/1000000)+Math.round(moneyIn50Under/1000000)+Math.round(moneyIn50Over/1000000))})
+-                    this.storeMoneyData.push({category:"감소매장", in20under:0, in50under:0, in50over:0, de:Math.round(moneyDe/1000000), minus_de:this.currency("-"+Math.round(moneyDe/1000000)), new:0, tot:this.currency("-"+Math.round(moneyDe/1000000))})
+-                    this.storeMoneyData.push({category:"신규매장", in20under:0, in50under:0, in50over:0, de:0, minus_de:0, new:moneyNew, tot:this.currency(moneyNew)})
++                    // this.storeMoneyData.push({category:"신장/신규", in20under:Math.round(moneyIn20Under/1000000), in50under:Math.round(moneyIn50Under/1000000), in50over:Math.round(moneyIn50Over/1000000), new:Number(moneyNew), de:'', minus_de:'', wthdr:'', minus_wthdr:'', tot:this.currency(Math.round(moneyIn20Under/1000000)+Math.round(moneyIn50Under/1000000)+Math.round(moneyIn50Over/1000000)+moneyNew)})
++                    // this.storeMoneyData.push({category:"감소/철수", in20under:'', in50under:'', in50over:'', new:'', de:Math.round(moneyDe/1000000), minus_de:this.currency("-"+Math.round(moneyDe/1000000)), wthdr:Number(moneyWthdr), minus_wthdr:this.currency("-"+moneyWthdr), tot:this.currency("-"+(Math.round(moneyDe/1000000)+moneyWthdr))})
++                    
++                    this.storeMoneyData.push({category:"신장", in20under:Math.round(moneyIn20Under/1000000), in50under:Math.round(moneyIn50Under/1000000), in50over:Math.round(moneyIn50Over/1000000), tot:this.currency(Math.round(moneyIn20Under/1000000)+Math.round(moneyIn50Under/1000000)+Math.round(moneyIn50Over/1000000))})
++                    this.storeMoneyData.push({category:"감소", de:Math.round(moneyDe/1000000), minus_de:this.currency("-"+Math.round(moneyDe/1000000)), tot:this.currency("-"+Math.round(moneyDe/1000000))})
++                    this.storeMoneyData.push({category:"신규", new:moneyNew, tot:this.currency(moneyNew)})
++                    this.storeMoneyData.push({category:"철수", wthdr:Number(moneyWthdr), minus_wthdr:this.currency("-"+moneyWthdr), tot:this.currency(Number(moneyWthdr))})
+ 
+                     // 전체 매장수는 신장매장+감소매장(신규매장은 제외)
+                     this.storeTotMoney = 0
++                    
+                     for(let i=0; i<this.storeMoneyData.length; i++) {
+-                        this.storeTotMoney += 
+-                        Number(this.storeMoneyData[i].in20under) + 
+-                        Number(this.storeMoneyData[i].in50under) + 
+-                        Number(this.storeMoneyData[i].in50over) - 
+-                        Number(this.storeMoneyData[i].de) +
+-                        Number(this.storeMoneyData[i].new)
++                        // this.storeTotMoney += 
++                        // this.storeMoneyData[i].in20under?Number(this.storeMoneyData[i].in20under):0 + 
++                        // this.storeMoneyData[i].in50under?Number(this.storeMoneyData[i].in50under):0 + 
++                        // this.storeMoneyData[i].in50over?Number(this.storeMoneyData[i].in50over):0 - 
++                        // this.storeMoneyData[i].de?Number(this.storeMoneyData[i].de):0 +
++                        // this.storeMoneyData[i].new?Number(this.storeMoneyData[i].new):0
++                        if(!this.storeMoneyData[i].wthdr) {
++                            this.storeTotMoney += Number(this.storeMoneyData[i].tot.replace(/,/g,""))
++                        }
+                     }
+-                    console.log("storeCntData >>> ", this.storeCntData)
+                     this.openCloseChart1(this.storeCntData, 1)
+                     this.openCloseChart1(this.storeMoneyData, 2)
+                 }
+@@ -957,6 +978,8 @@ export default {
+ 
+     },
+     getCompareStore() {
++        let tot_data = []
++        let color = ""
+         // 지표별 매장 요약 > 매장수
+         let department = ((this.cuIndexData.department/this.cuIndexData.tot)*100).toFixed(1)
+         let mall = ((this.cuIndexData.mall/this.cuIndexData.tot)*100).toFixed(1)
+@@ -967,48 +990,83 @@ export default {
+         paramData_department.push({category:(this.year-1) + "년", absdata:this.lastIndexData.department, ogdata:this.lastIndexData.department, color: "#4fdbe2"})
+         paramData_department.push({category:this.year + "년", absdata:this.cuIndexData.department, ogdata:this.cuIndexData.department, color: "#00becf"})
+         if(this.cuIndexData.department-this.lastIndexData.department > 0) {
+-            paramData_department.push({category:"증감", absdata:Math.abs(this.cuIndexData.department-this.lastIndexData.department), ogdata:this.cuIndexData.department-this.lastIndexData.department, color: "rgb(198, 198, 199)"})
++            color = "rgb(198, 198, 199)"
+         } else {
+-            paramData_department.push({category:"증감", absdata:Math.abs(this.cuIndexData.department-this.lastIndexData.department), ogdata:this.cuIndexData.department-this.lastIndexData.department, color: "#ffa89f"})
++            color = "#ffa89f"
+         }
++        paramData_department.push({category:"증감", absdata:Math.abs(this.cuIndexData.department-this.lastIndexData.department), ogdata:this.cuIndexData.department-this.lastIndexData.department, color: color})
++        tot_data.push({
++            category_en:"department", category: "백화점", 
++            lastyear: this.year-1, cuyear: this.year, 
++            lastdata: this.lastIndexData.department, cudata: this.cuIndexData.department, 
++            abs_incredata: Math.abs(this.cuIndexData.department-this.lastIndexData.department), incredata: this.cuIndexData.department-this.lastIndexData.department,
++            incredata_color: color
++        })
+         
+ 
+         let paramData_mall = []
+         paramData_mall.push({category:(this.year-1) + "년", absdata:this.lastIndexData.mall, ogdata:this.lastIndexData.mall, color: "#4fdbe2"})
+         paramData_mall.push({category:this.year + "년", absdata:this.cuIndexData.mall, ogdata:this.cuIndexData.mall, color: "#00becf"})
+         if(this.cuIndexData.mall-this.lastIndexData.mall > 0) {
+-            paramData_mall.push({category:"증감", absdata:Math.abs(this.cuIndexData.mall-this.lastIndexData.mall), ogdata:this.cuIndexData.mall-this.lastIndexData.mall, color: "rgb(198, 198, 199)"})
++            color = "rgb(198, 198, 199)"
+         } else {
+-            paramData_mall.push({category:"증감", absdata:Math.abs(this.cuIndexData.mall-this.lastIndexData.mall), ogdata:this.cuIndexData.mall-this.lastIndexData.mall, color: "#ffa89f"})
++            color = "#ffa89f"
+         }
++        paramData_mall.push({category:"증감", absdata:Math.abs(this.cuIndexData.mall-this.lastIndexData.mall), ogdata:this.cuIndexData.mall-this.lastIndexData.mall, color: color})
++        tot_data.push({
++            category_en:"mall", category: "몰", 
++            lastyear: this.year-1, cuyear: this.year, 
++            lastdata: this.lastIndexData.mall, cudata: this.cuIndexData.mall, 
++            abs_incredata: Math.abs(this.cuIndexData.mall-this.lastIndexData.mall), incredata: this.cuIndexData.mall-this.lastIndexData.mall,
++            incredata_color: color
++        })
+         
+ 
+         let paramData_agency = []
+         paramData_agency.push({category:(this.year-1) + "년", absdata:this.lastIndexData.agency, ogdata:this.lastIndexData.agency, color: "#4fdbe2"})
+         paramData_agency.push({category:this.year + "년", absdata:this.cuIndexData.agency, ogdata:this.cuIndexData.agency, color: "#00becf"})
+         if(this.cuIndexData.agency-this.lastIndexData.agency > 0) {
+-            paramData_agency.push({category:"증감", absdata:Math.abs(this.cuIndexData.agency-this.lastIndexData.agency), ogdata:this.cuIndexData.agency-this.lastIndexData.agency, color: "rgb(198, 198, 199)"})
++            color = "rgb(198, 198, 199)"
+         } else {
+-            paramData_agency.push({category:"증감", absdata:Math.abs(this.cuIndexData.agency-this.lastIndexData.agency), ogdata:this.cuIndexData.agency-this.lastIndexData.agency, color: "#ffa89f"})
++            color = "#ffa89f"
+         }
++        paramData_agency.push({category:"증감", absdata:Math.abs(this.cuIndexData.agency-this.lastIndexData.agency), ogdata:this.cuIndexData.agency-this.lastIndexData.agency, color: color})
++        tot_data.push({
++            category_en:"agency", category: "대리점", 
++            lastyear: this.year-1, cuyear: this.year, 
++            lastdata: this.lastIndexData.agency, cudata: this.cuIndexData.agency, 
++            abs_incredata: Math.abs(this.cuIndexData.agency-this.lastIndexData.agency), incredata: this.cuIndexData.agency-this.lastIndexData.agency,
++            incredata_color: color
++        })
+         
+ 
+         let paramData_online = []
+         paramData_online.push({category:(this.year-1) + "년", absdata:this.lastIndexData.online, ogdata:this.lastIndexData.online, color: "#4fdbe2"})
+         paramData_online.push({category:this.year + "년", absdata:this.cuIndexData.online, ogdata:this.cuIndexData.online, color: "#00becf"})
+         if(this.cuIndexData.online-this.lastIndexData.online > 0) {
+-            paramData_online.push({category:"증감", absdata:Math.abs(this.cuIndexData.online-this.lastIndexData.online), ogdata:this.cuIndexData.online-this.lastIndexData.online, color: "rgb(198, 198, 199)"})
++            color = "rgb(198, 198, 199)"
+         } else {
+-            paramData_online.push({category:"증감", absdata:Math.abs(this.cuIndexData.online-this.lastIndexData.online), ogdata:this.cuIndexData.online-this.lastIndexData.online, color: "#ffa89f"})
++            color = "#ffa89f"
+         }
++        paramData_online.push({category:"증감", absdata:Math.abs(this.cuIndexData.online-this.lastIndexData.online), ogdata:this.cuIndexData.online-this.lastIndexData.online, color: color})
++        tot_data.push({
++            category_en:"online", category: "온라인 및 기타", 
++            lastyear: this.year-1, cuyear: this.year, 
++            lastdata: this.lastIndexData.online, cudata: this.cuIndexData.online, 
++            abs_incredata: Math.abs(this.cuIndexData.online-this.lastIndexData.online), incredata: this.cuIndexData.online-this.lastIndexData.online,
++            incredata_color: color
++        })
+         
+         // 매장수 차트
+-        this.storeChart(paramData_department, 7)
+-        this.storeChart(paramData_mall, 8)
+-        this.storeChart(paramData_agency, 9)
+-        this.storeChart(paramData_online, 10)
++        // this.storeChart(paramData_department, 7)
++        // this.storeChart(paramData_mall, 8)
++        // this.storeChart(paramData_agency, 9)
++        // this.storeChart(paramData_online, 10)
++        this.storeChart_temp(tot_data)
+     },
+     getMonthAcc() {
++        let tot_data = []
++        let color = ""
+         // 지표별 매장 요약 > 매장수 > 월 누계
+         let last_department = ((this.lastIndexData.department_amt/this.lastIndexData.tot_amt)*100).toFixed(1)
+         let last_mall = ((this.lastIndexData.mall_amt/this.lastIndexData.tot_amt)*100).toFixed(1)
+@@ -1183,12 +1241,31 @@ export default {
+                 }
+             )
+         }
++
++
++        for(let i in this.gubuns) {
++            if(this.cuIndexData[this.gubuns[i].category_en+"_amt"]-this.lastIndexData[this.gubuns[i].category_en+"_amt"] > 0) {
++                color = "rgb(198, 198, 199)"
++            } else {
++                color = "#ffa89f"
++            }
++            tot_data.push({
++                category_en:this.gubuns[i].category_en, category: this.gubuns[i].category_ko, 
++                lastyear: this.year-1, cuyear: this.year, 
++                lastdata: Math.round(this.lastIndexData[this.gubuns[i].category_en+"_amt"]/1000000), 
++                cudata: Math.round(this.cuIndexData[this.gubuns[i].category_en+"_amt"]/1000000), 
++                abs_incredata: Math.abs(Math.round((this.cuIndexData[this.gubuns[i].category_en+"_amt"]-this.lastIndexData[this.gubuns[i].category_en+"_amt"])/1000000)), 
++                incredata: Math.round((this.cuIndexData[this.gubuns[i].category_en+"_amt"]-this.lastIndexData[this.gubuns[i].category_en+"_amt"])/1000000),
++                incredata_color: color
++            })
++        }
+             
+         // 월 누계 차트
+-        this.storeChart(paramData_department, 7)
+-        this.storeChart(paramData_mall, 8)
+-        this.storeChart(paramData_agency, 9)
+-        this.storeChart(paramData_online, 10)    
++        // this.storeChart(paramData_department, 7)
++        // this.storeChart(paramData_mall, 8)
++        // this.storeChart(paramData_agency, 9)
++        // this.storeChart(paramData_online, 10)
++        this.storeChart_temp(tot_data)
+     },
+     getMonthAvg() {
+         // 지표별 매장 요약 > 월평균
+@@ -1400,11 +1477,32 @@ export default {
+                         )
+                     }
+ 
++                    let tot_data = []
++                    let color = ""
++
++                    for(let i in this.gubuns) {
++                        if(this.cuMonthAvgData[this.gubuns[i].category_en]-this.lastMonthAvgData[this.gubuns[i].category_en] > 0) {
++                            color = "rgb(198, 198, 199)"
++                        } else {
++                            color = "#ffa89f"
++                        }
++                        tot_data.push({
++                            category_en:this.gubuns[i].category_en, category: this.gubuns[i].category_ko, 
++                            lastyear: this.year-1, cuyear: this.year, 
++                            lastdata: Math.round(this.lastMonthAvgData[this.gubuns[i].category_en]/1000000), 
++                            cudata: Math.round(this.cuMonthAvgData[this.gubuns[i].category_en]/1000000), 
++                            abs_incredata: Math.abs(Math.round((this.cuMonthAvgData[this.gubuns[i].category_en]-this.lastMonthAvgData[this.gubuns[i].category_en])/1000000)), 
++                            incredata: Math.round((this.cuMonthAvgData[this.gubuns[i].category_en]-this.lastMonthAvgData[this.gubuns[i].category_en])/1000000),
++                            incredata_color: color
++                        })
++                    }
++
+                     // 월평균 차트
+-                    this.storeChart(paramData_department, 7)
+-                    this.storeChart(paramData_mall, 8)
+-                    this.storeChart(paramData_agency, 9)
+-                    this.storeChart(paramData_online, 10)   
++                    // this.storeChart(paramData_department, 7)
++                    // this.storeChart(paramData_mall, 8)
++                    // this.storeChart(paramData_agency, 9)
++                    // this.storeChart(paramData_online, 10)   
++                    this.storeChart_temp(tot_data)
+                 }
+             },
+             rej => {
+@@ -1634,11 +1732,32 @@ export default {
+                         )
+                     }
+ 
++                    let tot_data = []
++                    let color = ""
++
++                    for(let i in this.gubuns) {
++                        if(this.cuMonthStoreAvgData[this.gubuns[i].category_en]-this.lastMonthStoreAvgData[this.gubuns[i].category_en] > 0) {
++                            color = "rgb(198, 198, 199)"
++                        } else {
++                            color = "#ffa89f"
++                        }
++                        tot_data.push({
++                            category_en:this.gubuns[i].category_en, category: this.gubuns[i].category_ko, 
++                            lastyear: this.year-1, cuyear: this.year, 
++                            lastdata: Math.round(this.lastMonthStoreAvgData[this.gubuns[i].category_en]/1000000), 
++                            cudata: Math.round(this.cuMonthStoreAvgData[this.gubuns[i].category_en]/1000000), 
++                            abs_incredata: Math.abs(Math.round((this.cuMonthStoreAvgData[this.gubuns[i].category_en]-this.lastMonthStoreAvgData[this.gubuns[i].category_en])/1000000)), 
++                            incredata: Math.round((this.cuMonthStoreAvgData[this.gubuns[i].category_en]-this.lastMonthStoreAvgData[this.gubuns[i].category_en])/1000000),
++                            incredata_color: color
++                        })
++                    }
++
+                     // 매장별평균 차트
+-                    this.storeChart(paramData_department, 7)
+-                    this.storeChart(paramData_mall, 8)
+-                    this.storeChart(paramData_agency, 9)
+-                    this.storeChart(paramData_online, 10)   
++                    // this.storeChart(paramData_department, 7)
++                    // this.storeChart(paramData_mall, 8)
++                    // this.storeChart(paramData_agency, 9)
++                    // this.storeChart(paramData_online, 10)
++                    this.storeChart_temp(tot_data)
+                 }
+             },
+             rej => {
+@@ -1650,21 +1769,38 @@ export default {
+     getShtpStore(key) {
+         // 유통형태별 매장 요약 > 매장수
+         let paramData = []
+-        paramData.push({category:this.year-1, result:this.lastIndexData[key], color:"rgb(140, 190, 249)"})
+-        paramData.push({category:this.year, result:this.cuIndexData[key], color:"rgb(63, 147, 245)"})
+-        paramData.push({category:"증감", result:this.cuIndexData[key]-this.lastIndexData[key], color:"rgb(255, 168, 159)"})
+-
+-        this.openCloseMakeChart2(paramData, 11)
++        // paramData.push({category:this.year-1, result:this.lastIndexData[key], color:"rgb(140, 190, 249)"})
++        // paramData.push({category:this.year, result:this.cuIndexData[key], color:"rgb(63, 147, 245)"})
++        // paramData.push({category:"증감", result:this.cuIndexData[key]-this.lastIndexData[key], color:"rgb(255, 168, 159)"})
++        let text = ""
++        if(this.cuIndexData[key]-this.lastIndexData[key] > 0) { text = "증가" } 
++        else if(this.cuIndexData[key]-this.lastIndexData[key] < 0) { text = "감소" } 
++        else { text = "동일" }
++
++        paramData.push({category:this.year-1,   lastdata:this.lastIndexData[key],   color:"rgb(140, 190, 249)"})
++        paramData.push({category:this.year,     cudata:this.cuIndexData[key],       color:"rgb(63, 147, 245)", result:this.currency(this.cuIndexData[key]-this.lastIndexData[key]), text: text})
++
++        // this.openCloseMakeChart2(paramData, 11)
++        this.openCloseMakeChart3(paramData, 11)
+     },
+     getMonthAcc2(key) {
+         // 유통형태별 매장 요약 > 월 누계
+         let paramData = []
+         
+-        paramData.push({category:this.year-1, result:Math.round(this.lastIndexData[key]/1000000), color:"rgb(140, 190, 249)"})
+-        paramData.push({category:this.year, result:Math.round(this.cuIndexData[key]/1000000), color:"rgb(63, 147, 245)"})
+-        paramData.push({category:"증감", result:Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000), color:"rgb(255, 168, 159)"})
++        // paramData.push({category:this.year-1, result:Math.round(this.lastIndexData[key]/1000000), color:"rgb(140, 190, 249)"})
++        // paramData.push({category:this.year, result:Math.round(this.cuIndexData[key]/1000000), color:"rgb(63, 147, 245)"})
++        // paramData.push({category:"증감", result:Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000), color:"rgb(255, 168, 159)"})
++        
++        // this.openCloseMakeChart2(paramData, 12)
++
++        let text = ""
++        if(Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000) > 0) { text = "증가" } 
++        else if(Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000) < 0) { text = "감소" } 
++        else { text = "동일" }
++        paramData.push({category:this.year-1,   lastdata:Math.round(this.lastIndexData[key]/1000000),   color:"rgb(140, 190, 249)"})
++        paramData.push({category:this.year,     cudata:Math.round(this.cuIndexData[key]/1000000),       color:"rgb(63, 147, 245)", result:this.currency(Math.round((this.cuIndexData[key]-this.lastIndexData[key])/1000000)), text: text })
+         
+-        this.openCloseMakeChart2(paramData, 12)
++        this.openCloseMakeChart3(paramData, 12)
+     },
+     getMonthlySalesAverage() {
+         // 유통형태별 매장 요약 > 월 평균
+@@ -1685,11 +1821,20 @@ export default {
+                     }
+                     
+                     let paramData = []
+-                    paramData.push({category:this.year-1, result:Math.round(this.monthlyAverageData.LAST_AVGMON/1000000), color:"rgb(140, 190, 249)"})
+-                    paramData.push({category:this.year, result:Math.round(this.monthlyAverageData.CU_AVGMON/1000000), color:"rgb(63, 147, 245)"})
+-                    paramData.push({category:"증감", result:Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000), color:"rgb(255, 168, 159)"})
++                    // paramData.push({category:this.year-1, result:Math.round(this.monthlyAverageData.LAST_AVGMON/1000000), color:"rgb(140, 190, 249)"})
++                    // paramData.push({category:this.year, result:Math.round(this.monthlyAverageData.CU_AVGMON/1000000), color:"rgb(63, 147, 245)"})
++                    // paramData.push({category:"증감", result:Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000), color:"rgb(255, 168, 159)"})
+ 
+-                    this.openCloseMakeChart2(paramData, 13)
++                    // this.openCloseMakeChart2(paramData, 13)
++
++                    let text = ""
++                    if(Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000) > 0) { text = "증가" } 
++                    else if(Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000) < 0) { text = "감소" } 
++                    else { text = "동일" }
++                    paramData.push({category:this.year-1, lastdata:Math.round(this.monthlyAverageData.LAST_AVGMON/1000000), color:"rgb(140, 190, 249)"})
++                    paramData.push({category:this.year,   cudata:Math.round(this.monthlyAverageData.CU_AVGMON/1000000),     color:"rgb(63, 147, 245)", result: this.currency(Math.round((this.monthlyAverageData.INDE_MONTH_AVG)/1000000)), text: text})
++
++                    this.openCloseMakeChart3(paramData, 13)
+                 }
+             },
+             rej => {
+@@ -1716,11 +1861,20 @@ export default {
+                     }
+                     
+                     let paramData = []
+-                    paramData.push({category:this.year-1, result:Math.round(this.storeAverageData.LAST_AVGVDCD/1000000), color:"rgb(140, 190, 249)"})
+-                    paramData.push({category:this.year, result:Math.round(this.storeAverageData.CU_AVGVDCD/1000000), color:"rgb(63, 147, 245)"})
+-                    paramData.push({category:"증감", result:Math.round((this.storeAverageData.AA)/1000000), color:"rgb(255, 168, 159)"})
++                    // paramData.push({category:this.year-1, result:Math.round(this.storeAverageData.LAST_AVGVDCD/1000000), color:"rgb(140, 190, 249)"})
++                    // paramData.push({category:this.year, result:Math.round(this.storeAverageData.CU_AVGVDCD/1000000), color:"rgb(63, 147, 245)"})
++                    // paramData.push({category:"증감", result:Math.round((this.storeAverageData.AA)/1000000), color:"rgb(255, 168, 159)"})
++
++                    // this.openCloseMakeChart2(paramData, 14)
+ 
+-                    this.openCloseMakeChart2(paramData, 14)
++                    let text = ""
++                    if(Math.round((this.storeAverageData.AA)/1000000) > 0) { text = "증가" } 
++                    else if(Math.round((this.storeAverageData.AA)/1000000) < 0) { text = "감소" } 
++                    else { text = "동일" }
++                    paramData.push({category:this.year-1, lastdata:Math.round(this.storeAverageData.LAST_AVGVDCD/1000000),  color:"rgb(140, 190, 249)"})
++                    paramData.push({category:this.year,   cudata:Math.round(this.storeAverageData.CU_AVGVDCD/1000000),      color:"rgb(63, 147, 245)", result:this.currency(Math.round((this.storeAverageData.AA)/1000000)), text: text})
++
++                    this.openCloseMakeChart3(paramData, 14)
+                 }
+             },
+             rej => {
+@@ -1819,7 +1973,7 @@ export default {
+             titleField: "category",
+             valueField: "data",
+             fontFamily: "GothamBold",
+-            fontSize: 16,
++            fontSize: 13,
+             allLabels: [
+                 {
+                     align: "center",
+@@ -1830,7 +1984,7 @@ export default {
+                 {
+                     align: "center",
+                     id: "Label-2",
+-                    size: 30,
++                    size: 20,
+                     text: summary,
+                     y: "44%",
+                     fontFamily: "GothamBold"
+@@ -1858,7 +2012,7 @@ export default {
+         AmCharts.makeChart(divName, {
+             type: "serial",
+             categoryField: "category",
+-            rotate: true,
++            //rotate: true,
+             startDuration: 1,
+             fontFamily: "GothamBold",
+             fontSize: 13,
+@@ -1876,6 +2030,7 @@ export default {
+                     fillAlphas: 1,
+                     id: "AmGraph-1",
+                     labelText: "[[ogdata]]",
++                    showAllValueLabels: true,
+                     lineColorField: "color",
+                     // title: "graph 1",
+                     type: "column",
+@@ -1891,7 +2046,7 @@ export default {
+                     gridThickness: 0,
+                     labelsEnabled: false,
+                     tickLength: 0,
+-                    // totalText: "[[total]]"
++                    totalText: "[[ogdata]]"
+                 }
+             ],
+             allLabels: [],
+@@ -1899,6 +2054,77 @@ export default {
+             dataProvider: val
+         });
+     },
++    storeChart_temp(val) {
++        let divName = "chartdiv7"
++
++        // AmCharts graphs 에서 labelText값으로 value를 쓰면 자동으로 ,가 찍히지만 
++        // -값 표현을 위해 absdata를 사용중이므로 ogdata를 currency로 가공
++        for(let i=0; i<val.length; i++) {
++            if(val[i].incredata > 0) {
++                val[i].incretext = "증가" 
++            } else if(val[i].incredata < 0) {
++                val[i].incretext = "감소" 
++            } else {
++                val[i].incretext = "동일" 
++            }
++            val[i].incredata = this.currency(val[i].incredata)
++        }
++        let color = ["rgb(140, 190, 249)", "rgb(63, 147, 245)"]
++        fontFamily: "GothamBold",
++        console.log(val)
++
++        AmCharts.makeChart(divName, {
++            type: "serial",
++            categoryField: "category",
++            theme: "none",
++            legend: {
++                enabled: false,
++                horizontalGap: 10,
++                useGraphSettings: true
++            },
++            fontSize: 15,
++            dataProvider: val,
++            valueAxes: [ {
++                stackType: "regular",
++                axisAlpha: 0,
++                gridAlpha: 0,
++                fontSize: 15,
++            } ],
++            graphs: [ {
++                balloonText: "<b>[[category]]</b><br><span style='font-size:14px'>[[title]]: <b>[[value]]</b></span>",
++                fillAlphas: 0.8,
++                labelText: "[[value]]",
++                labelPosition: "top",
++                showAllValueLabels: true,
++                lineAlpha: 0.3,
++                title: this.year-1,
++                type: "column",
++                newStack: true,
++                color: "#000000",
++                lineColor: color[0],
++                valueField: "lastdata"
++            }, {
++                balloonText: "<b>[[category]]</b><br><span style='font-size:14px'>[[title]]: <b>[[value]]</b></span><br><span>전년대비:<b>[[incretext]]([[incredata]])</b></span>",
++                fillAlphas: 0.8,
++                labelText: "[[value]]",
++                labelPosition: "top",
++                showAllValueLabels: true,
++                lineAlpha: 0.3,
++                title: this.year,
++                type: "column",
++                newStack: true,
++                color: "#000000",
++                lineColor: color[1],
++                valueField: "cudata"
++            }],
++            categoryAxis: {
++                gridPosition: "start",
++                axisAlpha: 0,
++                gridAlpha: 0,
++                position: "left"
++            }
++        });
++    },
+     openCloseChart1(val, index) {
+         let divName = "chartdiv" + index;
+         let data = val
+@@ -1908,17 +2134,17 @@ export default {
+         //     }
+         // }
+ 
+-        let title = ["신장매장 20%이내","신장매장 50%이내", "신장매장 50%이상", "감소매장", "신규매장"]
++        let title = ["신장매장 20%이내","신장매장 50%이내", "신장매장 50%이상", "감소매장", "신규매장", "철수매장"]
+ 
+         AmCharts.makeChart(divName, {
+             type: "serial",
+             startEffect: "easeOutSine",
+             categoryField: "category",
++            colors: ["#C5DEFC", "#8CBEF9", "#3F93F5", "#FF8A97", "#D0C3FD", "#FF5C33"],
+             marginRight: 100,
+             rotate: true,
+-            colors: [ "rgb(197, 222, 252)", "rgb(140, 190, 249)", "rgb(63, 147, 245)", "rgb(255, 138, 151)", "rgb(208, 195, 253)" ],
+             startDuration: 1,
+-            fontSize: 18,
++            fontSize: 15,
+             categoryAxis: {
+                 gridPosition: "start",
+                 axisAlpha: 0,
+@@ -1927,51 +2153,66 @@ export default {
+             },
+             trendLines: [],
+             graphs: [
+-            {
+-                balloonText: "[[title]]:[[value]]",
+-                fillAlphas: 1,
+-                id: "AmGraph-1",
+-                labelText: "[[value]]",
+-                title: title[0],
+-                type: "column",
+-                valueField: "in20under"
+-            },
+-            {
+-                balloonText: "[[title]]:[[value]]",
+-                fillAlphas: 1,
+-                id: "AmGraph-2",
+-                labelText: "[[value]]",
+-                title: title[1],
+-                type: "column",
+-                valueField: "in50under"
+-            },
+-            {
+-                balloonText: "[[title]]:[[value]]",
+-                fillAlphas: 1,
+-                id: "AmGraph-3",
+-                labelText: "[[value]]",
+-                title: title[2],
+-                type: "column",
+-                valueField: "in50over"
+-            },
+-            {
+-                balloonText: "[[title]]:[[minus_de]]",
+-                fillAlphas: 1,
+-                id: "AmGraph-4",
+-                labelText: "[[minus_de]]",
+-                title: title[3],
+-                type: "column",
+-                valueField: "de"
+-            },
+-            {
+-                balloonText: "[[title]]:[[value]]",
+-                fillAlphas: 1,
+-                id: "AmGraph-5",
+-                labelText: "[[value]]",
+-                title: title[4],
+-                type: "column",
+-                valueField: "new"
+-            }
++                {
++                    balloonText: "[[title]]:[[value]]",
++                    fillAlphas: 1,
++                    id: "AmGraph-1",
++                    labelText: "[[value]]",
++                    title: title[0],
++                    type: "column",
++                    fixedColumnWidth: 40,
++                    valueField: "in20under"
++                },
++                {
++                    balloonText: "[[title]]:[[value]]",
++                    fillAlphas: 1,
++                    id: "AmGraph-2",
++                    labelText: "[[value]]",
++                    title: title[1],
++                    type: "column",
++                    fixedColumnWidth: 40,
++                    valueField: "in50under"
++                },
++                {
++                    balloonText: "[[title]]:[[value]]",
++                    fillAlphas: 1,
++                    id: "AmGraph-3",
++                    labelText: "[[value]]",
++                    title: title[2],
++                    type: "column",
++                    fixedColumnWidth: 40,
++                    valueField: "in50over"
++                },
++                {
++                    balloonText: "[[title]]:[[minus_de]]",
++                    fillAlphas: 1,
++                    id: "AmGraph-4",
++                    labelText: "[[minus_de]]",
++                    title: title[3],
++                    type: "column",
++                    fixedColumnWidth: 40,
++                    valueField: "de"
++                },
++                {
++                    balloonText: "[[title]]:[[value]]",
++                    fillAlphas: 1,
++                    id: "AmGraph-5",
++                    labelText: "[[value]]",
++                    title: title[4],
++                    type: "column",
++                    fixedColumnWidth: 40,
++                    valueField: "new"
++                },
++                {
++                    balloonText: "[[title]]:[[minus_wthdr]]",
++                    fillAlphas: 1,
++                    id: "AmGraph-6",
++                    labelText: "[[minus_wthdr]]",
++                    title: title[5],
++                    type: "column",
++                    fixedColumnWidth: 40,
++                    valueField: "wthdr"
++                }
+             ],
+             guides: [],
+             valueAxes: [
+@@ -2014,20 +2255,86 @@ export default {
+             },
+             trendLines: [],
+             graphs: [
++                {
++                    colorField: "color",
++                    fillAlphas: 1,
++                    fixedColumnWidth: 20,
++                    id: "AmGraph-1",
++                    labelText: "[[value]]",
++                    labelPosition: "top",
++                    lineColorField: "color",
++                    title: "graph 1",
++                    type: "column",
++                    valueField: "result",
++                    showAllValueLabels: true
++                }
++            ],
++            guides: [],
++            valueAxes: [
+             {
+-                colorField: "color",
+-                fillAlphas: 1,
+-                fixedColumnWidth: 20,
+-                id: "AmGraph-1",
+-                labelText: "[[value]]",
+-                labelPosition: "top",
+-                lineColorField: "color",
+-                title: "graph 1",
+-                type: "column",
+-                valueField: "result",
+-                showAllValueLabels: true
++                stackType: "regular",
++                id: "ValueAxis-1",
++                axisAlpha: 0,
++                gridColor: "#AAB3B3",
++                gridAlpha: 0.3,
++                gridThickness: 0,
++                labelsEnabled: false
+             }
+             ],
++            allLabels: [],
++            balloon: {},
++            dataProvider: data
++        });
++    },
++    openCloseMakeChart3(val, index) {
++        let divName = "chartdiv" + index;
++        let data = val
++        
++        AmCharts.makeChart(divName, {
++            type: "serial",
++            startEffect: "easeOutSine",
++            categoryField: "category",
++            columnSpacing: 0,
++            columnWidth: 0.4,
++            startDuration: 0.7,
++            fontSize: 15,
++            categoryAxis: {
++                axisColor: "#AAB3B3",
++                gridAlpha: 0,
++                axisThickness: 0,
++                gridThickness: 0
++            },
++            trendLines: [],
++            graphs: [
++                {
++                    balloonText: "<span style='font-size:14px'>[[category]]: <b>[[value]]</b></span>",
++                    colorField: "color",
++                    fillAlphas: 1,
++                    // fixedColumnWidth: 20,
++                    id: "AmGraph-1",
++                    labelText: "[[value]]",
++                    labelPosition: "top",
++                    lineColorField: "color",
++                    title: "graph 1",
++                    type: "column",
++                    valueField: "lastdata",
++                    showAllValueLabels: true
++                },
++                {
++                    balloonText: "<span style='font-size:14px'>[[category]]: <b>[[value]]</b></span><br><span>전년대비:<b>[[text]]([[result]])</b></span>",
++                    colorField: "color",
++                    fillAlphas: 1,
++                    // fixedColumnWidth: 20,
++                    id: "AmGraph-2",
++                    labelText: "[[value]]",
++                    labelPosition: "top",
++                    lineColorField: "color",
++                    title: "graph 2",
++                    type: "column",
++                    valueField: "cudata",
++                    showAllValueLabels: true
++                }
++            ],
+             guides: [],
+             valueAxes: [
+             {
+diff --git a/src/pages/store/STO0004/index.vue b/src/pages/store/STO0004/index.vue
+index c4b3f9b..d3cbbf6 100644
+--- a/src/pages/store/STO0004/index.vue
++++ b/src/pages/store/STO0004/index.vue
+@@ -1,7 +1,7 @@
+ ﻿<template>
+     <transition name="modal">
+     <!-- 팝업용 레이아웃 클래스 : popup_layout -->
+-    <div class="wrap popup_layout pl_r" style="height:1300px">
++    <div class="wrap popup_layout pl_r">
+         <!-- popup close button -->
+         <div class="btn_pop_close" role="button" @click="close()"><i class="material-icons">close</i></div>
+         <!-- header -->
+@@ -227,7 +227,7 @@
+                             <colgroup>
+                                 <col style="width: 8%;" />
+                                 <col style="width: 8%;" />
+-                                <col style="width: 20%;" />
++                                <col style="width: 20%;"/>
+                                 <col style="width: 8%;" />
+                                 <col style="width: 8%;" />
+                                 <col style="width: 8%;" />
+@@ -250,7 +250,7 @@
+                             </tfoot>
+                         </table>
+                     </div>
+-                    <div class="tbody_wrap tbl_hover_none" style="margin-top: 43px;">
++                    <div class="tbody_wrap tbl_hover_none" style="margin-top: 43px; height: 680px;">
+                         <table class="tbl tbl_right">
+                             <colgroup>
+                                 <col style="width: 8%;" />
+@@ -342,7 +342,12 @@ export default {
+   computed: {
+     req2svr: () => req2svr,
+     SUCDs() {
+-      return this.$store.getters.getSTOList
++      // let returns = this.$store.getters.getFDRList
++      let returns = _.remove(this.$store.getters.getFDRList, function(n) {
++        return n.MCODE != '10';
++      });
++      console.log("SUCDs >>> ", returns)
++      return returns
+     },
+     SelectCodeName() {
+         return this.$store.getters.getSUCDCODNM(this.selectSucd)
+diff --git a/src/router/index.js b/src/router/index.js
+index dfdcc56..ab4f7f1 100644
+--- a/src/router/index.js
++++ b/src/router/index.js
+@@ -25,7 +25,7 @@ import STY0201 from '@/pages/style/STY0201'
+ import NEWSTY0001 from '@/pages/style/NEWSTY0001'
+ import NEWSTY0101 from '@/pages/style/NEWSTY0101'
+ import STO0001 from '@/pages/store/STO0001'
+-import STO0003 from '@/pages/store/STO0003'
++// import STO0003 from '@/pages/store/STO0003'
+ import STO0003_1 from '@/pages/store/STO0003_1'
+ import CRM0001 from '@/pages/crm/CRM0001'
+ import PRO0101 from '@/pages/product/PRO0101'
+@@ -36,7 +36,6 @@ import BUY0102 from '@/pages/buy/BUY0102'
+ import ONL0101 from '@/pages/online/ONL0101'
+ import ONL0102 from '@/pages/online/ONL0102'
+ import ONL0103 from '@/pages/online/ONL0103'
+-import ONL0104 from '@/pages/online/ONL0104'
+ import HUM0001 from '@/pages/hum/HUM0001'
+ import HUM0002 from '@/pages/hum/HUM0002'
+ import HUM0003 from '@/pages/hum/HUM0003'
+@@ -50,6 +49,7 @@ import WEE0101 from '@/pages/wee/WEE0101'
+ import WEE0201 from '@/pages/wee/WEE0201'
+ import WEE0301 from '@/pages/wee/WEE0301'
+ import WEE0401 from '@/pages/wee/WEE0401'
++// import T0001 from '@/pages/test/T0001'
+ import ERR0001 from '@/pages/error/common'
+ import STORE from '@/store'
+ import req2svr from "./req2svr";
+@@ -65,8 +65,6 @@ const deleteCookie = function(name) {
+   document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+ }
+ 
+-const toName = {};
+-
+ const requireAuth = (to, from, next) => {
+   if (to.path == "/") {
+     let empcd = getCookie("empcd")
+@@ -86,8 +84,6 @@ const requireAuth = (to, from, next) => {
+       deleteCookie("token")
+     }
+   }
+-  
+-  toName.name = to.name;
+   checkAuthToken(to, from, next)
+ }
+ 
+@@ -101,25 +97,25 @@ const checkAuthToken = (to, from, next) => {
+     STORE.commit('setEmpCd', empcd)
+   }
+ 
+-  // 개발서버 및 로컬 테스트 용 start(배포시 전체 주석 처리)
++  // 로컬 테스트 용 start(배포시 전체 주석 처리)
+   if (!empcd && !token) {
+     token = "smzH^8^N9}N`B[t."
+     // empcd = "1180206" // all : 문무홍(1180206)
+-    // empcd = "1180502" // all : 권희진(1180502)
++    empcd = "1190410" // all : 권희진(1180502)
+     // empcd = "1040308" // 사업부, 브랜드 제한
+-    // empcd = "1190410" // BIGR010_DEV 테이블 전체 권한
+-    empcd = "" 
+     STORE.commit('setAuthToken', token)
+     STORE.commit('setEmpCd', empcd)
+     sessionStorage.setItem("token" , token)
+     sessionStorage.setItem("empcd" , empcd)
+   }
+-  // 개발서버 및 로컬 테스트 용 end
++  // 로컬 테스트 용 end
+ 
+   if(token == null || token == "undefined" || empcd == null || empcd == "undefined") {
+     alert("접속권한이 없습니다.")
+     history.back()
+   } else {
++    // alert("시스템 점검중 입니다.")
++    // next("/Error")
+     authCheckToken(next, isRoot, to.path)
+   }
+ }
+@@ -829,52 +825,6 @@ const getYearCodeList = (next, isRoot, path) => {
+   })
+ }
+ 
+-const authCheckURL = function(next, isRoot, path) {  
+-    
+-    let currentPage = _.find(STORE.getters.getAuthProCd, {PROCD: toName.name})
+-
+-    if (path == "/") {
+-      next()
+-    } else if ( currentPage && currentPage.VIEWYN == 1 ) {
+-      next()
+-    } else {
+-      // 로컬용 고도화 페이지 예외처리(신규 페이지라 DB에 등록이 안되어 있음) start
+-      if(path == "/NewDailyReport"
+-      || path == "/NewDailyReportSales"
+-      || path == "/NewDailyReportCash"
+-      || path == "/NewDailyReportProfit"
+-      || path == "/NewDailyReportStock"
+-      || path == "/NewDailyReportSalesPart"
+-      || path == "/NewDailyReportCashPart"
+-      || path == "/NewDailyReportProfitPart"
+-      || path == "/NewDailyReportStockPart"
+-      || path == "/HumSeList"
+-      || path == "/HumSeDetail"
+-      || path == "/NewStyleMain"
+-      || path == "/NewStyleProductDetail"
+-      || path == "/WeeklyClothSale"
+-      || path == "/WeeklyBest20"
+-      || path == "/WeeklyResearch"
+-      || path == "/WeeklyProgress"
+-      || path == "/StoreSalesStatus"
+-      || path == "/StoreSalesStatus2"
+-      || path == "/OnLineSale"
+-      || path == "/OnLineSaleDetail"
+-      || path == "/DailyReportDetail"
+-      || path == "/StoreMain"
+-      || path == "/Error") {
+-        next()
+-      } else {
+-        alert("권한이 없습니다.")
+-      }
+-      // 로컬용 고도화 페이지 예외처리(신규 페이지라 DB에 등록이 안되어 있음) end
+-
+-      // 운영용
+-      // alert("권한이 없습니다.")
+-    }
+-}
+-
+-/* 이전 소스 - 운영 반영 후 이상 없을 시 삭제 필요
+ const authCheckURL = function(next, isRoot, path) {
+     let DailyReport = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0001"})
+     let SalesMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0002"})
+@@ -882,19 +832,31 @@ const authCheckURL = function(next, isRoot, path) {
+     let ProductMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0004"})
+     let BuyMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0005"})
+     let OnLineMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0006"})
+-    let Human = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0007"})    
+-    
+-    let currentPage = _.find(STORE.getters.getAuthProCd, {PROCD: toName.name})
++    let Human = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0007"})
++    let Weekly = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0008"})
++    let Sale = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0009"})
+ 
+-    console.log(currentPage);
+-    
++    console.log(STORE.getters.getAuthGbnCd,  " / ", Sale)
+ 
+     if (path == "/") {
+       next()
+-    } else if ( DailyReport ) {
++    } else if ( (path == "/DailyReportDetail"
++    || path == "/OnLineSale"
++    || path == "/StoreSalesStatus2") && Sale ) {
++      next()
++    } else if ( (path == "/DailyReportDetail"
++    || path == "/NewDailyReport"
++    || path == "/NewDailyReportSales"
++    || path == "/NewDailyReportCash"
++    || path == "/NewDailyReportProfit"
++    || path == "/NewDailyReportStock"
++    || path == "/NewDailyReportSalesPart"
++    || path == "/NewDailyReportCashPart"
++    || path == "/NewDailyReportProfitPart"
++    || path == "/NewDailyReportStockPart" ) && DailyReport ) {
+       next()
+-    } else if ( (path == "/SalesMain" || path == "/StyleMain" || path == "/StoreMain"
+-      || path == "/StyleProductDetail"
++    } else if ( (path == "/SalesMain" || path == "/NewStyleMain" || path == "/StoreMain"
++      || path == "/NewStyleProductDetail"
+       || path == "/StyleProductStatus"
+       || path == "/StyleDesignerDetail") && SalesMain ) {
+       next()
+@@ -910,11 +872,17 @@ const authCheckURL = function(next, isRoot, path) {
+       next()
+     } else if( (path == "/HumMain" 
+       || path == "/HumSdList" 
++      || path == "/HumSeList" 
+       || path == "/HumRegionSdList" 
+       || path == "/HumSdSalesList" 
+       || path == "/HumSdDetail" 
+       || path == "/HumOcSdDetail") && Human ) {
+       next()
++    } else if( (path == "/WeeklyClothSale"
++      || path == "/WeeklyBest20"
++      || path == "/WeeklyResearch"
++      || path == "/WeeklyProgress") && Weekly ) {
++      next()
+     } else if (path == "/Error") { 
+       next()
+     } else {
+@@ -924,7 +892,6 @@ const authCheckURL = function(next, isRoot, path) {
+       // }
+     }
+ }
+-*/
+ 
+ export default new Router({
+   routes: [
+@@ -932,13 +899,24 @@ export default new Router({
+     // { name: 'Test', component: T0001, path: '/Test'},
+     // 메인화면
+     { name: 'MAI0001', component: MAI0001, path: '/', beforeEnter: requireAuth },
++
++    // 매출 
++    // // 일매출
++    { name: 'FIN0101', component: FIN0101, path: '/DailyReportDetail', beforeEnter: requireAuth },
++    // // 온라인 
++    { name: 'ONL0103', component: ONL0103, path: '/OnLineSale', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // // 월매출
++    { name: 'STO0003_1', component: STO0003_1, path: '/StoreSalesStatus2', beforeEnter: requireAuth },
++    
+     // 재무
+     { name: 'FIN0001', component: FIN0001, path: '/DailyReport', beforeEnter: requireAuth },
+-    { name: 'FIN0101', component: FIN0101, path: '/DailyReportDetail', beforeEnter: requireAuth },
+     { name: 'FIN0201', component: FIN0201, path: '/DailyReportSales', beforeEnter: requireAuth },
+     { name: 'FIN0301', component: FIN0301, path: '/DailyReportProfit', beforeEnter: requireAuth },
+     { name: 'FIN0401', component: FIN0401, path: '/DailyReportCash', beforeEnter: requireAuth },
+     { name: 'FIN0501', component: FIN0501, path: '/DailyReportStock', beforeEnter: requireAuth },
++    
+     // 재무 고도화
+     { name: 'NEWFIN0001', component: NEWFIN0001, path: '/NewDailyReport', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+@@ -967,8 +945,10 @@ export default new Router({
+     { name: 'NEWFIN0502', component: NEWFIN0502, path: '/NewDailyReportStockPart', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+     },
++    
+     // 영업
+     { name: 'SAL0001', component: SAL0001, path: '/SalesMain', beforeEnter: requireAuth },
++    
+     // 스타일
+     { name: 'STY0001', component: STY0001, path: '/StyleMain', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+@@ -988,12 +968,13 @@ export default new Router({
+     // { name: 'STY0201', component: STY0201, path: '/StyleDesignerDetail', beforeEnter: requireAuth },
+     // 매장
+     { name: 'STO0001', component: STO0001, path: '/StoreMain', beforeEnter: requireAuth },
+-    { name: 'STO0003', component: STO0003, path: '/StoreSalesStatus', beforeEnter: requireAuth,
+-      props: (route) => ({ data: route.params.data })
+-    },
+-    { name: 'STO0003_1', component: STO0003_1, path: '/StoreSalesStatus2', beforeEnter: requireAuth },
++    // { name: 'STO0003', component: STO0003, path: '/StoreSalesStatus', beforeEnter: requireAuth,
++    //   props: (route) => ({ data: route.params.data })
++    // },
++    
+     // CRM
+     { name: 'CRM0001', component: CRM0001, path: '/Crm', beforeEnter: requireAuth },
++    
+     // 생산
+     { name: 'PRO0101', component: PRO0101, path: '/ProductMain', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+@@ -1004,6 +985,7 @@ export default new Router({
+     { name: 'PRO0103', component: PRO0103, path: '/ProductYearDetail', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+     },
++    
+     // 구매
+     { name: 'BUY0101', component: BUY0101, path: '/BuyMain', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+@@ -1011,6 +993,7 @@ export default new Router({
+     { name: 'BUY0102', component: BUY0102, path: '/BuyDetail', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+     },
++    
+     // 온라인
+     { name: 'ONL0101', component: ONL0101, path: '/OnLineMain', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+@@ -1018,16 +1001,9 @@ export default new Router({
+     { name: 'ONL0102', component: ONL0102, path: '/OnLineDetail', beforeEnter: requireAuth,
+       props: (route) => ({ data: route.params.data })
+     },
++    
+     // 인재DB메인
+     { name: 'HUM0001', component: HUM0001, path: '/HumMain', beforeEnter: requireAuth },
+-    // 온라인 판매 현황
+-    { name: 'ONL0103', component: ONL0103, path: '/OnLineSale', beforeEnter: requireAuth,
+-      props: (route) => ({ data: route.params.data })
+-    },
+-    // 온라인 월별 판매 현황
+-    { name: 'ONL0104', component: ONL0104, path: '/OnLineSaleDetail', beforeEnter: requireAuth,
+-      props: (route) => ({ data: route.params.data })
+-    },
+     // 전체 SD LIST
+     { name: 'HUM0002', component: HUM0002, path: '/HumSdList', beforeEnter: requireAuth },
+     // 전체 시니어 LIST
+@@ -1050,23 +1026,24 @@ export default new Router({
+     { name: 'HUM0401', component: HUM0401, path: '/HumSeDetail', beforeEnter: requireAuth },
+     // 시니어 타사 Detail 기본정보
+     { name: 'HUM0501', component: HUM0501, path: '/HumSeDetail2', beforeEnter: requireAuth },
++
+     // 주간보고(복종별 판매 및 할인율)
+-    { name: 'WEE0101', component: WEE0101, path: '/WeeklyClothSale', beforeEnter: requireAuth,
+-      props: (route) => ({ data: route.params.data }) 
++    { name: 'WEE0101', component: WEE0101, path: '/WeeklyClothSale', beforeEnter: requireAuth, 
++      props: (route) => ({ data: route.params.data })
+     },
+     // 주간보고(주간판매 BEST 20)
+-    { name: 'WEE0201', component: WEE0201, path: '/WeeklyBest20', beforeEnter: requireAuth,
+-      props: (route) => ({ data: route.params.data }) 
++    { name: 'WEE0201', component: WEE0201, path: '/WeeklyBest20', beforeEnter: requireAuth, 
++      props: (route) => ({ data: route.params.data })
+     },
+     // 주간보고(신상품 반응조사)
+-    { name: 'WEE0301', component: WEE0301, path: '/WeeklyResearch', beforeEnter: requireAuth,
+-      props: (route) => ({ data: route.params.data }) 
++    { name: 'WEE0301', component: WEE0301, path: '/WeeklyResearch', beforeEnter: requireAuth, 
++      props: (route) => ({ data: route.params.data })
+     },
+     // 주간보고(주간판매 추이)
+-    { name: 'WEE0401', component: WEE0401, path: '/WeeklyProgress', beforeEnter: requireAuth,
+-      props: (route) => ({ data: route.params.data }) 
++    { name: 'WEE0401', component: WEE0401, path: '/WeeklyProgress', beforeEnter: requireAuth, 
++      props: (route) => ({ data: route.params.data })
+     },
+     // ERROR
+-    { name: 'Error', component: ERR0001, path: '/Error'}
++    { name: 'Error', component: ERR0001, path: '/Error' }
+   ]
+ })
+\ No newline at end of file
+diff --git a/src/router/index_loc.js b/src/router/index_loc.js
+new file mode 100644
+index 0000000..dfdcc56
+--- /dev/null
++++ b/src/router/index_loc.js
+@@ -0,0 +1,1072 @@
++import Vue from 'vue'
++import Router from 'vue-router'
++
++import MAI0001 from '@/pages/main/MAI0001'
++import FIN0001 from '@/pages/financial/FIN0001'
++import FIN0101 from '@/pages/financial/FIN0101'
++import FIN0201 from '@/pages/financial/FIN0201'
++import FIN0301 from '@/pages/financial/FIN0301'
++import FIN0401 from '@/pages/financial/FIN0401'
++import FIN0501 from '@/pages/financial/FIN0501'
++import NEWFIN0001 from '@/pages/financial/NEWFIN0001'
++import NEWFIN0201 from '@/pages/financial/NEWFIN0201'
++import NEWFIN0202 from '@/pages/financial/NEWFIN0202'
++import NEWFIN0301 from '@/pages/financial/NEWFIN0301'
++import NEWFIN0302 from '@/pages/financial/NEWFIN0302'
++import NEWFIN0401 from '@/pages/financial/NEWFIN0401'
++import NEWFIN0402 from '@/pages/financial/NEWFIN0402'
++import NEWFIN0501 from '@/pages/financial/NEWFIN0501'
++import NEWFIN0502 from '@/pages/financial/NEWFIN0502'
++import SAL0001 from '@/pages/sales/SAL0001'
++import STY0001 from '@/pages/style/STY0001'
++import STY0101 from '@/pages/style/STY0101'
++import STY0102 from '@/pages/style/STY0102'
++import STY0201 from '@/pages/style/STY0201'
++import NEWSTY0001 from '@/pages/style/NEWSTY0001'
++import NEWSTY0101 from '@/pages/style/NEWSTY0101'
++import STO0001 from '@/pages/store/STO0001'
++import STO0003 from '@/pages/store/STO0003'
++import STO0003_1 from '@/pages/store/STO0003_1'
++import CRM0001 from '@/pages/crm/CRM0001'
++import PRO0101 from '@/pages/product/PRO0101'
++import PRO0102 from '@/pages/product/PRO0102'
++import PRO0103 from '@/pages/product/PRO0103'
++import BUY0101 from '@/pages/buy/BUY0101'
++import BUY0102 from '@/pages/buy/BUY0102'
++import ONL0101 from '@/pages/online/ONL0101'
++import ONL0102 from '@/pages/online/ONL0102'
++import ONL0103 from '@/pages/online/ONL0103'
++import ONL0104 from '@/pages/online/ONL0104'
++import HUM0001 from '@/pages/hum/HUM0001'
++import HUM0002 from '@/pages/hum/HUM0002'
++import HUM0003 from '@/pages/hum/HUM0003'
++import HUM0101 from '@/pages/hum/HUM0101'
++import HUM0103 from '@/pages/hum/HUM0103'
++import HUM0201 from '@/pages/hum/HUM0201'
++import HUM0301 from '@/pages/hum/HUM0301'
++import HUM0401 from '@/pages/hum/HUM0401'
++import HUM0501 from '@/pages/hum/HUM0501'
++import WEE0101 from '@/pages/wee/WEE0101'
++import WEE0201 from '@/pages/wee/WEE0201'
++import WEE0301 from '@/pages/wee/WEE0301'
++import WEE0401 from '@/pages/wee/WEE0401'
++import ERR0001 from '@/pages/error/common'
++import STORE from '@/store'
++import req2svr from "./req2svr";
++
++Vue.use(Router)
++
++const getCookie = function(name) {
++  var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
++  return value? value[2] : null;
++};
++
++const deleteCookie = function(name) {
++  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
++}
++
++const toName = {};
++
++const requireAuth = (to, from, next) => {
++  if (to.path == "/") {
++    let empcd = getCookie("empcd")
++    let token = getCookie("token")
++
++    if (empcd && token) {
++      empcd = decodeURI(empcd)
++      token = decodeURI(token)
++
++      STORE.commit('setAuthToken', token)
++      STORE.commit('setEmpCd', empcd)
++
++      sessionStorage.setItem("token" , token)
++      sessionStorage.setItem("empcd" , empcd)
++
++      deleteCookie("empcd")
++      deleteCookie("token")
++    }
++  }
++  
++  toName.name = to.name;
++  checkAuthToken(to, from, next)
++}
++
++const checkAuthToken = (to, from, next) => {
++  let token = sessionStorage.getItem("token")
++  let empcd = sessionStorage.getItem("empcd")
++  let isRoot = to.path == "/" ? true : false
++
++  if (empcd && token) {
++    STORE.commit('setAuthToken', token)
++    STORE.commit('setEmpCd', empcd)
++  }
++
++  // 개발서버 및 로컬 테스트 용 start(배포시 전체 주석 처리)
++  if (!empcd && !token) {
++    token = "smzH^8^N9}N`B[t."
++    // empcd = "1180206" // all : 문무홍(1180206)
++    // empcd = "1180502" // all : 권희진(1180502)
++    // empcd = "1040308" // 사업부, 브랜드 제한
++    // empcd = "1190410" // BIGR010_DEV 테이블 전체 권한
++    empcd = "" 
++    STORE.commit('setAuthToken', token)
++    STORE.commit('setEmpCd', empcd)
++    sessionStorage.setItem("token" , token)
++    sessionStorage.setItem("empcd" , empcd)
++  }
++  // 개발서버 및 로컬 테스트 용 end
++
++  if(token == null || token == "undefined" || empcd == null || empcd == "undefined") {
++    alert("접속권한이 없습니다.")
++    history.back()
++  } else {
++    authCheckToken(next, isRoot, to.path)
++  }
++}
++
++const authCheckToken = (next, isRoot, path) => {
++  // 토큰 검사
++  req2svr.accessControl().then(
++    res => {
++          authCheckMenu(next, isRoot, path)
++    },
++    rej => {
++      console.log("rej", rej)
++      alert(rej.response.data)
++      next("/Error")
++      // history.back()
++    }
++  )
++}
++
++const authCheckMenu = (next, isRoot, path) => {
++  if (STORE.getters.getAuthGbnCd.length > 0) {
++    authCheckPage(next, isRoot, path)
++    return
++  }
++  let empcd = STORE.getters.getEmpCd
++
++  req2svr.getAssignedMenuList(empcd).then(
++    res => {
++      if (res.MACHBASE_ERROR) {
++        console.log("res", res)
++        if (isRoot, path) {
++          authCheckPage(next, isRoot, path)
++        } else {
++          alert("메뉴 권한이 없습니다.")
++          history.back()
++        }
++      } else {
++        let list = []
++        let count = (JSON.stringify(res).match(/{/g) || []).length;
++        
++        if(count < 1) {
++        } else if(count == 1) {
++          list.push(res);
++        } else {
++          list = JSON.parse("[" + res + "]")
++        }
++        STORE.commit('setAuthGbnCd', list)
++        authCheckPage(next, isRoot, path)
++      }
++    },
++    rej => {
++      console.log("rej", rej)
++      alert("응답이 없습니다.")
++      history.back()
++    }
++  )
++}
++
++const authCheckPage = (next, isRoot, path) => {
++  if (STORE.getters.getAuthProCd.length > 0) {
++    authCheckSU(next, isRoot, path)
++    return
++  }
++  let empcd = STORE.getters.getEmpCd
++
++  req2svr.getAssignedPageList(empcd).then(
++    res => {
++      if (res.MACHBASE_ERROR) {
++        console.log("res", res)
++        if (isRoot, path) {
++          authCheckSU(next, isRoot, path)
++        } else {
++          alert("메뉴 권한이 없습니다.")
++          history.back()
++        }
++      } else {
++        let list = []
++        let count = (JSON.stringify(res).match(/{/g) || []).length;
++        
++        if(count < 1) {
++        } else if(count == 1) {
++          list.push(res);
++        } else {
++          list = JSON.parse("[" + res + "]")
++        }
++        STORE.commit('setAuthProCd', list)
++        authCheckSU(next, isRoot, path)
++      }
++    },
++    rej => {
++      console.log("rej", rej)
++      alert("응답이 없습니다.")
++      history.back()
++    }
++  )
++}
++
++const authCheckSU = (next, isRoot, path) => {
++  if (STORE.getters.getAuthSUCDCode.length > 0) {
++    authCheckBR(next, isRoot, path)
++    return
++  }
++  let empcd = STORE.getters.getEmpCd
++
++  req2svr.getAssignedSUList(empcd).then(
++    res => {
++      if (res.MACHBASE_ERROR) {
++        console.log("res", res)
++        if (isRoot, path) {
++          authCheckBR(next, isRoot, path)
++        } else {
++          alert("사업부 권한이 없습니다.")
++          history.back()
++        }
++      } else {
++        let list = []
++        let count = (JSON.stringify(res).match(/{/g) || []).length;
++        
++        if(count < 1) {
++        } else if(count == 1) {
++          list.push(res);
++        } else {
++          list = JSON.parse("[" + res + "]")
++        }
++        let GBNCD, itemList = []
++        for (let i=0;i<list.length;i++) {
++          if (GBNCD != list[i].GBNCD) {
++            GBNCD = list[i].GBNCD
++            itemList.push(_.filter(list, _.matches({ GBNCD: GBNCD})))
++          }
++        }
++        STORE.commit('setAuthSUCDCode', itemList)
++        authCheckBR(next, isRoot, path)
++      }
++    },
++    rej => {
++      console.log("rej", rej)
++      alert("응답이 없습니다.")
++      history.back()
++    }
++  )
++}
++
++const authCheckBR = (next, isRoot, path) => {
++  if (STORE.getters.getAuthBRCDCode.length > 0) {
++    initCommonData(next, isRoot, path)
++    return
++  }
++  let empcd = STORE.getters.getEmpCd
++
++  req2svr.getAssignedBrandList(empcd).then(
++    res => {
++      if (res.MACHBASE_ERROR) {
++        console.log("res", res)
++        if (isRoot, path) {
++          initCommonData(next, isRoot, path)
++        } else {
++          alert("브랜드 권한이 없습니다.")
++          history.back()
++        }
++      } else {
++        let list = []
++        let count = (JSON.stringify(res).match(/{/g) || []).length;
++        
++        if(count < 1) {
++        } else if(count == 1) {
++          list.push(res);
++        } else {
++          list = JSON.parse("[" + res + "]")
++        }
++        let GBNCD, itemList = []
++        for (let i=0;i<list.length;i++) {
++          if (GBNCD != list[i].GBNCD) {
++            GBNCD = list[i].GBNCD
++            itemList.push(_.filter(list, _.matches({ GBNCD: GBNCD})))
++          }
++        }
++        STORE.commit('setAuthBRCDCode', itemList)
++        initCommonData(next, isRoot, path)
++      }
++    },
++    rej => {
++      console.log("rej", rej)
++      alert("응답이 없습니다.")
++      history.back()
++    }
++  )
++}
++
++const initCommonData = (next, isRoot, path) => {
++  getFDRList(next, isRoot, path)
++}
++
++const getFDRList = (next, isRoot, path) => {
++  if (STORE.getters.getFDRList.length > 0) {
++    getFINLIST(next, isRoot, path)
++    return
++  }
++
++  req2svr.getFDRList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setFDRList', JSON.parse("[" + res + "]"))
++    }
++    getFINLIST(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getFINLIST = (next, isRoot, path) => {
++  if (STORE.getters.getFINList.length > 0) {
++    getSALList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getFINLIST().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setFINList', JSON.parse("[" + res + "]"))
++    }
++    getSALList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getSALList = (next, isRoot, path) => {
++  if (STORE.getters.getSALList.length > 0) {
++    getWRPList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getSALList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setSALList', JSON.parse("[" + res + "]"))
++    }
++    getWRPList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getWRPList = (next, isRoot, path) => {
++  if (STORE.getters.getWRPList.length > 0) {
++    getSTYList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getWRPList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setWRPList', JSON.parse("[" + res + "]"))
++    }
++    getSTYList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getSTYList = (next, isRoot, path) => {
++  if (STORE.getters.getSTYList.length > 0) {
++    getSTOList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getSTYList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setSTYList', JSON.parse("[" + res + "]"))
++    }
++    getSTOList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getSTOList = (next, isRoot, path) => {
++  if (STORE.getters.getSTOList.length > 0) {
++    getCRMList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getSTOList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setSTOList', JSON.parse("[" + res + "]"))
++    }
++    getCRMList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getCRMList = (next, isRoot, path) => {
++  if (STORE.getters.getCRMList.length > 0) {
++    getPROList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getCRMList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setCRMList', JSON.parse("[" + res + "]"))
++    }
++    getPROList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getPROList = (next, isRoot, path) => {
++  if (STORE.getters.getPROList.length > 0) {
++    getBUYList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getPROList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setPROList', JSON.parse("[" + res + "]"))
++    }
++    getBUYList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getBUYList = (next, isRoot, path) => {
++  if (STORE.getters.getBUYList.length > 0) {
++    getHUMList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getBUYList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setBUYList', JSON.parse("[" + res + "]"))
++    }
++    getHUMList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getHUMList = (next, isRoot, path) => {
++  if (STORE.getters.getHUMList.length > 0) {
++    getSDCOMPANYCDList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getHUMList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setHUMList', JSON.parse("[" + res + "]"))
++    }
++    getSDCOMPANYCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getSDCOMPANYCDList = (next, isRoot, path) => {
++  if (STORE.getters.getSDCOMPANYCDList.length > 0) {
++    getSECOMPANYCDList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getSDCOMPANYCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setSDCOMPANYCDList', JSON.parse("[" + res + "]"))
++    }
++    getSECOMPANYCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getSECOMPANYCDList = (next, isRoot, path) => {
++  if (STORE.getters.getSECOMPANYCDList.length > 0) {
++    getJAEJIGCDList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getSECOMPANYCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setSECOMPANYCDList', JSON.parse("[" + res + "]"))
++    }
++    getJAEJIGCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getJAEJIGCDList = (next, isRoot, path) => {
++  if (STORE.getters.getJAEJIGCDList.length > 0) {
++    getCHGUCDList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getJAEJIGCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setJAEJIGCDList', JSON.parse("[" + res + "]"))
++    }
++    getCHGUCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getCHGUCDList = (next, isRoot, path) => {
++  if (STORE.getters.getCHGUCDList.length > 0) {
++    getAMTRATINGCDList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getCHGUCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setCHGUCDList', JSON.parse("[" + res + "]"))
++    }
++    getAMTRATINGCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getAMTRATINGCDList = (next, isRoot, path) => {
++  if (STORE.getters.getAMTRATINGCDList.length > 0) {
++    getSUCDCardList(next, isRoot, path)
++    return
++  }
++
++  req2svr.getAMTRATINGCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setAMTRATINGCDList', JSON.parse("[" + res + "]"))
++    }
++    getSUCDCardList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getSUCDCardList = (next, isRoot, path) => {
++  if (STORE.getters.getSUCDCardList.length > 0) {
++    getSUCDList(next, isRoot, path)
++    return
++  }
++  // 사업부 카드 CODE
++    req2svr.getSUCDCardList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setSUCDCardList', JSON.parse("[" + res + "]"))
++    }
++    getSUCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getSUCDList = (next, isRoot, path) => {
++  if (STORE.getters.getSUCDList.length > 0) {
++    getBRCDList(next, isRoot, path)
++    return
++  }
++  // 사업부 CODE
++  req2svr.getSUCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setSUCDList', JSON.parse("[" + res + "]"))
++    }
++    getBRCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getBRCDList = (next, isRoot, path) => {
++  if (STORE.getters.getBRCDList.length > 0) {
++    getBRCDCardList(next, isRoot, path)
++    return
++  }
++  // 브랜드 CODE
++  req2svr.getBRCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setBRCDList', JSON.parse("[" + res + "]"))
++    }
++    getBRCDCardList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getBRCDCardList = (next, isRoot, path) => {
++  if (STORE.getters.getBRCDCardList.length > 0) {
++    getFasionSUCDList(next, isRoot, path)
++    return
++  }
++  // 브랜드 카드 CODE
++  req2svr.getBRCDCardList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setBRCDCardList', JSON.parse("[" + res + "]"))
++    }
++    getFasionSUCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getFasionSUCDList = (next, isRoot, path) => {
++  if (STORE.getters.getFasionSUCDList.length > 0) {
++    getFutureSUCDList(next, isRoot, path)
++    return
++  }
++  // 패션사업 사업부 CODE
++  req2svr.getFasionSUCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      let count = (JSON.stringify(res).match(/{/g) || []).length;
++      if(count < 1) {
++      } else if(count == 1) {
++        let list = []
++        list.push(res)
++        STORE.commit('setFasionSUCDList', list)
++      } else {
++        STORE.commit('setFasionSUCDList', JSON.parse("[" + res + "]"))
++      }
++    }
++    getFutureSUCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getFutureSUCDList = (next, isRoot, path) => {
++  if (STORE.getters.getFutureSUCDList.length > 0) {
++    getStopSUCDList(next, isRoot, path)
++    return
++  }
++  // 미래성장사업 사업부 CODE
++  req2svr.getFutureSUCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      let count = (JSON.stringify(res).match(/{/g) || []).length;
++      if(count < 1) {
++      } else if(count == 1) {
++        let list = []
++        list.push(res)
++        STORE.commit('setFutureSUCDList', list)
++      } else {
++        STORE.commit('setFutureSUCDList', JSON.parse("[" + res + "]"))
++      }
++    }
++    getStopSUCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getStopSUCDList = (next, isRoot, path) => {
++  if (STORE.getters.getStopSUCDList.length > 0) {
++    getFasionBRCDList(next, isRoot, path)
++    return
++  }
++  // 중단사업 사업부 CODE
++  req2svr.getStopSUCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      let count = (JSON.stringify(res).match(/{/g) || []).length;
++      if(count < 1) {
++      } else if(count == 1) {
++        let list = []
++        list.push(res)
++        STORE.commit('setStopSUCDList', list)
++      } else {
++        STORE.commit('setStopSUCDList', JSON.parse("[" + res + "]"))
++      }
++    }
++    getFasionBRCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getFasionBRCDList = (next, isRoot, path) => {
++  if (STORE.getters.getFasionBRCDList.length > 0) {
++    getFutureBRCDList(next, isRoot, path)
++    return
++  }
++  // 패션사업 브랜드 CODE
++  req2svr.getFasionBRCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      let count = (JSON.stringify(res).match(/{/g) || []).length;
++      if(count < 1) {
++      } else if(count == 1) {
++        let list = []
++        list.push(res)
++        STORE.commit('setFasionBRCDList', list)
++      } else {
++        STORE.commit('setFasionBRCDList', JSON.parse("[" + res + "]"))
++      }
++    }
++    getFutureBRCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getFutureBRCDList = (next, isRoot, path) => {
++  if (STORE.getters.getFutureBRCDList.length > 0) {
++    getStopBRCDList(next, isRoot, path)
++    return
++  }
++  // 미래성장사업 브랜드 CODE
++  req2svr.getFutureBRCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      let count = (JSON.stringify(res).match(/{/g) || []).length;
++      if(count < 1) {
++      } else if(count == 1) {
++        let list = []
++        list.push(res)
++        STORE.commit('setFutureBRCDList', list)
++      } else {
++        STORE.commit('setFutureBRCDList', JSON.parse("[" + res + "]"))
++      }
++    }
++    getStopBRCDList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getStopBRCDList = (next, isRoot, path) => {
++  if (STORE.getters.getStopBRCDList.length > 0) {
++    getYearCodeList(next, isRoot, path)
++    return
++  }
++  // 중단사업 브랜드 CODE
++  req2svr.getStopBRCDList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      let count = (JSON.stringify(res).match(/{/g) || []).length;
++      if(count < 1) {
++      } else if(count == 1) {
++        let list = []
++        list.push(res)
++        STORE.commit('setStopBRCDList', list)
++      } else {
++        STORE.commit('setStopBRCDList', JSON.parse("[" + res + "]"))
++      }
++    }
++    getYearCodeList(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const getYearCodeList = (next, isRoot, path) => {
++  if (STORE.getters.getYearCodeList.length > 0) {
++    authCheckURL(next, isRoot, path)
++    return
++  }
++  // 연도 CODE
++  req2svr.getYearCodeList().then((res) => {
++    if (res.MACHBASE_ERROR) {
++      console.log("res", res)
++    } else {
++      STORE.commit('setYearCode', JSON.parse("[" + res + "]"))
++    }
++    authCheckURL(next, isRoot, path)
++  }, (rej) => {
++    console.log('rej', rej)
++  })
++}
++
++const authCheckURL = function(next, isRoot, path) {  
++    
++    let currentPage = _.find(STORE.getters.getAuthProCd, {PROCD: toName.name})
++
++    if (path == "/") {
++      next()
++    } else if ( currentPage && currentPage.VIEWYN == 1 ) {
++      next()
++    } else {
++      // 로컬용 고도화 페이지 예외처리(신규 페이지라 DB에 등록이 안되어 있음) start
++      if(path == "/NewDailyReport"
++      || path == "/NewDailyReportSales"
++      || path == "/NewDailyReportCash"
++      || path == "/NewDailyReportProfit"
++      || path == "/NewDailyReportStock"
++      || path == "/NewDailyReportSalesPart"
++      || path == "/NewDailyReportCashPart"
++      || path == "/NewDailyReportProfitPart"
++      || path == "/NewDailyReportStockPart"
++      || path == "/HumSeList"
++      || path == "/HumSeDetail"
++      || path == "/NewStyleMain"
++      || path == "/NewStyleProductDetail"
++      || path == "/WeeklyClothSale"
++      || path == "/WeeklyBest20"
++      || path == "/WeeklyResearch"
++      || path == "/WeeklyProgress"
++      || path == "/StoreSalesStatus"
++      || path == "/StoreSalesStatus2"
++      || path == "/OnLineSale"
++      || path == "/OnLineSaleDetail"
++      || path == "/DailyReportDetail"
++      || path == "/StoreMain"
++      || path == "/Error") {
++        next()
++      } else {
++        alert("권한이 없습니다.")
++      }
++      // 로컬용 고도화 페이지 예외처리(신규 페이지라 DB에 등록이 안되어 있음) end
++
++      // 운영용
++      // alert("권한이 없습니다.")
++    }
++}
++
++/* 이전 소스 - 운영 반영 후 이상 없을 시 삭제 필요
++const authCheckURL = function(next, isRoot, path) {
++    let DailyReport = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0001"})
++    let SalesMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0002"})
++    let Crm = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0003"})
++    let ProductMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0004"})
++    let BuyMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0005"})
++    let OnLineMain = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0006"})
++    let Human = _.find(STORE.getters.getAuthGbnCd, {GBNCD: "BI0007"})    
++    
++    let currentPage = _.find(STORE.getters.getAuthProCd, {PROCD: toName.name})
++
++    console.log(currentPage);
++    
++
++    if (path == "/") {
++      next()
++    } else if ( DailyReport ) {
++      next()
++    } else if ( (path == "/SalesMain" || path == "/StyleMain" || path == "/StoreMain"
++      || path == "/StyleProductDetail"
++      || path == "/StyleProductStatus"
++      || path == "/StyleDesignerDetail") && SalesMain ) {
++      next()
++    } else if (path == "/Crm" && Crm && Crm.GBNCD ) {
++      next()
++    } else if ( (path == "/ProductMain"
++      || path == "/ProductDetail"
++      || path == "/ProductYearDetail") && ProductMain ) {
++      next()
++    } else if ( (path == "/BuyMain" || path == "/BuyDetail") && BuyMain ) {
++      next()
++    } else if ( (path == "/OnLineMain" || path == "/OnLineDetail") && OnLineMain ) {
++      next()
++    } else if( (path == "/HumMain" 
++      || path == "/HumSdList" 
++      || path == "/HumRegionSdList" 
++      || path == "/HumSdSalesList" 
++      || path == "/HumSdDetail" 
++      || path == "/HumOcSdDetail") && Human ) {
++      next()
++    } else if (path == "/Error") { 
++      next()
++    } else {
++      alert("권한이 없습니다.")
++      // if (!isRoot) {
++      //   history.back()
++      // }
++    }
++}
++*/
++
++export default new Router({
++  routes: [
++    // 권한테스트 링크 화면
++    // { name: 'Test', component: T0001, path: '/Test'},
++    // 메인화면
++    { name: 'MAI0001', component: MAI0001, path: '/', beforeEnter: requireAuth },
++    // 재무
++    { name: 'FIN0001', component: FIN0001, path: '/DailyReport', beforeEnter: requireAuth },
++    { name: 'FIN0101', component: FIN0101, path: '/DailyReportDetail', beforeEnter: requireAuth },
++    { name: 'FIN0201', component: FIN0201, path: '/DailyReportSales', beforeEnter: requireAuth },
++    { name: 'FIN0301', component: FIN0301, path: '/DailyReportProfit', beforeEnter: requireAuth },
++    { name: 'FIN0401', component: FIN0401, path: '/DailyReportCash', beforeEnter: requireAuth },
++    { name: 'FIN0501', component: FIN0501, path: '/DailyReportStock', beforeEnter: requireAuth },
++    // 재무 고도화
++    { name: 'NEWFIN0001', component: NEWFIN0001, path: '/NewDailyReport', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWFIN0201', component: NEWFIN0201, path: '/NewDailyReportSales', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWFIN0202', component: NEWFIN0202, path: '/NewDailyReportSalesPart', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWFIN0301', component: NEWFIN0301, path: '/NewDailyReportCash', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWFIN0302', component: NEWFIN0302, path: '/NewDailyReportCashPart', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWFIN0401', component: NEWFIN0401, path: '/NewDailyReportProfit', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWFIN0402', component: NEWFIN0402, path: '/NewDailyReportProfitPart', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWFIN0501', component: NEWFIN0501, path: '/NewDailyReportStock', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWFIN0502', component: NEWFIN0502, path: '/NewDailyReportStockPart', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 영업
++    { name: 'SAL0001', component: SAL0001, path: '/SalesMain', beforeEnter: requireAuth },
++    // 스타일
++    { name: 'STY0001', component: STY0001, path: '/StyleMain', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'STY0101', component: STY0101, path: '/StyleProductDetail', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'STY0102', component: STY0102, path: '/StyleProductStatus', beforeEnter: requireAuth },
++    // 스타일 고도화 메인
++    { name: 'NEWSTY0001', component: NEWSTY0001, path: '/NewStyleMain', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'NEWSTY0101', component: NEWSTY0101, path: '/NewStyleProductDetail', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // TODO : 디자이너 추후 지원
++    // { name: 'STY0201', component: STY0201, path: '/StyleDesignerDetail', beforeEnter: requireAuth },
++    // 매장
++    { name: 'STO0001', component: STO0001, path: '/StoreMain', beforeEnter: requireAuth },
++    { name: 'STO0003', component: STO0003, path: '/StoreSalesStatus', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'STO0003_1', component: STO0003_1, path: '/StoreSalesStatus2', beforeEnter: requireAuth },
++    // CRM
++    { name: 'CRM0001', component: CRM0001, path: '/Crm', beforeEnter: requireAuth },
++    // 생산
++    { name: 'PRO0101', component: PRO0101, path: '/ProductMain', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'PRO0102', component: PRO0102, path: '/ProductDetail', beforeEnter: requireAuth ,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'PRO0103', component: PRO0103, path: '/ProductYearDetail', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 구매
++    { name: 'BUY0101', component: BUY0101, path: '/BuyMain', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'BUY0102', component: BUY0102, path: '/BuyDetail', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 온라인
++    { name: 'ONL0101', component: ONL0101, path: '/OnLineMain', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    { name: 'ONL0102', component: ONL0102, path: '/OnLineDetail', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 인재DB메인
++    { name: 'HUM0001', component: HUM0001, path: '/HumMain', beforeEnter: requireAuth },
++    // 온라인 판매 현황
++    { name: 'ONL0103', component: ONL0103, path: '/OnLineSale', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 온라인 월별 판매 현황
++    { name: 'ONL0104', component: ONL0104, path: '/OnLineSaleDetail', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 전체 SD LIST
++    { name: 'HUM0002', component: HUM0002, path: '/HumSdList', beforeEnter: requireAuth },
++    // 전체 시니어 LIST
++    { name: 'HUM0003', component: HUM0003, path: '/HumSeList', beforeEnter: requireAuth },
++    // 지역별 SD 매출 TOP20
++    { name: 'HUM0101', component: HUM0101, path: '/HumRegionSdList', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 지역별 SD 매출순위
++    { name: 'HUM0103', component: HUM0103, path: '/HumSdSalesList', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 자사 SD Detail 기본정보, 매출정보, Style Top10
++    { name: 'HUM0201', component: HUM0201, path: '/HumSdDetail', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data })
++    },
++    // 타사 SD Detail 기본정보
++    { name: 'HUM0301', component: HUM0301, path: '/HumOcSdDetail', beforeEnter: requireAuth },
++    // 시니어 자사 Detail 기본정보
++    { name: 'HUM0401', component: HUM0401, path: '/HumSeDetail', beforeEnter: requireAuth },
++    // 시니어 타사 Detail 기본정보
++    { name: 'HUM0501', component: HUM0501, path: '/HumSeDetail2', beforeEnter: requireAuth },
++    // 주간보고(복종별 판매 및 할인율)
++    { name: 'WEE0101', component: WEE0101, path: '/WeeklyClothSale', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data }) 
++    },
++    // 주간보고(주간판매 BEST 20)
++    { name: 'WEE0201', component: WEE0201, path: '/WeeklyBest20', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data }) 
++    },
++    // 주간보고(신상품 반응조사)
++    { name: 'WEE0301', component: WEE0301, path: '/WeeklyResearch', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data }) 
++    },
++    // 주간보고(주간판매 추이)
++    { name: 'WEE0401', component: WEE0401, path: '/WeeklyProgress', beforeEnter: requireAuth,
++      props: (route) => ({ data: route.params.data }) 
++    },
++    // ERROR
++    { name: 'Error', component: ERR0001, path: '/Error'}
++  ]
++})
+\ No newline at end of file
+-- 
+2.23.0.windows.1
+

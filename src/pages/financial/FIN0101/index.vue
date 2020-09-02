@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap">
+  <div class="wrap" @click="clear(interval)">
     <!-- side menu -->
     <div class="layout_drawer" :class="{on: drawer}">
       <h1 class="tit_drawer teamSelector" @click="toMain">
@@ -565,11 +565,15 @@ export default {
     performanceListPopup,
     sideMenu
   },
+  props: {
+    data: Object
+  },
   mounted() {
     this.makeChart1()
     this.makeChart2()
   },
   created: function() {
+    this.lotate()
     this.recentDate = moment().subtract(1, "days").format("YYYY-MM-DD")
     this.getRecentDate()
     this.getMakeDataDate()
@@ -616,7 +620,8 @@ export default {
       chart4: null,
       gubun2: 1,
       dr_TP: [],
-      dr_LYTP: []
+      dr_LYTP: [],
+      interval: null
     };
   },
   computed: {
@@ -706,6 +711,27 @@ export default {
     }
   },
   methods: {
+    lotate() {
+      let lotation = sessionStorage.getItem("loatation")
+
+      if(lotation == "true" || lotation == true) {
+        this.interval = window.setTimeout (this.func, 10000);
+      }
+    },
+    func() {
+      this.$router.push({
+        name: "ONL0103",
+        params: {
+          data: 
+          {
+            flag: true
+          }
+        }
+      })
+    },
+    clear(timer) {
+      clearInterval(timer)
+    },
     getMakeDataDate(){
       this.req2svr.getMakeDataDate().then(
         res => {
@@ -739,7 +765,7 @@ export default {
         return
       }
       this.storeListOrderType = orderType
-      console.log("selectDate >>>", this.selectDate)
+      // console.log("selectDate >>>", this.selectDate)
       this.select_p_choice = this.gubun2;
       this.isStoreListVisible = true;
     },
@@ -804,7 +830,7 @@ export default {
             } else {
               list = JSON.parse("[" + res + "]")
             }
-            console.log("0. authCodeList >>>", this.authCodeList)
+            // console.log("0. authCodeList >>>", this.authCodeList)
             
               /*
             for (i=0;i<this.authCodeList.length;i++) {
@@ -830,7 +856,7 @@ export default {
 
             list.unshift(tot_obj)
             this.dr_H = list
-            console.log("1. this.dr_H >>>", this.dr_H)
+            // console.log("1. this.dr_H >>>", this.dr_H)
             //this.dr_H[0] = tot_obj;
           }
         },
@@ -881,7 +907,7 @@ export default {
             }
 
             this.dr_H.unshift(tot_obj);
-            console.log("2. dr_H >>> " , this.dr_H);
+            // console.log("2. dr_H >>> " , this.dr_H);
 
             this.SU_TOT_AMT = _.sumBy(this.dr_H, function(o) { return Number(o.AMT); })
             this.SU_TOT_SALE_TOT = _.sumBy(this.dr_H, function(o) { return Number(o.SALE_TOT); })
@@ -936,7 +962,7 @@ export default {
 
             list.unshift(tot_obj)
             this.dr_C = list
-            console.log("dr_C >>> ", this.dr_C)
+            // console.log("dr_C >>> ", this.dr_C)
           }
         },
         rej => {
@@ -1057,8 +1083,8 @@ export default {
 
       let endDate = Number(moment(this.selectDate).endOf('month').format("DD"))
       let lastYearLastday = moment(paramStartDt, "YYYYMMDD").add(endDate-1,'days').format('YYYYMMDD')
-      console.log("작년 첫번째 ", moment(monthStDt, "YYYYMMDD").format("ddd"), "요일: "+ paramStartDt + ", 더하기" + endDate + ", 마지막:", lastYearLastday)
-      console.log("작년 주차 ", moment(paramStartDt, "YYYYMMDD").format('WW'))
+      // console.log("작년 첫번째 ", moment(monthStDt, "YYYYMMDD").format("ddd"), "요일: "+ paramStartDt + ", 더하기" + endDate + ", 마지막:", lastYearLastday)
+      // console.log("작년 주차 ", moment(paramStartDt, "YYYYMMDD").format('WW'))
 
       this.req2svr.getChartData2(this.tabType, code, paramStartDt, lastYearLastday, this.choice_copy).then(
         res => {
@@ -1149,7 +1175,7 @@ export default {
 
                   if(saleDt <= toDt) {
                     
-                    console.log("SALE_TOT2>>> ", SALE_TOT2, " || _SALE_TOT >>>", _SALE_TOT)
+                    // console.log("SALE_TOT2>>> ", SALE_TOT2, " || _SALE_TOT >>>", _SALE_TOT)
                     list2.push({
                       AMT: Math.round(_AMT/1000),
                       LY_SALE_TOT: Math.round(_LY_SALE_TOT/1000),
@@ -1192,7 +1218,7 @@ export default {
                   this.dr_P[i]["GRAPHCOLOR"] = "#8195CC"
                 }
               }
-              console.log("dr_P >>> ", this.dr_P)
+              // console.log("dr_P >>> ", this.dr_P)
             }
           }
           this.makeChart4();
@@ -1246,7 +1272,7 @@ export default {
                   this.dr_P[i]["RATE2"] = Math.round(this.dr_P[i]["SALE_TOT"]/this.dr_P[i]["LY_SALE_TOT"]*100)
                 }
               }
-              console.log("dr_P >>> ", this.dr_P)
+              // console.log("dr_P >>> ", this.dr_P)
             }
           }
           this.makeChart4();
@@ -1336,7 +1362,7 @@ export default {
               this.dr_S.R_DCQTY = Number(res.R_DCQTY)
               this.dr_S.R_GQTY = Number(res.R_GQTY)
             }
-              console.log("??? getSalesChartCount >>>>", res)
+              // console.log("??? getSalesChartCount >>>>", res)
             this.makeChart1()
           }
         },
@@ -1798,8 +1824,8 @@ export default {
 
       let endDate = Number(moment(this.selectDate).endOf('month').format("DD"))
       let lastYearLastday = moment(paramStartDt, "YYYYMMDD").add(endDate-1,'days').format('YYYYMMDD')
-      console.log("작년 첫번째 ", moment(monthStDt, "YYYYMMDD").format("ddd"), "요일: "+ paramStartDt + ", 더하기" + endDate + ", 마지막:", lastYearLastday)
-      console.log("작년 주차 ", moment(paramStartDt, "YYYYMMDD").format('WW'))
+      // console.log("작년 첫번째 ", moment(monthStDt, "YYYYMMDD").format("ddd"), "요일: "+ paramStartDt + ", 더하기" + endDate + ", 마지막:", lastYearLastday)
+      // console.log("작년 주차 ", moment(paramStartDt, "YYYYMMDD").format('WW'))
 
       this.req2svr.getChartData2_1(this.tabType, this.selectedCODE, paramStartDt, lastYearLastday, this.choice_copy).then(
         res => {
@@ -1836,7 +1862,7 @@ export default {
         }
       );
     }, getTempData2: function() {
-      console.log("this.dr_LYTP >>>", this.dr_LYTP)
+      // console.log("this.dr_LYTP >>>", this.dr_LYTP)
       let unit = 0;
       if(this.choice_copy == 1) {
         unit = 1000
@@ -1847,7 +1873,7 @@ export default {
         this.dr_TP[i]["LY_SALE_TOT"] = this.dr_LYTP[i]["LY_SALE_TOT"]/unit
         this.dr_TP[i]["SUNM"] = this.dr_LYTP[i]["SUNM"]
       }
-      console.log("this.dr_TP >>>", this.dr_TP)
+      // console.log("this.dr_TP >>>", this.dr_TP)
       
     }
   }

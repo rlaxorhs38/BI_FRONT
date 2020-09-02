@@ -41,7 +41,7 @@
       </div>
     </header>
     <!-- box2 -->
-    <div class="cont_box" style="margin-bottom: 10px;">
+    <div class="cont_box">
       <div class="tit">
         <div class="tab">
           <ul>
@@ -53,9 +53,6 @@
             </li>
             <li :class="{'on': gubun == 3}">
               <a href="javascript:void(0);" @click="tabVal(3, 'store_sale_tbody')">담당별 매장실적 달성율</a>
-            </li>
-            <li :class="{'on': gubun == 4}" style="display: none;">
-              <a href="javascript:void(0);" @click="tabVal(4, 'business_edi_tbody')">동업계 RANK</a>
             </li>
           </ul>
         </div>
@@ -69,22 +66,6 @@
       </div>
       <div class="container">
         <div class="content">
-          <div class="toggle_group" v-if="gubun == 3||gubun == 4">
-            <label v-for="data in CODECardsList" :key="data.MCODE" class="tg_btn" :class="{'is-checked': selectedSUCD == data.MCODE}">
-              <input
-                type="radio"
-                id="option-1"
-                class="tg_radio"
-                name="options"
-                :value="data.MCODE"
-                v-model="selectedSUCD"
-                style="display:none"
-                @click="changeCODE(data.MCODE)"
-                :disabled="!data.VISIBLE"
-              >
-              <span class="btn_n txt_label">{{ data.CODNM }}</span>
-            </label>
-          </div>
           <!-- 테이블 -->
           <iframe id="txtArea1" style="display:none;" />
           <div class="tbl_sheet yellow np" v-show="gubun == 1">
@@ -214,53 +195,69 @@
             </table>
           </div>
           <div class="tbl_sheet yellow np" v-show="gubun == 3">
-            <table class="tbl tbl_center" id="store_sale_tbody" style="width: 1880px;">
+            <div class="toggle_group">
+              <label v-for="data in CODECardsList" :key="data.MCODE" class="tg_btn" :class="{'is-checked': selectedSUCD == data.MCODE}">
+                <input
+                  type="radio"
+                  id="option-1"
+                  class="tg_radio"
+                  name="options"
+                  :value="data.MCODE"
+                  v-model="selectedSUCD"
+                  style="display:none"
+                  @click="changeCODE(data.MCODE)"
+                  :disabled="!data.VISIBLE"
+                >
+                <span class="btn_n txt_label">{{ data.CODNM }}</span>
+              </label>
+            </div>
+            <table class="tbl tbl_center" id="store_sale_tbody" style="width: 1880px; display: block;">
               <colgroup>
-                <col style="width:71px;" />
-                <col style="width:92px;" />
-                <col style="width:211px;" />
-                <col style="width:190px;" />
-                <col style="width:140px;" />
-                <col style="width:140px;" />
-                <col style="width:140px;" />
-                <col style="width:140px;" />
-                <col style="width:140px;" />
-                <col style="width:140px;" />
-                <col style="width:112px;" />
-                <col style="width:112px;" />
-                <col style="width:140px;" />
-                <col style="width:112px;" />
+                <col style="width:5%;" />
+                <col style="width:10%;" />
+                <col style="width:15%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:10%;" />
+                <col style="width:8%;" />
+                <col style="width:8%;" />
+                <col style="width:10%;" />
+                <col style="width:8%;" />
               </colgroup>
-              <thead>
+              <thead style=" display: block; width: 1900px;">
                 <tr>
-                  <th scope="col" rowspan="2">순번</th>
-                  <th scope="col" rowspan="2">담당자</th>
-                  <th scope="col" rowspan="2">매장명</th>
-                  <th scope="col" rowspan="2">매니저</th>
-                  <th scope="col" rowspan="2">매출목표</th>
+                  <th scope="col" rowspan="2" style="width:71px;">순번</th>
+                  <th scope="col" rowspan="2" style="width:141px;">담당자</th>
+                  <th scope="col" rowspan="2" style="width:211px;">매장명</th>
+                  <th scope="col" rowspan="2" style="width:140px;">매니저</th>
+                  <th scope="col" rowspan="2" style="width:140px;">매출목표</th>
                   <th scope="col" colspan="3">주간매출({{Number(standardStartDate.substr(8))}}일 ~ {{Number(standardEndDate.substr(8))}}일)</th>
                   <th scope="col" colspan="5">월누계실적(1일 ~ {{Number(standardEndDate.substr(8))}}일)</th>
-                  <th scope="col" rowspan="2">M/S</th>
+                  <th scope="col" rowspan="2" style="width:112px;">M/S</th>
                 </tr>
                 <tr>
-                  <th class="tc">매출</th>
-                  <th class="tc">전년동일</th>
-                  <th class="tc">신장율</th>
-                  <th class="tc">누계</th>
-                  <th class="tc">전년동기간</th>
-                  <th class="tc">신장율</th>
-                  <th class="tc">진도율</th>
-                  <th class="tc">전년월마감</th>
+                  <th class="tc" style="width:140px;">매출</th>
+                  <th class="tc" style="width:140px;">전년동일</th>
+                  <th class="tc" style="width:140px;">신장율</th>
+                  <th class="tc" style="width:140px;">누계</th>
+                  <th class="tc" style="width:140px;">전년동기간</th>
+                  <th class="tc" style="width:112px;">신장율</th>
+                  <th class="tc" style="width:112px;">진도율</th>
+                  <th class="tc" style="width:140px;">전년월마감</th>
                 </tr>
               </thead>
-              <tbody style="display: block; height: 570px; overflow: hidden auto; width: 1900px;" id="store_sale_tbody2">
-                <tr style="height: 0px;"></tr>
+              <tbody style="display: block; height: 660px; overflow: hidden auto; width: 1900px;">
+                <tr></tr>
                 <tr v-for="(data2 , index2) in dr_THIS" :key="index2">
                   <td class="tc" name="index" style="width:71px;" >{{ index2+1 }}</td>
-                  <td class="tc" name="ERPNM" v-if="rowSpan(index2)" :rowspan="rowSpanNum(data2.BRCD, data2.MEMP)" style="width:92px;">{{ data2.ERPNM }}</td>
+                  <td class="tc" name="ERPNM" v-if="rowSpan(index2)" :rowspan="rowSpanNum(data2.BRCD, data2.MEMP)" style="width:141px;">{{ data2.ERPNM }}</td>
                   <td class="tl" name="VDSNM" v-if="data2.VDCD.indexOf('ZZ') == -1" style="width:211px;" >{{ data2.VDSNM }}</td>
-                  <td class="tc bg_point_col24" name="VDSNM" v-else colspan="2">TTL</td>
-                  <td class="tl" name="HNAME" v-if="data2.VDCD.indexOf('ZZ') == -1" style="width:190px;" >
+                  <td class="tc bg_point_col24" name="VDSNM" v-else colspan="2" style="width:140px;">TTL</td>
+                  <td class="tc" name="HNAME" v-if="data2.VDCD.indexOf('ZZ') == -1" style="width:140px;" >
                     {{ data2.HNAME }}
                     <span v-if="data2.BIRTH!=''&&data2.BIRTH!=null">({{ data2.BIRTH | currency }}")</span>
                   </td>
@@ -284,69 +281,37 @@
                   <td class="tc" :class="data2.VDCD.indexOf('ZZ') > -1?'bg_point_col24':''" name="MS" style="width:112px;" >{{ data2.MS }}</td>
                 </tr>
               </tbody>
-              <tfoot>
+              <tfoot style="display: block; width: 1900px;">
                 <tr class="tbl_total" style="border-top: 1px solid #ced4da;" v-for="(totalData , index3) in getTotData(selectedSUNM)" :key="index3">
-                  <th scope="col" colspan="4"><strong>합계</strong></th>
-                  <td class="tr"><strong>{{ totalData.PLNAMT | currency}}</strong></td>
-                  <td class="tr bg_point_col25"><strong>{{ totalData.NOWAMT | currency}}</strong></td>
-                  <td class="tr"><strong>{{ totalData.LASTAMT | currency}}</strong></td>
-                  <td class="tr">
+                  <th scope="col" colspan="4" style="width:563px;"><strong>합계</strong></th>
+                  <td class="tr" style="width:140px;"><strong>{{ totalData.PLNAMT | currency}}</strong></td>
+                  <td class="tr bg_point_col25" style="width:140px;"><strong>{{ totalData.NOWAMT | currency}}</strong></td>
+                  <td class="tr" style="width:140px;"><strong>{{ totalData.LASTAMT | currency}}</strong></td>
+                  <td class="tr" style="width:140px;">
                     <strong v-if="Number(totalData.WEEKRATE)!=0">{{ totalData.WEEKRATE | currency}} %</strong>
                   </td>
-                  <td class="tr bg_point_col25"><strong>{{ totalData.MONSUMAMT | currency}}</strong></td>
-                  <td class="tr"><strong>{{ totalData.LASTMONSUMAMT | currency}}</strong></td>
-                  <td class="tr">
+                  <td class="tr bg_point_col25" style="width:140px;"><strong>{{ totalData.MONSUMAMT | currency}}</strong></td>
+                  <td class="tr" style="width:140px;"><strong>{{ totalData.LASTMONSUMAMT | currency}}</strong></td>
+                  <td class="tr" style="width:112px;">
                     <strong v-if="Number(totalData.MONRATE)!=0">{{ totalData.MONRATE | currency}} %</strong>
                   </td>
-                  <td class="tr">
+                  <td class="tr" style="width:112px;">
                     <strong v-if="Number(totalData.MONSUMAMT)!=0&&Number(totalData.PLNAMT)!=0">{{ totalData.MONAVG | currency }} %</strong>
                     <strong v-else-if="Number(totalData.MONSUMAMT)==0&&Number(totalData.PLNAMT)==0"></strong>
                     <strong v-else-if="Number(totalData.MONSUMAMT)!=0&&Number(totalData.PLNAMT)==0"></strong>
                     <strong v-else-if="Number(totalData.MONSUMAMT)==0&&Number(totalData.PLNAMT)!=0">0 %</strong>
                   </td>
-                  <td class="tr"><strong>{{ totalData.ENDMONAMT | currency}}</strong></td>
-                  <td class="tr"></td>
+                  <td class="tr" style="width:140px;"><strong>{{ totalData.ENDMONAMT | currency}}</strong></td>
+                  <td class="tr" style="width:112px;"></td>
                 </tr>
               </tfoot>
-            </table>
-          </div>
-          <div class="tbl_sheet yellow np" v-show="gubun == 4">
-            <table class="tbl tbl_center" id="business_edi_tbody" style="width: 1880px;">
-              <colgroup>
-                <col style="width:120px;" />
-                <template v-for="(item, index) in brdkeyList">
-                  <col :key="index" style="width:108px;"/>
-                </template>
-              </colgroup>
-              <thead>
-                <tr>
-                  <th scope="col" >구분</th>
-                  <template v-for="(item, index) in brdkeyList">
-                    <th scope="col" :key="index" >{{item}}</th>
-                  </template>
-                </tr>
-              </thead>
-              <tbody style="display: block; height: 650px; overflow: hidden auto; width: 1900px;" id="business_edi_tbody2">
-                <template v-for="n in Object.keys(ediRankData).length*(colList.length+1)">
-                  <tr :key="n" v-if="n%(colList.length+1)==1">
-                    <th class="tl" :colspan="brdkeyList.length+1" style="width:1900px;" >{{Object.keys(ediRankData)[Math.round(n/(colList.length+1))].split("_")[1]}} 매출</th>
-                  </tr>
-                  <tr :key="n" v-else>
-                    <td class="tl" style="width:120px;" v-if="n%(colList.length+1)!=0" >{{colList[(n%(colList.length+1))-2].KR}}</td>
-                    <td class="tl" style="width:120px;" v-else >{{colList[colList.length-1].KR}}</td>
-                    <template v-for="(d, i) in brdkeyList">
-                      <td :key="i" class="tr" style="width:108px;" v-if="n%(colList.length+1)==0" >{{getEdiColunmData(n/(colList.length+1)-1, d, colList[colList.length-1].EN) | currency}}</td>
-                      <td :key="i" class="tr" style="width:108px;" v-else >{{getEdiColunmData(parseInt(n/(colList.length+1)), d, colList[(n-2)-(parseInt(n/(colList.length+1))*(colList.length+1))].EN) | currency}}</td>
-                    </template>
-                  </tr>
-                </template>
-              </tbody>
-              <tfoot><tr></tr></tfoot>
             </table>
           </div>
         </div>
       </div>
     </div>
+    
+    
   </div>
 </template>
 
@@ -392,53 +357,26 @@ export default {
       seasonYear: null,
       thisWeeks: null,
       brandList: null,
-      ediRankData: {},
+      ediRankData: null,
       gubun: 1,
       tableNm: 'exceldown_tbody',
       dr_THIS: null,
       selectedSUCD: null,
       selectedSUNM: null,
-      brdkeyList: [],
-      colList: [
-        {EN: "NML_SUM", KR: "정상"},
-        {EN: "EVT_SUM", KR: "행사"},
-        {EN: "SALE_TOT", KR: "합계"},
-        {EN: "LAST_SALE_TOT", KR: "전년대비"},
-        {EN: "GROWTH_RATE", KR: "신장율"},
-        {EN: "TOT_STR_CNT", KR: "매장수(금년)"},
-        {EN: "TOT_STORE_AVG", KR: "점평균(합계)"},
-        {EN: "NML_RANK", KR: "매출순위(정상)"},
-        {EN: "TOT_RANK", KR: "매출순위(합계)"},
-      ]
     }
   },
   created() {
     this.brandList = ["MI", "MO", "FO", "IT", "SO"];
-    const today = moment('2020-07-26')
-    let defaultStartDate = today.format('YYYY-MM') + "-01";
-    this.calDefaultDate = moment('2020-07-26').day('Sunday').format('YYYY-MM-DD')
+    this.calDefaultDate = moment().day('Sunday').format('YYYY-MM-DD')
     this.standardStartDate = moment(this.calDefaultDate).subtract(6, 'days').format('YYYY-MM-DD')
-    if(moment(this.standardStartDate, 'YYYY-MM-DD').format('MM') != today.format('MM') 
-      && today.format('YYYYMMDD') >= moment(this.standardStartDate).day('Sunday').add(14, 'days').format('YYYYMMDD')) {
-      this.standardStartDate = defaultStartDate
+    if(moment(this.standardStartDate, 'YYYY-MM-DD').format('MM') != moment().format('MM')) {
+      this.standardStartDate = moment().format('YYYY-MM') + "-01"
     }
-    if(moment(this.calDefaultDate).format('YYYYMMDD') == moment(this.defaultStartDate).day('Sunday').add(7, 'days').format('YYYYMMDD')) {
-      this.standardStartDate = defaultStartDate
-    }
-
     this.standardEndDate = this.calDefaultDate
-    if((moment(this.calDefaultDate, 'YYYY-MM-DD').format('MM') != today.format('MM') || moment(this.calDefaultDate, 'YYYY-MM-DD').format('MM') != moment(this.standardStartDate, 'YYYY-MM-DD').format('MM')) 
-      && moment(this.standardStartDate, 'YYYY-MM-DD').format('MM') < moment(this.calDefaultDate).day('Sunday').add(7, 'days').format('MM')) {
-      this.standardEndDate = moment(this.standardStartDate).endOf('month').format('YYYY-MM-DD');
-    }
-    if(today.format('YYYYMMDD') == moment(this.calDefaultDate).format('YYYYMMDD')) {
-      this.standardStartDate = today.subtract(13, 'days').format('YYYY-MM-DD')
-      this.standardEndDate = moment(this.standardStartDate).add(6, 'days').format('YYYY-MM-DD')
-    }
-    this.year = moment(this.standardStartDate).format("YYYY");
-    this.month = moment(this.standardStartDate).format("M");
+    this.year = moment(this.calDefaultDate).format("YYYY");
+    this.month = moment(this.calDefaultDate).format("M");
 
-    let cuerrentYear = Number(today.format("YYYY"));
+    let cuerrentYear = Number(moment().format("YYYY"));
     let code
     for (let i = 0; i < 5; i++) {
       code = this.$store.getters.getYearCode(cuerrentYear - (4 - i))
@@ -451,16 +389,11 @@ export default {
     }
 
     this.getWeek(this.year, this.month)
-    let weekIndex = _.findIndex(this.weekList, {'startDay': moment(this.standardStartDate).format("YYYYMMDD"), 'endDay': moment(this.standardEndDate).format("YYYYMMDD")});
+    let weekIndex = _.findIndex(this.weekList, ['startDay', moment(this.standardStartDate).format("YYYYMMDD")]);
     this.thisWeeks = this.weekList[weekIndex]
     this.week = this.thisWeeks.weekend
-    if(weekIndex != (this.weekList.length-1)) {
-      this.nextStartDate = this.weekList[weekIndex+1].startDay;
-      this.nextEndDate = this.weekList[weekIndex+1].endDay;
-    } else{
-      this.nextStartDate = this.year + this.twinNum(Number(this.month)+1) + "01"
-      this.nextEndDate =  moment(this.nextStartDate).day('Sunday').add(7, 'days').format('YYYYMMDD')
-    }
+    this.nextStartDate = this.weekList[weekIndex+1].startDay;
+    this.nextEndDate = this.weekList[weekIndex+1].endDay;
 
     this.selectedSUCD = this.authCodeList[0].MCODE
     this.selectedSUNM = _.find(this.authCodeList, {MCODE: this.selectedSUCD}).CODNM
@@ -551,19 +484,7 @@ export default {
         return false;
       }
     },
-    pointCutting: function (num) {
-      return num.toString().split(".")[0]
-    },
-    getEdiColunmData: function (index, name, colNm) {
-      let department = Object.keys(this.ediRankData)[index];
-      let data = _.find(this.ediRankData[department], { 'BRAND': name });;
-      if(data) {
-        return data[colNm]
-      } else {
-        return ''
-      }
-    },
-    getTotData: function (brcd) {
+    getTotData: function (brcd) {      
       // let objects = _.find(this.dr_C, ['BRCD', brcd]).DATA;
       let objects = this.dr_THIS;
       return [{
@@ -630,8 +551,8 @@ export default {
         }
       }
       this.weekList.push({
-        weekend: 0, weekendStr: "월마감",
-        startDay: fdate, endDay: end_day
+        weekend: '0', weekendStr: "월마감",
+        startDay: start_day, endDay: end_day
       })
     },
     getThisWeek: function (week) {
@@ -651,7 +572,7 @@ export default {
         return
       }
       */
-      this.getSaleListByBrand();
+      this.getProgressData();
       this.getTakeChargeList();
       this.getEdiRankList();
     },
@@ -677,35 +598,7 @@ export default {
       this.req2svr.getSaleListByBrand(this.year, this.month, this.week).then(
         res => {
           if (res.MACHBASE_ERROR) {
-            console.log("res", res);
-            this.dr_S = []
-            if(res["EXECUTE ERROR"] == "No more data to read.") {
-              alert("해당 주차의 데이터가 없습니다. 이전 주차로 조회합니다.");
-              if(this.week == 1) {
-                if(this.month == '1') {
-                  this.year = (Number(this.year)-1).toString()
-                  this.month = '12'
-                } else {
-                  this.month = (Number(this.month)-1).toString()
-                }
-              } 
-              this.getWeek(this.year, this.month)
-              this.week = this.week-1
-              let weekIndex = _.findIndex(this.weekList, ['weekend', this.week]);
-              this.thisWeeks = this.weekList[weekIndex]
-              console.log("여기 >>> ", this.weekList,  " / ", weekIndex);
-              this.standardStartDate = moment(this.thisWeeks.startDay, "YYYYMMDD").format("YYYY-MM-DD");
-              this.standardEndDate = moment(this.thisWeeks.endDay, "YYYYMMDD").format("YYYY-MM-DD");
-              if(weekIndex != (this.weekList.length-1)) {
-                this.nextStartDate = this.weekList[weekIndex+1].startDay;
-                this.nextEndDate = this.weekList[weekIndex+1].endDay;
-              } else{
-                this.nextStartDate = this.year + this.twinNum(Number(this.month)+1) + "01"
-                this.nextEndDate =  moment(this.nextStartDate).day('Sunday').add(7, 'days').format('YYYYMMDD')
-              }
-
-              this.getSaleListByBrand()
-            }
+            console.log("res", res)
           } else {
             let count = (JSON.stringify(res).match(/{/g) || []).length;
             let list = [];
@@ -733,6 +626,29 @@ export default {
 
             let brand_tot = {}
             let temp = 0;
+            /*
+            for(let i = 0; i < loop_index; i++) {
+              let index = i*2+temp
+              brand_tot = {
+                COMCD: this.dr_S[index].COMCD, SUCD: this.dr_S[index].SUCD, BRCD: this.dr_S[index].BRCD, 
+                YYYY: this.dr_S[index].YYYY, MM: this.dr_S[index].MM, WEEK: this.dr_S[index].WEEK,
+                FROM_SALEDT: this.dr_S[index].FROM_SALEDT, TO_SALEDT: this.dr_S[index].TO_SALEDT, 
+                SALEGU: '0', SALEGU2: '합계', MONPLNAMT: this.dr_S[index].MONPLNAMT+this.dr_S[index+1].MONPLNAMT, 
+                PREWEEKAMT: this.dr_S[index].PREWEEKAMT+this.dr_S[index+1].PREWEEKAMT, WEEKPLNAMT: this.dr_S[index].WEEKPLNAMT+this.dr_S[index+1].WEEKPLNAMT, 
+                WEEKAMT: this.dr_S[index].WEEKAMT+this.dr_S[index+1].WEEKAMT, 
+                WEEKRATE: this.getRate((this.dr_S[index].WEEKAMT+this.dr_S[index+1].WEEKAMT), (this.dr_S[index].WEEKPLNAMT+this.dr_S[index+1].WEEKPLNAMT)*100, 1), 
+                PREMONAMT: this.dr_S[index].PREMONAMT+this.dr_S[index+1].PREMONAMT, MONSUMPLNAMT: this.dr_S[index].MONSUMPLNAMT+this.dr_S[index+1].MONSUMPLNAMT, 
+                MONAMT: this.dr_S[index].MONAMT+this.dr_S[index+1].MONAMT, 
+                MONRATE: this.getRate((this.dr_S[index].MONAMT+this.dr_S[index+1].MONAMT), (this.dr_S[index].MONSUMPLNAMT+this.dr_S[index+1].MONSUMPLNAMT)*100, 1), 
+                WEEKAVERAGE: this.getRate((this.dr_S[index].WEEKAMT+this.dr_S[index+1].WEEKAMT), (this.dr_S[index].PREWEEKAMT+this.dr_S[index+1].PREWEEKAMT)-1, 2), 
+                MONAVERAGE: this.getRate((this.dr_S[index].MONAMT+this.dr_S[index+1].MONAMT), (this.dr_S[index].PREMONAMT+this.dr_S[index+1].PREMONAMT)-1, 2), 
+                NEXTWEEKPLNAMT: this.dr_S[index].NEXTWEEKPLNAMT+this.dr_S[index+1].NEXTWEEKPLNAMT
+              }
+              this.dr_S.splice(index+2, 0, brand_tot);
+              temp += 1;
+            }
+
+            */
             
             let brand_list = ["MI", "MO", "FO", "IT", "SO"]
             for(let i in brand_list) {
@@ -779,7 +695,7 @@ export default {
                 MONRATE: '', 
                 WEEKAVERAGE:    _.meanBy(this.dr_S, function(o) { return o.SALEGU == "1"? Number(o.WEEKAVERAGE):0; }), 
                 MONAVERAGE:     _.meanBy(this.dr_S, function(o) { return o.SALEGU == "1"? Number(o.MONAVERAGE):0; }), 
-                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == "1"? Number(o.NEXTWEEKPLNAMT):0; })
+                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == '1'? Number(o.NEXTWEEKPLNAMT):0; })
               },
               {
                 COMCD: '', SUCD:'', BRCD: 'TOTAL', YYYY: this.dr_S[0].YYYY, MM: this.dr_S[0].MM, WEEK: this.dr_S[0].WEEK,
@@ -796,7 +712,7 @@ export default {
                 MONRATE: '', 
                 WEEKAVERAGE:    _.meanBy(this.dr_S, function(o) { return o.SALEGU == "2"? Number(o.WEEKAVERAGE):0; }), 
                 MONAVERAGE:     _.meanBy(this.dr_S, function(o) { return o.SALEGU == "2"? Number(o.MONAVERAGE):0; }), 
-                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == "2"? Number(o.NEXTWEEKPLNAMT):0; })
+                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == '2'? Number(o.NEXTWEEKPLNAMT):0; })
               },
               {
                 COMCD: '', SUCD:'', BRCD: 'TOTAL', YYYY: this.dr_S[0].YYYY, MM: this.dr_S[0].MM, WEEK: this.dr_S[0].WEEK,
@@ -813,7 +729,7 @@ export default {
                 MONRATE: '', 
                 WEEKAVERAGE:    _.meanBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.WEEKAVERAGE):0; }), 
                 MONAVERAGE:     _.meanBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.MONAVERAGE):0; }), 
-                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == "3"? Number(o.NEXTWEEKPLNAMT):0; })
+                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == '3'? Number(o.NEXTWEEKPLNAMT):0; })
               },
               {
                 COMCD: '', SUCD:'', BRCD: 'TOTAL', YYYY: this.dr_S[0].YYYY, MM: this.dr_S[0].MM, WEEK: this.dr_S[0].WEEK,
@@ -830,13 +746,11 @@ export default {
                 MONRATE:        this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONSUMPLNAMT):0; }), 1), 
                 WEEKAVERAGE:    this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.WEEKAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.PREWEEKAMT):0; }), 2), 
                 MONAVERAGE:     this.getRate(_.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.MONAMT):0; }), _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.PREMONAMT):0; }), 2), 
-                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == "0"? Number(o.NEXTWEEKPLNAMT):0; })
+                NEXTWEEKPLNAMT: _.sumBy(this.dr_S, function(o) { return o.SALEGU == '3'? Number(o.NEXTWEEKPLNAMT):0; })
               }
             ]
 
             this.dr_S = _.concat(this.dr_S, this.TOT_dr_S);
-
-            this.getProgressData();
           }
         },
         rej => {
@@ -851,7 +765,31 @@ export default {
       this.req2svr.getProgressData(this.year, this.month, this.week).then(
         res => {
           if (res.MACHBASE_ERROR) {
-            console.log("res", res);
+            console.log("res", res)
+            // alert(res["EXECUTE ERROR"]);
+            this.dr_S = []
+            if(res["EXECUTE ERROR"] == "No more data to read.") {
+              alert("해당 주차의 데이터가 없습니다. 이전 주차로 조회합니다.");
+              if(this.week == 1) {
+                if(this.month == '1') {
+                  this.year = (Number(this.year)-1).toString()
+                  this.month = '12'
+                } else {
+                  this.month = (Number(this.month)-1).toString()
+                }
+              } 
+              this.getWeek(this.year, this.month)
+              this.week = this.week-1
+              let weekIndex = _.findIndex(this.weekList, ['weekend', this.week]);
+              this.thisWeeks = this.weekList[weekIndex]
+              console.log("여기 >>> ", this.weekList,  " / ", weekIndex);
+              this.standardStartDate = moment(this.thisWeeks.startDay, "YYYYMMDD").format("YYYY-MM-DD");
+              this.standardEndDate = moment(this.thisWeeks.endDay, "YYYYMMDD").format("YYYY-MM-DD");
+              this.nextStartDate = this.weekList[weekIndex+1].startDay;
+              this.nextEndDate = this.weekList[weekIndex+1].endDay;
+
+              this.getProgressData()
+            }
           } else {
             let count = (JSON.stringify(res).match(/{/g) || []).length;
             let list = []
@@ -868,6 +806,11 @@ export default {
                 PLAN: list[i].PLAN.replace(/ /gi, "&nbsp;").split('	').join('&emsp;').replace(/(?:\r\n|\r|\n)/g, '<br />'),
               })
             }
+            if(this.dr_P.length != 0) {
+              this.getSaleListByBrand();
+            } else {
+              alert("마감된 데이터가 없습니다.")
+            }
           }
         },
         rej => {
@@ -879,10 +822,8 @@ export default {
 
     },
     getTakeChargeList() {
-      this.dr_C = [];
-      this.dr_SC = [];
-      this.dr_THIS= {};
-
+      this.dr_C = []
+      
       this.req2svr.getTakeChargeList(this.year, this.twinNum(this.month), this.week).then(
         res => {
           if (res.MACHBASE_ERROR) {
@@ -948,7 +889,6 @@ export default {
               this.dr_THIS = _.find(this.dr_C, ['BRCD', this.selectedSUNM]).DATA;
               console.log("dr_C >>> ", this.dr_C);
               console.log("dr_SC >>> ", this.dr_SC);
-              console.log("dr_THIS >>> ", this.dr_THIS);
             }
           }
         },
@@ -958,129 +898,118 @@ export default {
       );
     },
     getEdiRankList() {
-      let data = [{"EDI":"LOTTE","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"36821023","EVT_SUM":"","SALE_TOT":"36821023","LAST_SALE_TOT":"47929402","GROWTH_RATE":"-23 %","TOT_STR_CNT":23,"TOT_STORE_AVG":"1600914"},
-                  {"EDI":"LOTTE","NML_RANK":2,"TOT_RANK":2,"BRAND":"구호","NML_SUM":"17195708","EVT_SUM":"","SALE_TOT":"17195708","LAST_SALE_TOT":"26447529","GROWTH_RATE":"-35 %","TOT_STR_CNT":21,"TOT_STORE_AVG":"818843"},
-                  {"EDI":"LOTTE","NML_RANK":3,"TOT_RANK":3,"BRAND":"모조","NML_SUM":"14124156","EVT_SUM":"1656388","SALE_TOT":"15780545","LAST_SALE_TOT":"21409254","GROWTH_RATE":"-26 %","TOT_STR_CNT":27,"TOT_STORE_AVG":"584465"},
-                  {"EDI":"LOTTE","NML_RANK":4,"TOT_RANK":4,"BRAND":"미샤","NML_SUM":"15435586","EVT_SUM":"","SALE_TOT":"15435586","LAST_SALE_TOT":"21380918","GROWTH_RATE":"-28 %","TOT_STR_CNT":24,"TOT_STORE_AVG":"643149"},
-                  {"EDI":"LOTTE","NML_RANK":5,"TOT_RANK":5,"BRAND":"마 인","NML_SUM":"13036894","EVT_SUM":"","SALE_TOT":"13036894","LAST_SALE_TOT":"17075139","GROWTH_RATE":"-24 %","TOT_STR_CNT":17,"TOT_STORE_AVG":"766876"},
-                  {"EDI":"LOTTE","NML_RANK":6,"TOT_RANK":6,"BRAND":"지고트","NML_SUM":"9199179","EVT_SUM":"2142055","SALE_TOT":"11341233","LAST_SALE_TOT":"17571131","GROWTH_RATE":"-35 %","TOT_STR_CNT":21,"TOT_STORE_AVG":"540059"},
-                  {"EDI":"LOTTE","NML_RANK":14,"TOT_RANK":7,"BRAND":"미니멈","NML_SUM":"4628834","EVT_SUM":"3268255","SALE_TOT":"7897089","LAST_SALE_TOT":"11881227","GROWTH_RATE":"-34 %","TOT_STR_CNT":21,"TOT_STORE_AVG":"376052"},
-                  {"EDI":"LOTTE","NML_RANK":11,"TOT_RANK":8,"BRAND":"아이잗컬렉션","NML_SUM":"5336257","EVT_SUM":"1771441","SALE_TOT":"7107698","LAST_SALE_TOT":"10151071","GROWTH_RATE":"-30 %","TOT_STR_CNT":12,"TOT_STORE_AVG":"592308"},
-                  {"EDI":"LOTTE","NML_RANK":8,"TOT_RANK":9,"BRAND":"데무","NML_SUM":"5710795","EVT_SUM":"1278455","SALE_TOT":"6989250","LAST_SALE_TOT":"10487850","GROWTH_RATE":"-33 %","TOT_STR_CNT":19,"TOT_STORE_AVG":"367855"},
-                  {"EDI":"LOTTE","NML_RANK":7,"TOT_RANK":10,"BRAND":"오브제","NML_SUM":"6829065","EVT_SUM":"","SALE_TOT":"6829065","LAST_SALE_TOT":"8813416","GROWTH_RATE":"-23 %","TOT_STR_CNT":17,"TOT_STORE_AVG":"401710"},
-                  {"EDI":"LOTTE","NML_RANK":13,"TOT_RANK":11,"BRAND":"린","NML_SUM":"4823108","EVT_SUM":"1415776","SALE_TOT":"6238883","LAST_SALE_TOT":"10484685","GROWTH_RATE":"-40 %","TOT_STR_CNT":18,"TOT_STORE_AVG":"346605"},
-                  {"EDI":"LOTTE","NML_RANK":12,"TOT_RANK":12,"BRAND":"데코","NML_SUM":"5217717","EVT_SUM":"593451","SALE_TOT":"5811168","LAST_SALE_TOT":"8989114","GROWTH_RATE":"-35 %","TOT_STR_CNT":20,"TOT_STORE_AVG":"290558"},
-                  {"EDI":"LOTTE","NML_RANK":9,"TOT_RANK":13,"BRAND":"랑방","NML_SUM":"5663439","EVT_SUM":"","SALE_TOT":"5663439","LAST_SALE_TOT":"6623870","GROWTH_RATE":"-14 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"1132688"},
-                  {"EDI":"LOTTE","NML_RANK":10,"TOT_RANK":14,"BRAND":"레니본","NML_SUM":"5535952","EVT_SUM":"110623","SALE_TOT":"5646576","LAST_SALE_TOT":"8876281","GROWTH_RATE":"-36 %","TOT_STR_CNT":17,"TOT_STORE_AVG":"332152"},
-                  {"EDI":"LOTTE","NML_RANK":15,"TOT_RANK":15,"BRAND":"도호","NML_SUM":"3480988","EVT_SUM":"1149524","SALE_TOT":"4630512","LAST_SALE_TOT":"7077710","GROWTH_RATE":"-35 %","TOT_STR_CNT":12,"TOT_STORE_AVG":"385876"},
-                  {"EDI":"LOTTE","NML_RANK":'',"TOT_RANK":'',"BRAND":"Theory","NML_SUM":"11695922","EVT_SUM":"","SALE_TOT":"11695922","LAST_SALE_TOT":"17202614","GROWTH_RATE":"-32 %","TOT_STR_CNT":20,"TOT_STORE_AVG":"584796"},
-                  {"EDI":"SSG","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"13114725","EVT_SUM":"","SALE_TOT":"13114725","LAST_SALE_TOT":"19874686","GROWTH_RATE":"-34 %","TOT_STR_CNT":8,"TOT_STORE_AVG":"1639341"},
-                  {"EDI":"SSG","NML_RANK":2,"TOT_RANK":2,"BRAND":"구호","NML_SUM":"9669996","EVT_SUM":"","SALE_TOT":"9669996","LAST_SALE_TOT":"14839630","GROWTH_RATE":"-35 %","TOT_STR_CNT":12,"TOT_STORE_AVG":"805833"},
-                  {"EDI":"SSG","NML_RANK":3,"TOT_RANK":3,"BRAND":"미샤","NML_SUM":"6279528","EVT_SUM":"","SALE_TOT":"6279528","LAST_SALE_TOT":"8771278","GROWTH_RATE":"-28 %","TOT_STR_CNT":12,"TOT_STORE_AVG":"523294"},
-                  {"EDI":"SSG","NML_RANK":4,"TOT_RANK":4,"BRAND":"모조","NML_SUM":"4716818","EVT_SUM":"1308590","SALE_TOT":"6025407","LAST_SALE_TOT":"8659897","GROWTH_RATE":"-30 %","TOT_STR_CNT":10,"TOT_STORE_AVG":"602541"},
-                  {"EDI":"SSG","NML_RANK":7,"TOT_RANK":5,"BRAND":"지고트","NML_SUM":"3144516","EVT_SUM":"1248579","SALE_TOT":"4393096","LAST_SALE_TOT":"6946759","GROWTH_RATE":"-37 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"488122"},
-                  {"EDI":"SSG","NML_RANK":5,"TOT_RANK":6,"BRAND":"랑방","NML_SUM":"4304087","EVT_SUM":"","SALE_TOT":"4304087","LAST_SALE_TOT":"5550463","GROWTH_RATE":"-22 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"1076022"},
-                  {"EDI":"SSG","NML_RANK":6,"TOT_RANK":7,"BRAND":"데코","NML_SUM":"3548244","EVT_SUM":"171412","SALE_TOT":"3719655","LAST_SALE_TOT":"5996816","GROWTH_RATE":"-38 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"413295"},
-                  {"EDI":"SSG","NML_RANK":8,"TOT_RANK":8,"BRAND":"마 인","NML_SUM":"2966860","EVT_SUM":"","SALE_TOT":"2966860","LAST_SALE_TOT":"4343876","GROWTH_RATE":"-32 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"741715"},
-                  {"EDI":"SSG","NML_RANK":13,"TOT_RANK":9,"BRAND":"린","NML_SUM":"1238788","EVT_SUM":"1317321","SALE_TOT":"2556108","LAST_SALE_TOT":"3433831","GROWTH_RATE":"-26 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"284012"},
-                  {"EDI":"SSG","NML_RANK":11,"TOT_RANK":10,"BRAND":"아이잗컬렉션","NML_SUM":"1581291","EVT_SUM":"742622","SALE_TOT":"2323914","LAST_SALE_TOT":"4055521","GROWTH_RATE":"-43 %","TOT_STR_CNT":6,"TOT_STORE_AVG":"387319"},
-                  {"EDI":"SSG","NML_RANK":9,"TOT_RANK":11,"BRAND":"레니본","NML_SUM":"2089168","EVT_SUM":"67050","SALE_TOT":"2156219","LAST_SALE_TOT":"2381792","GROWTH_RATE":"-9 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"431244"},
-                  {"EDI":"SSG","NML_RANK":12,"TOT_RANK":12,"BRAND":"미니멈","NML_SUM":"1296501","EVT_SUM":"801730","SALE_TOT":"2098231","LAST_SALE_TOT":"3540706","GROWTH_RATE":"-41 %","TOT_STR_CNT":8,"TOT_STORE_AVG":"262279"},
-                  {"EDI":"SSG","NML_RANK":10,"TOT_RANK":13,"BRAND":"오브제","NML_SUM":"1623766","EVT_SUM":"","SALE_TOT":"1623766","LAST_SALE_TOT":"985211","GROWTH_RATE":"65 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"541255"},
-                  {"EDI":"SSG","NML_RANK":14,"TOT_RANK":14,"BRAND":"도호","NML_SUM":"887879","EVT_SUM":"81848","SALE_TOT":"969727","LAST_SALE_TOT":"2014989","GROWTH_RATE":"-52 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"323,242"},
-                  {"EDI":"SSG","NML_RANK":15,"TOT_RANK":15,"BRAND":"데무","NML_SUM":"355312","EVT_SUM":"85350","SALE_TOT":"440662","LAST_SALE_TOT":"","GROWTH_RATE":"0 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"146887"},
-                  {"EDI":"HYUNDAI","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"19937736","EVT_SUM":"","SALE_TOT":"19937736","LAST_SALE_TOT":"26945868","GROWTH_RATE":"-26 %","TOT_STR_CNT":14,"TOT_STORE_AVG":"1424124"},
-                  {"EDI":"HYUNDAI","NML_RANK":2,"TOT_RANK":2,"BRAND":"구호","NML_SUM":"11937107","EVT_SUM":"","SALE_TOT":"11937107","LAST_SALE_TOT":"17737457","GROWTH_RATE":"-33 %","TOT_STR_CNT":13,"TOT_STORE_AVG":"918239"},
-                  {"EDI":"HYUNDAI","NML_RANK":3,"TOT_RANK":3,"BRAND":"랑방","NML_SUM":"9889715","EVT_SUM":"","SALE_TOT":"9889715","LAST_SALE_TOT":"13510207","GROWTH_RATE":"-27 %","TOT_STR_CNT":10,"TOT_STORE_AVG":"988971"},
-                  {"EDI":"HYUNDAI","NML_RANK":4,"TOT_RANK":4,"BRAND":"마 인","NML_SUM":"8848657","EVT_SUM":"","SALE_TOT":"8848657","LAST_SALE_TOT":"12382678","GROWTH_RATE":"-29 %","TOT_STR_CNT":13,"TOT_STORE_AVG":"680666"},
-                  {"EDI":"HYUNDAI","NML_RANK":6,"TOT_RANK":5,"BRAND":"모조","NML_SUM":"5193731","EVT_SUM":"2168313","SALE_TOT":"7362043","LAST_SALE_TOT":"8485829","GROWTH_RATE":"-13 %","TOT_STR_CNT":10,"TOT_STORE_AVG":"736204"},
-                  {"EDI":"HYUNDAI","NML_RANK":5,"TOT_RANK":6,"BRAND":"미샤","NML_SUM":"6841080","EVT_SUM":"","SALE_TOT":"6841080","LAST_SALE_TOT":"9078624","GROWTH_RATE":"-25 %","TOT_STR_CNT":11,"TOT_STORE_AVG":"621916"},
-                  {"EDI":"HYUNDAI","NML_RANK":9,"TOT_RANK":7,"BRAND":"지고트","NML_SUM":"2865023","EVT_SUM":"2083364","SALE_TOT":"4948388","LAST_SALE_TOT":"7338496","GROWTH_RATE":"-33 %","TOT_STR_CNT":11,"TOT_STORE_AVG":"449853"},
-                  {"EDI":"HYUNDAI","NML_RANK":7,"TOT_RANK":8,"BRAND":"오브제","NML_SUM":"4497230","EVT_SUM":"","SALE_TOT":"4497230","LAST_SALE_TOT":"6304654","GROWTH_RATE":"-29 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"499692"},
-                  {"EDI":"HYUNDAI","NML_RANK":8,"TOT_RANK":9,"BRAND":"데무","NML_SUM":"3078979","EVT_SUM":"1385843","SALE_TOT":"4464822","LAST_SALE_TOT":"7252648","GROWTH_RATE":"-38 %","TOT_STR_CNT":11,"TOT_STORE_AVG":"405893"},
-                  {"EDI":"HYUNDAI","NML_RANK":11,"TOT_RANK":10,"BRAND":"린","NML_SUM":"1888603","EVT_SUM":"2306012","SALE_TOT":"4194615","LAST_SALE_TOT":"6197992","GROWTH_RATE":"-32 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"466068"},
-                  {"EDI":"HYUNDAI","NML_RANK":10,"TOT_RANK":11,"BRAND":"아이잗컬렉션","NML_SUM":"2559484","EVT_SUM":"1498561","SALE_TOT":"4058046","LAST_SALE_TOT":"6230421","GROWTH_RATE":"-35 %","TOT_STR_CNT":10,"TOT_STORE_AVG":"405805"},
-                  {"EDI":"HYUNDAI","NML_RANK":12,"TOT_RANK":12,"BRAND":"도호","NML_SUM":"1385070","EVT_SUM":"1008761","SALE_TOT":"2393832","LAST_SALE_TOT":"3600370","GROWTH_RATE":"-34 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"478766"},
-                  {"EDI":"HYUNDAI","NML_RANK":13,"TOT_RANK":13,"BRAND":"미니멈","NML_SUM":"1042571","EVT_SUM":"311121","SALE_TOT":"1353691","LAST_SALE_TOT":"1290640","GROWTH_RATE":"5 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"676846"},
-                  {"EDI":"HYUNDAI","NML_RANK":14,"TOT_RANK":14,"BRAND":"레니본","NML_SUM":"775873","EVT_SUM":"78047","SALE_TOT":"853921","LAST_SALE_TOT":"1294571","GROWTH_RATE":"-34 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"213480"},
-                  {"EDI":"HYUNDAI","NML_RANK":'',"TOT_RANK":'',"BRAND":"Theory","NML_SUM":"10240195","EVT_SUM":"877573","SALE_TOT":"11117768","LAST_SALE_TOT":"17014703","GROWTH_RATE":"-35 %","TOT_STR_CNT":13,"TOT_STORE_AVG":"855213"},
-                  {"EDI":"GALLERIA","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"7537657","EVT_SUM":"","SALE_TOT":"7537657","LAST_SALE_TOT":"10790388","GROWTH_RATE":"-30 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"1507531"},
-                  {"EDI":"GALLERIA","NML_RANK":2,"TOT_RANK":2,"BRAND":"랑방","NML_SUM":"3973132","EVT_SUM":"","SALE_TOT":"3973132","LAST_SALE_TOT":"5338624","GROWTH_RATE":"-26 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"1324377"},
-                  {"EDI":"GALLERIA","NML_RANK":3,"TOT_RANK":3,"BRAND":"구호","NML_SUM":"3954259","EVT_SUM":"","SALE_TOT":"3954259","LAST_SALE_TOT":"6020762","GROWTH_RATE":"-34 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"790852"},
-                  {"EDI":"GALLERIA","NML_RANK":4,"TOT_RANK":4,"BRAND":"미샤","NML_SUM":"3038054","EVT_SUM":"","SALE_TOT":"3038054","LAST_SALE_TOT":"4397975","GROWTH_RATE":"-31 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"607611"},
-                  {"EDI":"GALLERIA","NML_RANK":5,"TOT_RANK":5,"BRAND":"마 인","NML_SUM":"2076946","EVT_SUM":"","SALE_TOT":"2076946","LAST_SALE_TOT":"3174865","GROWTH_RATE":"-35 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"415389"},
-                  {"EDI":"GALLERIA","NML_RANK":6,"TOT_RANK":6,"BRAND":"데코","NML_SUM":"1726126","EVT_SUM":"85807","SALE_TOT":"1811934","LAST_SALE_TOT":"2889746","GROWTH_RATE":"-37 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"452983"},
-                  {"EDI":"GALLERIA","NML_RANK":7,"TOT_RANK":7,"BRAND":"아이잗컬렉션","NML_SUM":"1561097","EVT_SUM":"226644","SALE_TOT":"1787740","LAST_SALE_TOT":"2819805","GROWTH_RATE":"-37 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"446935"},
-                  {"EDI":"GALLERIA","NML_RANK":9,"TOT_RANK":8,"BRAND":"도호","NML_SUM":"1093423","EVT_SUM":"495696","SALE_TOT":"1589119","LAST_SALE_TOT":"2311322","GROWTH_RATE":"-31 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"397280"},
-                  {"EDI":"GALLERIA","NML_RANK":8,"TOT_RANK":9,"BRAND":"모조","NML_SUM":"1141131","EVT_SUM":"281402","SALE_TOT":"1422533","LAST_SALE_TOT":"2155289","GROWTH_RATE":"-34 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"474178"},
-                  {"EDI":"GALLERIA","NML_RANK":10,"TOT_RANK":10,"BRAND":"레니본","NML_SUM":"1002517","EVT_SUM":"9448","SALE_TOT":"1011966","LAST_SALE_TOT":"1841618","GROWTH_RATE":"-45 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"337322"},
-                  {"EDI":"GALLERIA","NML_RANK":11,"TOT_RANK":11,"BRAND":"데무","NML_SUM":"633729","EVT_SUM":"123076","SALE_TOT":"756804","LAST_SALE_TOT":"1187019","GROWTH_RATE":"-36 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"252268"},
-                  {"EDI":"GALLERIA","NML_RANK":12,"TOT_RANK":12,"BRAND":"오브제","NML_SUM":"504593","EVT_SUM":"","SALE_TOT":"504593","LAST_SALE_TOT":"364597","GROWTH_RATE":"38 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"252297"},
-                  {"EDI":"GALLERIA","NML_RANK":13,"TOT_RANK":13,"BRAND":"지고트","NML_SUM":"292591","EVT_SUM":"74490","SALE_TOT":"367081","LAST_SALE_TOT":"913554","GROWTH_RATE":"-60 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"183541"},
-                  {"EDI":"GALLERIA","NML_RANK":14,"TOT_RANK":14,"BRAND":"린","NML_SUM":"232574","EVT_SUM":"84352","SALE_TOT":"316926","LAST_SALE_TOT":"304457","GROWTH_RATE":"4 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"158463"},
-                  {"EDI":"GALLERIA","NML_RANK":'',"TOT_RANK":'',"BRAND":"Theory","NML_SUM":"2259206","EVT_SUM":"","SALE_TOT":"2259206","LAST_SALE_TOT":"3320137","GROWTH_RATE":"-32 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"564802"},
-                  {"EDI":"AK","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"2575964","EVT_SUM":"","SALE_TOT":"2575964","LAST_SALE_TOT":"4291540","GROWTH_RATE":"-40 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"858655"},
-                  {"EDI":"AK","NML_RANK":2,"TOT_RANK":2,"BRAND":"구호","NML_SUM":"2057024","EVT_SUM":"","SALE_TOT":"2057024","LAST_SALE_TOT":"3073172","GROWTH_RATE":"-33 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"514256"},
-                  {"EDI":"AK","NML_RANK":3,"TOT_RANK":3,"BRAND":"랑방","NML_SUM":"1211057","EVT_SUM":"","SALE_TOT":"1211057","LAST_SALE_TOT":"1651503","GROWTH_RATE":"-27 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"1211057"},
-                  {"EDI":"AK","NML_RANK":4,"TOT_RANK":4,"BRAND":"모조","NML_SUM":"661163","EVT_SUM":"180185","SALE_TOT":"841348","LAST_SALE_TOT":"1556990","GROWTH_RATE":"-46 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"168270"},
-                  {"EDI":"AK","NML_RANK":5,"TOT_RANK":5,"BRAND":"마 인","NML_SUM":"647515","EVT_SUM":"","SALE_TOT":"647515","LAST_SALE_TOT":"573408","GROWTH_RATE":"13 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"647515"},
-                  {"EDI":"AK","NML_RANK":6,"TOT_RANK":6,"BRAND":"오브제","NML_SUM":"622378","EVT_SUM":"","SALE_TOT":"622378","LAST_SALE_TOT":"420282","GROWTH_RATE":"48 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"311189"},
-                  {"EDI":"AK","NML_RANK":7,"TOT_RANK":7,"BRAND":"레니본","NML_SUM":"552190","EVT_SUM":"11257","SALE_TOT":"563447","LAST_SALE_TOT":"936515","GROWTH_RATE":"-40 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"140862"},
-                  {"EDI":"AK","NML_RANK":10,"TOT_RANK":8,"BRAND":"미니멈","NML_SUM":"334872","EVT_SUM":"224583","SALE_TOT":"559454","LAST_SALE_TOT":"853228","GROWTH_RATE":"-34 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"139864"},
-                  {"EDI":"AK","NML_RANK":9,"TOT_RANK":9,"BRAND":"지고트","NML_SUM":"376180","EVT_SUM":"151812","SALE_TOT":"527993","LAST_SALE_TOT":"1167398","GROWTH_RATE":"-55 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"131998"},
-                  {"EDI":"AK","NML_RANK":8,"TOT_RANK":10,"BRAND":"미샤","NML_SUM":"527154","EVT_SUM":"","SALE_TOT":"527154","LAST_SALE_TOT":"734503","GROWTH_RATE":"-28 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"263577"},
-                  {"EDI":"AK","NML_RANK":12,"TOT_RANK":11,"BRAND":"아이잗컬렉션","NML_SUM":"147394","EVT_SUM":"116651","SALE_TOT":"264045","LAST_SALE_TOT":"607810","GROWTH_RATE":"-57 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"264045"},
-                  {"EDI":"AK","NML_RANK":11,"TOT_RANK":12,"BRAND":"데코","NML_SUM":"159425","EVT_SUM":"8323","SALE_TOT":"167748","LAST_SALE_TOT":"614868","GROWTH_RATE":"-73 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"55916"},
-                  {"EDI":"AK","NML_RANK":13,"TOT_RANK":13,"BRAND":"데무","NML_SUM":"30258","EVT_SUM":"24953","SALE_TOT":"55211","LAST_SALE_TOT":"265831","GROWTH_RATE":"-79 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"55211"},
-                  {"EDI":"AK","NML_RANK":14,"TOT_RANK":14,"BRAND":"린","NML_SUM":"9824","EVT_SUM":"7218","SALE_TOT":"17042","LAST_SALE_TOT":"","GROWTH_RATE":"0 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"17042"},
-                  {"EDI":"AK","NML_RANK":'',"TOT_RANK":'',"BRAND":"Theory","NML_SUM":"961726","EVT_SUM":"202151","SALE_TOT":"1163877","LAST_SALE_TOT":"1998600","GROWTH_RATE":"-42 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"581938"}];
+      console.log("getEdiRankList")
+      let data = [{"EDI":"LOTTE","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"36,821,023","EVT_SUM":"","SALE_TOT":"36,821,023","LAST_SALE_TOT":"47,929,402","GROWTH_RATE":"-23 %","TOT_STR_CNT":23,"TOT_STORE_AVG":"1,600,914"},
+                  {"EDI":"LOTTE","NML_RANK":2,"TOT_RANK":2,"BRAND":"구호","NML_SUM":"17,195,708","EVT_SUM":"","SALE_TOT":"17,195,708","LAST_SALE_TOT":"26,447,529","GROWTH_RATE":"-35 %","TOT_STR_CNT":21,"TOT_STORE_AVG":"818.843"},
+                  {"EDI":"LOTTE","NML_RANK":4,"TOT_RANK":3,"BRAND":"모조","NML_SUM":"14,124,156","EVT_SUM":"1,656,388","SALE_TOT":"15,780,545","LAST_SALE_TOT":"21,409,254","GROWTH_RATE":"-26 %","TOT_STR_CNT":27,"TOT_STORE_AVG":"584.465"},
+                  {"EDI":"LOTTE","NML_RANK":3,"TOT_RANK":4,"BRAND":"미샤","NML_SUM":"15,435,586","EVT_SUM":"","SALE_TOT":"15,435,586","LAST_SALE_TOT":"21,380,918","GROWTH_RATE":"-28 %","TOT_STR_CNT":24,"TOT_STORE_AVG":"643.149"},
+                  {"EDI":"LOTTE","NML_RANK":5,"TOT_RANK":5,"BRAND":"마 인","NML_SUM":"13,036,894","EVT_SUM":"","SALE_TOT":"13,036,894","LAST_SALE_TOT":"17,075,139","GROWTH_RATE":"-24 %","TOT_STR_CNT":17,"TOT_STORE_AVG":"766.876"},
+                  {"EDI":"LOTTE","NML_RANK":6,"TOT_RANK":6,"BRAND":"지고트","NML_SUM":"9,199,179","EVT_SUM":"2,142,055","SALE_TOT":"11,341,233","LAST_SALE_TOT":"17,571,131","GROWTH_RATE":"-35 %","TOT_STR_CNT":21,"TOT_STORE_AVG":"540.059"},
+                  {"EDI":"LOTTE","NML_RANK":14,"TOT_RANK":7,"BRAND":"미니멈","NML_SUM":"4,628,834","EVT_SUM":"3,268,255","SALE_TOT":"7,897,089","LAST_SALE_TOT":"11,881,227","GROWTH_RATE":"-34 %","TOT_STR_CNT":21,"TOT_STORE_AVG":"376.052"},
+                  {"EDI":"LOTTE","NML_RANK":11,"TOT_RANK":8,"BRAND":"아이잗컬렉션","NML_SUM":"5,336,257","EVT_SUM":"1,771,441","SALE_TOT":"7,107,698","LAST_SALE_TOT":"10,151,071","GROWTH_RATE":"-30 %","TOT_STR_CNT":12,"TOT_STORE_AVG":"592.308"},
+                  {"EDI":"LOTTE","NML_RANK":8,"TOT_RANK":9,"BRAND":"데무","NML_SUM":"5,710,795","EVT_SUM":"1,278,455","SALE_TOT":"6,989,250","LAST_SALE_TOT":"10,487,850","GROWTH_RATE":"-33 %","TOT_STR_CNT":19,"TOT_STORE_AVG":"367.855"},
+                  {"EDI":"LOTTE","NML_RANK":7,"TOT_RANK":10,"BRAND":"오브제","NML_SUM":"6,829,065","EVT_SUM":"","SALE_TOT":"6,829,065","LAST_SALE_TOT":"8,813,416","GROWTH_RATE":"-23 %","TOT_STR_CNT":17,"TOT_STORE_AVG":"401.710"},
+                  {"EDI":"LOTTE","NML_RANK":13,"TOT_RANK":11,"BRAND":"린","NML_SUM":"4,823,108","EVT_SUM":"1,415,776","SALE_TOT":"6,238,883","LAST_SALE_TOT":"10,484,685","GROWTH_RATE":"-40 %","TOT_STR_CNT":18,"TOT_STORE_AVG":"346.605"},
+                  {"EDI":"LOTTE","NML_RANK":12,"TOT_RANK":12,"BRAND":"데코","NML_SUM":"5,217,717","EVT_SUM":"593.451","SALE_TOT":"5,811,168","LAST_SALE_TOT":"8,989,114","GROWTH_RATE":"-35 %","TOT_STR_CNT":20,"TOT_STORE_AVG":"290.558"},
+                  {"EDI":"LOTTE","NML_RANK":9,"TOT_RANK":13,"BRAND":"랑방","NML_SUM":"5,663,439","EVT_SUM":"","SALE_TOT":"5,663,439","LAST_SALE_TOT":"6,623,870","GROWTH_RATE":"-14 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"1,132,688"},
+                  {"EDI":"LOTTE","NML_RANK":10,"TOT_RANK":14,"BRAND":"레니본","NML_SUM":"5,535,952","EVT_SUM":"110.623","SALE_TOT":"5,646,576","LAST_SALE_TOT":"8,876,281","GROWTH_RATE":"-36 %","TOT_STR_CNT":17,"TOT_STORE_AVG":"332.152"},
+                  {"EDI":"LOTTE","NML_RANK":15,"TOT_RANK":15,"BRAND":"도호","NML_SUM":"3,480,988","EVT_SUM":"1,149,524","SALE_TOT":"4,630,512","LAST_SALE_TOT":"7,077,710","GROWTH_RATE":"-35 %","TOT_STR_CNT":12,"TOT_STORE_AVG":"385.876"},
+                  {"EDI":"LOTTE","NML_RANK":'',"TOT_RANK":'',"BRAND":"Theory","NML_SUM":"11,695,922","EVT_SUM":"","SALE_TOT":"11,695,922","LAST_SALE_TOT":"17,202,614","GROWTH_RATE":"-32 %","TOT_STR_CNT":20,"TOT_STORE_AVG":"584.796"},
+                  {"EDI":"SSG","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"13,114,725","EVT_SUM":"","SALE_TOT":"13,114,725","LAST_SALE_TOT":"19,874,686","GROWTH_RATE":"-34 %","TOT_STR_CNT":8,"TOT_STORE_AVG":"1,639,341"},
+                  {"EDI":"SSG","NML_RANK":2,"TOT_RANK":2,"BRAND":"구호","NML_SUM":"9,669,996","EVT_SUM":"","SALE_TOT":"9,669,996","LAST_SALE_TOT":"14,839,630","GROWTH_RATE":"-35 %","TOT_STR_CNT":12,"TOT_STORE_AVG":"805.833"},
+                  {"EDI":"SSG","NML_RANK":3,"TOT_RANK":3,"BRAND":"미샤","NML_SUM":"6,279,528","EVT_SUM":"","SALE_TOT":"6,279,528","LAST_SALE_TOT":"8,771,278","GROWTH_RATE":"-28 %","TOT_STR_CNT":12,"TOT_STORE_AVG":"523.294"},
+                  {"EDI":"SSG","NML_RANK":4,"TOT_RANK":4,"BRAND":"모조","NML_SUM":"4,716,818","EVT_SUM":"1,308,590","SALE_TOT":"6,025,407","LAST_SALE_TOT":"8,659,897","GROWTH_RATE":"-30 %","TOT_STR_CNT":10,"TOT_STORE_AVG":"602.541"},
+                  {"EDI":"SSG","NML_RANK":7,"TOT_RANK":5,"BRAND":"지고트","NML_SUM":"3,144,516","EVT_SUM":"1,248,579","SALE_TOT":"4,393,096","LAST_SALE_TOT":"6,946,759","GROWTH_RATE":"-37 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"488.122"},
+                  {"EDI":"SSG","NML_RANK":5,"TOT_RANK":6,"BRAND":"랑방","NML_SUM":"4,304,087","EVT_SUM":"","SALE_TOT":"4,304,087","LAST_SALE_TOT":"5,550,463","GROWTH_RATE":"-22 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"1,076,022"},
+                  {"EDI":"SSG","NML_RANK":6,"TOT_RANK":7,"BRAND":"데코","NML_SUM":"3,548,244","EVT_SUM":"171.412","SALE_TOT":"3,719,655","LAST_SALE_TOT":"5,996,816","GROWTH_RATE":"-38 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"413.295"},
+                  {"EDI":"SSG","NML_RANK":8,"TOT_RANK":8,"BRAND":"마 인","NML_SUM":"2,966,860","EVT_SUM":"","SALE_TOT":"2,966,860","LAST_SALE_TOT":"4,343,876","GROWTH_RATE":"-32 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"741.715"},
+                  {"EDI":"SSG","NML_RANK":13,"TOT_RANK":9,"BRAND":"린","NML_SUM":"1,238,788","EVT_SUM":"1,317,321","SALE_TOT":"2,556,108","LAST_SALE_TOT":"3,433,831","GROWTH_RATE":"-26 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"284.012"},
+                  {"EDI":"SSG","NML_RANK":11,"TOT_RANK":10,"BRAND":"아이잗컬렉션","NML_SUM":"1,581,291","EVT_SUM":"742.622","SALE_TOT":"2,323,914","LAST_SALE_TOT":"4,055,521","GROWTH_RATE":"-43 %","TOT_STR_CNT":6,"TOT_STORE_AVG":"387.319"},
+                  {"EDI":"SSG","NML_RANK":9,"TOT_RANK":11,"BRAND":"레니본","NML_SUM":"2,089,168","EVT_SUM":"67.050","SALE_TOT":"2,156,219","LAST_SALE_TOT":"2,381,792","GROWTH_RATE":"-9 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"431.244"},
+                  {"EDI":"SSG","NML_RANK":12,"TOT_RANK":12,"BRAND":"미니멈","NML_SUM":"1,296,501","EVT_SUM":"801.730","SALE_TOT":"2,098,231","LAST_SALE_TOT":"3,540,706","GROWTH_RATE":"-41 %","TOT_STR_CNT":8,"TOT_STORE_AVG":"262.279"},
+                  {"EDI":"SSG","NML_RANK":10,"TOT_RANK":13,"BRAND":"오브제","NML_SUM":"1,623,766","EVT_SUM":"","SALE_TOT":"1,623,766","LAST_SALE_TOT":"985.211","GROWTH_RATE":"65 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"541.255"},
+                  {"EDI":"SSG","NML_RANK":14,"TOT_RANK":14,"BRAND":"도호","NML_SUM":"887.879","EVT_SUM":"81.848","SALE_TOT":"969.727","LAST_SALE_TOT":"2,014,989","GROWTH_RATE":"-52 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"323.242"},
+                  {"EDI":"SSG","NML_RANK":15,"TOT_RANK":15,"BRAND":"데무","NML_SUM":"355.312","EVT_SUM":"85.350","SALE_TOT":"440.662","LAST_SALE_TOT":"","GROWTH_RATE":"0 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"146.887"},
+                  {"EDI":"HYUNDAI","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"19,937,736","EVT_SUM":"","SALE_TOT":"19,937,736","LAST_SALE_TOT":"26,945,868","GROWTH_RATE":"-26 %","TOT_STR_CNT":14,"TOT_STORE_AVG":"1,424,124"},
+                  {"EDI":"HYUNDAI","NML_RANK":2,"TOT_RANK":2,"BRAND":"구호","NML_SUM":"11,937,107","EVT_SUM":"","SALE_TOT":"11,937,107","LAST_SALE_TOT":"17,737,457","GROWTH_RATE":"-33 %","TOT_STR_CNT":13,"TOT_STORE_AVG":"918.239"},
+                  {"EDI":"HYUNDAI","NML_RANK":3,"TOT_RANK":3,"BRAND":"랑방","NML_SUM":"9,889,715","EVT_SUM":"","SALE_TOT":"9,889,715","LAST_SALE_TOT":"13,510,207","GROWTH_RATE":"-27 %","TOT_STR_CNT":10,"TOT_STORE_AVG":"988.971"},
+                  {"EDI":"HYUNDAI","NML_RANK":4,"TOT_RANK":4,"BRAND":"마 인","NML_SUM":"8,848,657","EVT_SUM":"","SALE_TOT":"8,848,657","LAST_SALE_TOT":"12,382,678","GROWTH_RATE":"-29 %","TOT_STR_CNT":13,"TOT_STORE_AVG":"680.666"},
+                  {"EDI":"HYUNDAI","NML_RANK":6,"TOT_RANK":5,"BRAND":"모조","NML_SUM":"5,193,731","EVT_SUM":"2,168,313","SALE_TOT":"7,362,043","LAST_SALE_TOT":"8,485,829","GROWTH_RATE":"-13 %","TOT_STR_CNT":10,"TOT_STORE_AVG":"736.204"},
+                  {"EDI":"HYUNDAI","NML_RANK":5,"TOT_RANK":6,"BRAND":"미샤","NML_SUM":"6,841,080","EVT_SUM":"","SALE_TOT":"6,841,080","LAST_SALE_TOT":"9,078,624","GROWTH_RATE":"-25 %","TOT_STR_CNT":11,"TOT_STORE_AVG":"621.916"},
+                  {"EDI":"HYUNDAI","NML_RANK":9,"TOT_RANK":7,"BRAND":"지고트","NML_SUM":"2,865,023","EVT_SUM":"2,083,364","SALE_TOT":"4,948,388","LAST_SALE_TOT":"7,338,496","GROWTH_RATE":"-33 %","TOT_STR_CNT":11,"TOT_STORE_AVG":"449.853"},
+                  {"EDI":"HYUNDAI","NML_RANK":7,"TOT_RANK":8,"BRAND":"오브제","NML_SUM":"4,497,230","EVT_SUM":"","SALE_TOT":"4,497,230","LAST_SALE_TOT":"6,304,654","GROWTH_RATE":"-29 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"499.692"},
+                  {"EDI":"HYUNDAI","NML_RANK":8,"TOT_RANK":9,"BRAND":"데무","NML_SUM":"3,078,979","EVT_SUM":"1,385,843","SALE_TOT":"4,464,822","LAST_SALE_TOT":"7,252,648","GROWTH_RATE":"-38 %","TOT_STR_CNT":11,"TOT_STORE_AVG":"405.893"},
+                  {"EDI":"HYUNDAI","NML_RANK":11,"TOT_RANK":10,"BRAND":"린","NML_SUM":"1,888,603","EVT_SUM":"2,306,012","SALE_TOT":"4,194,615","LAST_SALE_TOT":"6,197,992","GROWTH_RATE":"-32 %","TOT_STR_CNT":9,"TOT_STORE_AVG":"466.068"},
+                  {"EDI":"HYUNDAI","NML_RANK":10,"TOT_RANK":11,"BRAND":"아이잗컬렉션","NML_SUM":"2,559,484","EVT_SUM":"1,498,561","SALE_TOT":"4,058,046","LAST_SALE_TOT":"6,230,421","GROWTH_RATE":"-35 %","TOT_STR_CNT":10,"TOT_STORE_AVG":"405.805"},
+                  {"EDI":"HYUNDAI","NML_RANK":12,"TOT_RANK":12,"BRAND":"도호","NML_SUM":"1,385,070","EVT_SUM":"1,008,761","SALE_TOT":"2,393,832","LAST_SALE_TOT":"3,600,370","GROWTH_RATE":"-34 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"478.766"},
+                  {"EDI":"HYUNDAI","NML_RANK":13,"TOT_RANK":13,"BRAND":"미니멈","NML_SUM":"1,042,571","EVT_SUM":"311.121","SALE_TOT":"1,353,691","LAST_SALE_TOT":"1,290,640","GROWTH_RATE":"5 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"676.846"},
+                  {"EDI":"HYUNDAI","NML_RANK":14,"TOT_RANK":14,"BRAND":"레니본","NML_SUM":"775.873","EVT_SUM":"78.047","SALE_TOT":"853.921","LAST_SALE_TOT":"1,294,571","GROWTH_RATE":"-34 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"213.480"},
+                  {"EDI":"HYUNDAI","NML_RANK":'',"TOT_RANK":'',"BRAND":"Theory","NML_SUM":"10,240,195","EVT_SUM":"877.573","SALE_TOT":"11,117,768","LAST_SALE_TOT":"17,014,703","GROWTH_RATE":"-35 %","TOT_STR_CNT":13,"TOT_STORE_AVG":"855.213"},
+                  {"EDI":"GALLERIA","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"7,537,657","EVT_SUM":"","SALE_TOT":"7,537,657","LAST_SALE_TOT":"10,790,388","GROWTH_RATE":"-30 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"1,507,531"},
+                  {"EDI":"GALLERIA","NML_RANK":2,"TOT_RANK":2,"BRAND":"랑방","NML_SUM":"3,973,132","EVT_SUM":"","SALE_TOT":"3,973,132","LAST_SALE_TOT":"5,338,624","GROWTH_RATE":"-26 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"1,324,377"},
+                  {"EDI":"GALLERIA","NML_RANK":3,"TOT_RANK":3,"BRAND":"구호","NML_SUM":"3,954,259","EVT_SUM":"","SALE_TOT":"3,954,259","LAST_SALE_TOT":"6,020,762","GROWTH_RATE":"-34 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"790.852"},
+                  {"EDI":"GALLERIA","NML_RANK":4,"TOT_RANK":4,"BRAND":"미샤","NML_SUM":"3,038,054","EVT_SUM":"","SALE_TOT":"3,038,054","LAST_SALE_TOT":"4,397,975","GROWTH_RATE":"-31 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"607.611"},
+                  {"EDI":"GALLERIA","NML_RANK":5,"TOT_RANK":5,"BRAND":"마 인","NML_SUM":"2,076,946","EVT_SUM":"","SALE_TOT":"2,076,946","LAST_SALE_TOT":"3,174,865","GROWTH_RATE":"-35 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"415.389"},
+                  {"EDI":"GALLERIA","NML_RANK":6,"TOT_RANK":6,"BRAND":"데코","NML_SUM":"1,726,126","EVT_SUM":"85.807","SALE_TOT":"1,811,934","LAST_SALE_TOT":"2,889,746","GROWTH_RATE":"-37 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"452.983"},
+                  {"EDI":"GALLERIA","NML_RANK":7,"TOT_RANK":7,"BRAND":"아이잗컬렉션","NML_SUM":"1,561,097","EVT_SUM":"226.644","SALE_TOT":"1,787,740","LAST_SALE_TOT":"2,819,805","GROWTH_RATE":"-37 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"446.935"},
+                  {"EDI":"GALLERIA","NML_RANK":9,"TOT_RANK":8,"BRAND":"도호","NML_SUM":"1,093,423","EVT_SUM":"495.696","SALE_TOT":"1,589,119","LAST_SALE_TOT":"2,311,322","GROWTH_RATE":"-31 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"397.280"},
+                  {"EDI":"GALLERIA","NML_RANK":8,"TOT_RANK":9,"BRAND":"모조","NML_SUM":"1,141,131","EVT_SUM":"281.402","SALE_TOT":"1,422,533","LAST_SALE_TOT":"2,155,289","GROWTH_RATE":"-34 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"474.178"},
+                  {"EDI":"GALLERIA","NML_RANK":10,"TOT_RANK":10,"BRAND":"레니본","NML_SUM":"1,002,517","EVT_SUM":"9.448","SALE_TOT":"1,011,966","LAST_SALE_TOT":"1,841,618","GROWTH_RATE":"-45 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"337.322"},
+                  {"EDI":"GALLERIA","NML_RANK":11,"TOT_RANK":11,"BRAND":"데무","NML_SUM":"633.729","EVT_SUM":"123.076","SALE_TOT":"756.804","LAST_SALE_TOT":"1,187,019","GROWTH_RATE":"-36 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"252.268"},
+                  {"EDI":"GALLERIA","NML_RANK":12,"TOT_RANK":12,"BRAND":"오브제","NML_SUM":"504.593","EVT_SUM":"","SALE_TOT":"504.593","LAST_SALE_TOT":"364.597","GROWTH_RATE":"38 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"252.297"},
+                  {"EDI":"GALLERIA","NML_RANK":13,"TOT_RANK":13,"BRAND":"지고트","NML_SUM":"292.591","EVT_SUM":"74.490","SALE_TOT":"367.081","LAST_SALE_TOT":"913.554","GROWTH_RATE":"-60 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"183.541"},
+                  {"EDI":"GALLERIA","NML_RANK":14,"TOT_RANK":14,"BRAND":"린","NML_SUM":"232.574","EVT_SUM":"84.352","SALE_TOT":"316.926","LAST_SALE_TOT":"304.457","GROWTH_RATE":"4 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"158.463"},
+                  {"EDI":"GALLERIA","NML_RANK":'',"TOT_RANK":'',"BRAND":"Theory","NML_SUM":"2,259,206","EVT_SUM":"","SALE_TOT":"2,259,206","LAST_SALE_TOT":"3,320,137","GROWTH_RATE":"-32 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"564.802"},
+                  {"EDI":"AK","NML_RANK":1,"TOT_RANK":1,"BRAND":"타 임","NML_SUM":"2,575,964","EVT_SUM":"","SALE_TOT":"2,575,964","LAST_SALE_TOT":"4,291,540","GROWTH_RATE":"-40 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"858.655"},
+                  {"EDI":"AK","NML_RANK":2,"TOT_RANK":2,"BRAND":"구호","NML_SUM":"2,057,024","EVT_SUM":"","SALE_TOT":"2,057,024","LAST_SALE_TOT":"3,073,172","GROWTH_RATE":"-33 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"514.256"},
+                  {"EDI":"AK","NML_RANK":3,"TOT_RANK":3,"BRAND":"랑방","NML_SUM":"1,211,057","EVT_SUM":"","SALE_TOT":"1,211,057","LAST_SALE_TOT":"1,651,503","GROWTH_RATE":"-27 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"1,211,057"},
+                  {"EDI":"AK","NML_RANK":4,"TOT_RANK":4,"BRAND":"모조","NML_SUM":"661.163","EVT_SUM":"180.185","SALE_TOT":"841.348","LAST_SALE_TOT":"1,556,990","GROWTH_RATE":"-46 %","TOT_STR_CNT":5,"TOT_STORE_AVG":"168.270"},
+                  {"EDI":"AK","NML_RANK":5,"TOT_RANK":5,"BRAND":"마 인","NML_SUM":"647.515","EVT_SUM":"","SALE_TOT":"647.515","LAST_SALE_TOT":"573.408","GROWTH_RATE":"13 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"647.515"},
+                  {"EDI":"AK","NML_RANK":6,"TOT_RANK":6,"BRAND":"오브제","NML_SUM":"622.378","EVT_SUM":"","SALE_TOT":"622.378","LAST_SALE_TOT":"420.282","GROWTH_RATE":"48 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"311.189"},
+                  {"EDI":"AK","NML_RANK":7,"TOT_RANK":7,"BRAND":"레니본","NML_SUM":"552.190","EVT_SUM":"11.257","SALE_TOT":"563.447","LAST_SALE_TOT":"936.515","GROWTH_RATE":"-40 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"140.862"},
+                  {"EDI":"AK","NML_RANK":10,"TOT_RANK":8,"BRAND":"미니멈","NML_SUM":"334.872","EVT_SUM":"224.583","SALE_TOT":"559.454","LAST_SALE_TOT":"853.228","GROWTH_RATE":"-34 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"139.864"},
+                  {"EDI":"AK","NML_RANK":9,"TOT_RANK":9,"BRAND":"지고트","NML_SUM":"376.180","EVT_SUM":"151.812","SALE_TOT":"527.993","LAST_SALE_TOT":"1,167,398","GROWTH_RATE":"-55 %","TOT_STR_CNT":4,"TOT_STORE_AVG":"131.998"},
+                  {"EDI":"AK","NML_RANK":8,"TOT_RANK":10,"BRAND":"미샤","NML_SUM":"527.154","EVT_SUM":"","SALE_TOT":"527.154","LAST_SALE_TOT":"734.503","GROWTH_RATE":"-28 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"263.577"},
+                  {"EDI":"AK","NML_RANK":12,"TOT_RANK":11,"BRAND":"아이잗컬렉션","NML_SUM":"147.394","EVT_SUM":"116.651","SALE_TOT":"264.045","LAST_SALE_TOT":"607.810","GROWTH_RATE":"-57 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"264.045"},
+                  {"EDI":"AK","NML_RANK":11,"TOT_RANK":12,"BRAND":"데코","NML_SUM":"159.425","EVT_SUM":"8.323","SALE_TOT":"167.748","LAST_SALE_TOT":"614.868","GROWTH_RATE":"-73 %","TOT_STR_CNT":3,"TOT_STORE_AVG":"55.916"},
+                  {"EDI":"AK","NML_RANK":13,"TOT_RANK":13,"BRAND":"데무","NML_SUM":"30.258","EVT_SUM":"24.953","SALE_TOT":"55.211","LAST_SALE_TOT":"265.831","GROWTH_RATE":"-79 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"55.211"},
+                  {"EDI":"AK","NML_RANK":14,"TOT_RANK":14,"BRAND":"린","NML_SUM":"9.824","EVT_SUM":"7.218","SALE_TOT":"17.042","LAST_SALE_TOT":"","GROWTH_RATE":"0 %","TOT_STR_CNT":1,"TOT_STORE_AVG":"17.042"},
+                  {"EDI":"AK","NML_RANK":'',"TOT_RANK":'',"BRAND":"Theory","NML_SUM":"961.726","EVT_SUM":"202.151","SALE_TOT":"1,163,877","LAST_SALE_TOT":"1,998,600","GROWTH_RATE":"-42 %","TOT_STR_CNT":2,"TOT_STORE_AVG":"581.938"}];
       let keyList = Object.keys(_.keyBy(data, 'EDI'));
-      console.log("keyList >>> ", keyList);
       let newData = new Object();
       for(let i in keyList) {
-        newData[Number(i)+1 + "_" + keyList[i]] = [];
+        newData[keyList[i]] = [];
       }
-      console.log("getEdiRankList >>> ", data);
-      let index = 0;
+      console.log("data >>> ", data);
       _.forEach(newData, function(value, key) {
         for(let i = 0; i < data.length; i++) {
-          if(key.split("_")[1] == data[i].EDI) {
+          if(key == data[i].EDI) {
             newData[key].push(data[i]);
           }
         }
       });
       this.ediRankData = newData;
-
-
-      let tmepKeys = Object.keys(_.keyBy(data, 'BRAND'));
-      let totoEdiData = new Array();
-      for(let i in tmepKeys) {
-        let brdObj = new Object();
-        brdObj["BRAND"]         = tmepKeys[i]
-        brdObj["NML_SUM"]       = _.sumBy(data, function(o) { return o.BRAND == tmepKeys[i]?Number(o.NML_SUM.replace(/\,/g, '')):0; });
-        brdObj["EVT_SUM"]       = _.sumBy(data, function(o) { return o.BRAND == tmepKeys[i]?Number(o.EVT_SUM.replace(/\,/g, '')):0; });
-        brdObj["SALE_TOT"]      = _.sumBy(data, function(o) { return o.BRAND == tmepKeys[i]?Number(o.SALE_TOT.replace(/\,/g, '')):0; });
-        brdObj["LAST_SALE_TOT"] = _.sumBy(data, function(o) { return o.BRAND == tmepKeys[i]?Number(o.LAST_SALE_TOT.replace(/\,/g, '')):0; });
-        brdObj["TOT_STR_CNT"]   = _.sumBy(data, function(o) { return o.BRAND == tmepKeys[i]?Number(o.TOT_STR_CNT):0; });
-        brdObj["TOT_STORE_AVG"] = _.sumBy(data, function(o) { return o.BRAND == tmepKeys[i]?Number(o.TOT_STORE_AVG.replace(/\,/g, '')):0; });
-        totoEdiData.push(brdObj);
-      }
-      this.brdkeyList = tmepKeys;
-      console.log("brdkeyList >>> ", this.brdkeyList);
-
-      let nmlRankList = _.orderBy(totoEdiData, ['NML_SUM'], ['desc'])
-      let totRankList = _.orderBy(totoEdiData, ['SALE_TOT'], ['desc'])
-
-      for(let j in totoEdiData) {
-        totoEdiData[j]["GROWTH_RATE"] = Math.round((totoEdiData[j].SALE_TOT/totoEdiData[j].LAST_SALE_TOT-1)*100);
-        totoEdiData[j]["NML_RANK"]    = _.findIndex(nmlRankList, { 'NML_SUM': totoEdiData[j].NML_SUM })+1;
-        totoEdiData[j]["TOT_RANK"]    = _.findIndex(totRankList, { 'SALE_TOT': totoEdiData[j].SALE_TOT })+1;
-      }
-      console.log("totoEdiData >>> ", totoEdiData);
-      this.ediRankData["0_통합"] = totoEdiData;
-
       console.log("ediRankData >>> ", this.ediRankData);
 
+      let brdkeyList = Object.keys(_.keyBy(data, 'BRAND'));
+      let newBrdData = new Array();
+      for(let i in brdkeyList) {
+        let brdObj = new Object();
+        brdObj["BRAND"] = brdkeyList[i]
+        brdObj["NML_SUM"] = _.sumBy(data, function(o) { return o.BRAND == brdkeyList[i]?Number(o.NML_SUM.replace(/\,/g, '')):0; });
+        brdObj["EVT_SUM"] = _.sumBy(data, function(o) { return o.BRAND == brdkeyList[i]?Number(o.EVT_SUM.replace(/\,/g, '')):0; });
+        brdObj["SALE_TOT"] = _.sumBy(data, function(o) { return o.BRAND == brdkeyList[i]?Number(o.SALE_TOT.replace(/\,/g, '')):0; });
+        brdObj["LAST_SALE_TOT"] = _.sumBy(data, function(o) { return o.BRAND == brdkeyList[i]?Number(o.LAST_SALE_TOT.replace(/\,/g, '')):0; });
+        brdObj["TOT_STR_CNT"] = _.sumBy(data, function(o) { return o.BRAND == brdkeyList[i]?Number(o.TOT_STR_CNT):0; });
+        brdObj["TOT_STORE_AVG"] = _.sumBy(data, function(o) { return o.BRAND == brdkeyList[i]?Number(o.TOT_STORE_AVG.replace(/\,/g, '')):0; });
+        newBrdData.push(brdObj);
+      }
+
+      for(let j in newBrdData) {
+        newBrdData[j]["GROWTH_RATE"] = Math.round((newBrdData[j].SALE_TOT/newBrdData[j].LAST_SALE_TOT-1)*100);
+        // console.log(newBrdData[j].NML_SUM + " / " + newBrdData[j]["BRAND"] + " >>> ", _.sortedIndexOf(Object.keys(_.keyBy(newBrdData, function(o) { return o.NML_SUM; })), newBrdData[j].NML_SUM.toString()));
+      }
+      // console.log("newBrdData >>> ", Object.keys(_.keyBy(newBrdData, function(o) { return o.NML_SUM; })));
     },
     link(val) {
       //this.$router.push(val)
@@ -1169,11 +1098,8 @@ export default {
       this.selectedSUNM = _.find(this.authCodeList, {MCODE: this.selectedSUCD}).CODNM
       $("tr.on").removeClass("on")
       $(".click_text").removeClass("click_text")
-      if(this.dr_C.length != 0) {
-        this.dr_THIS = _.find(this.dr_C, ['BRCD', this.selectedSUNM]).DATA;
-        let elmnt = document.getElementById("store_sale_tbody2");
-        elmnt.scrollTop = 0;
-      }
+      this.dr_THIS = _.find(this.dr_C, ['BRCD', this.selectedSUNM]).DATA;
+      console.log("dr_THIS >>> ", this.dr_THIS);
     },
     imageExist(url) {
       var img = new Image();

@@ -24,10 +24,13 @@ export default {
       }
     }).then(x => x.data)
   },
-  getClothCodeList() {
+  getClothCodeList(sucd) {
     return axios.get(apiUrl() + "style/getClothCodeList").then(x => x.data)
   },
   getFabricsCodeList() {
     return axios.get(apiUrl() + "style/getFabricsCodeList").then(x => x.data)
+  },
+  getColorsCodeList() {
+    return axios.get(apiUrl() + "style/getColorsCodeList").then(x => x.data)
   },
 }

@@ -22,7 +22,7 @@
             </small>
           </h2>
           <div class="layout_spacer"></div>
-          <div class="groups pr20" style="display: none">
+          <div class="groups pr20">
             <div class="toggle_group tg_sty01">
               <label class="tg_btn" :class="{'is-checked': p_tb_choice === 1}">
                 <input type="radio" id="option-s" class="tg_radio" name="select_table" :value="1" v-model="p_tb_choice" style="display:none" @click="p_chageTable(1)" />

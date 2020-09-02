@@ -49,14 +49,15 @@ export default {
       }
     }).then(x => x.data)
   },
-  getSDInfo(selectedCODE, vdcdData, choice, year, month) {
+  getSDInfo(selectedCODE, vdcdData, choice, year, month, region) {
     return axios.post(apiUrl() + "hum/getSDInfo", {
       params : { 
         selectedCODE : selectedCODE,
         vdcdData : vdcdData,
         choice : choice,
         year : year,
-        month : month
+        month : month,
+        region : region
       }
     }).then(x => x.data)
   }

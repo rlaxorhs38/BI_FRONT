@@ -230,6 +230,8 @@ export default {
         cloth_a: null,
         fabrics: [],
         fabric_a: null,
+        colors: [],
+        color_a: null,
         releaseCodes: null,
         releaseNm: null,
         saleCodes: null,
@@ -308,6 +310,8 @@ export default {
       this.filterData.cloth_a = this.data.filterData.cloth_a
       this.filterData.fabrics = this.data.filterData.fabrics
       this.filterData.fabric_a = this.data.filterData.fabric_a
+      this.filterData.colors = this.data.filterData.colors
+      this.filterData.color_a = this.data.filterData.color_a
 
       this.filterData.releaseCodes = this.data.filterData.releaseCodes
       this.filterData.releaseNm = this.data.filterData.releaseNm
@@ -363,6 +367,8 @@ export default {
       this.filterData.cloth_a = true
       this.filterData.fabrics = []
       this.filterData.fabric_a = true
+      this.filterData.colors = []
+      this.filterData.color_a = true
 
       this.filterData.releaseCodes = "RELEASEALL"
       this.filterData.releaseNm =  "출고 유형 전체"
@@ -730,6 +736,7 @@ export default {
           title_range += "복종 전체"
         } else {
           if (this.filterData.cloths.length > 0) { // 복종
+            title_range += "복종: "
             for (let i=0;i<this.filterData.cloths.length;i++) {
               title_range += "'" + this.filterData.cloths[i] + "'"
               if (i < this.filterData.cloths.length - 1) {
@@ -747,6 +754,7 @@ export default {
           title_range += "소재 전체"
         } else {
           if (this.filterData.fabrics.length > 0) { // 소재
+            title_range += "소재: "
             for (let i=0;i<this.filterData.fabrics.length;i++) {
               title_range += "'" + this.filterData.fabrics[i] + "'"
               if (i < this.filterData.fabrics.length - 1) {
@@ -755,6 +763,24 @@ export default {
             }
           } else {
             title_range += "소재 -"
+          }
+        }
+        
+        title_range += " / "
+
+        if (this.filterData.color_a) { // 컬러 전체
+          title_range += "컬러 전체"
+        } else {
+          if (this.filterData.colors.length > 0) { // 컬러
+            title_range += "컬러: "
+            for (let i=0;i<this.filterData.colors.length;i++) {
+              title_range += "'" + this.filterData.colors[i] + "'"
+              if (i < this.filterData.colors.length - 1) {
+                title_range += ","
+              }
+            }
+          } else {
+            title_range += "컬러 -"
           }
         }
         
@@ -907,6 +933,8 @@ export default {
         this.filterData.cloth_a = data.cloth_a // 복종전체 체크
         this.filterData.fabrics = data.fabrics
         this.filterData.fabric_a = data.fabric_a // 소재전체 체크
+        this.filterData.colors = data.colors
+        this.filterData.color_a = data.color_a // 컬러전체 체크
         this.filterData.releaseCodes = data.releaseCodes // 출고유형
         this.filterData.releaseNm = data.releaseNm // 출고유형 텍스트
         this.filterData.saleCodes = data.saleCodes // 판매유형

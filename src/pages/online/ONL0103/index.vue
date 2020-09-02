@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="wrap">
+  <div class="wrap" @click="clear(interval)">
     <!-- drawer_열리는 클래스 : on -->
     <div class="layout_drawer" :class="{on: drawer}">
       <h1 class="tit_drawer teamSelector" @click="toMain"><img src="@/assets/images/img_logo.png" alt="sisun" /></h1>
@@ -283,21 +283,21 @@
           <div class="col_md_5 npl" id="salesMonthlyDiv">
             <div class="cont_box h100">
               <div class="tit">
-                <!--
                 <div class="tab">
                   <ul>
                     <li :class="{'on': gubun == 1}">
-                      <a href="javascript:void(0);" @click="tabVal('1')">온라인 월간 매출추이</a>
+                      <a href="javascript:void(0);" @click="tabVal(1)">주문</a>
                     </li>
-                    <li :class="{'on': gubun == 2}" style="display:none;">
-                      <a href="javascript:void(0);" @click="tabVal('2')">온라인 월간 매출_막대</a>
+                    <li :class="{'on': gubun == 2}">
+                      <a href="javascript:void(0);" @click="tabVal(2)">판매</a>
+                    </li>
+                    <li :class="{'on': gubun == 3}">
+                      <a href="javascript:void(0);" @click="tabVal(3)">결제</a>
                     </li>
                   </ul>
                 </div>
-                -->
               </div>
               <div class="cont">
-                <!--
                 <div class="tr pr10 mt10"> 단위: 백만원 </div>
                 <div class="graph_area" style="height: auto;" v-show="gubun == 1">
                   <div class="graph_view npt">
@@ -313,7 +313,13 @@
                     </div>
                   </div>
                 </div>
-                -->
+                <div class="graph_area" style="height: auto;" v-show="gubun == 3">
+                  <div class="graph_view npt">
+                    <div class="graph" style="position:relative; width:100%; height:270px;">
+                      <div id="chartdiv4" style="position:relative; width:100%; height:100%; float:left;"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -407,13 +413,13 @@ export default {
   props: {
     data: Object
   },
-  mounted() {
-    this.setLoadData();
-  },
   created() {
     this.getMakeDataDate();
     this.selectDate = moment().subtract(1, "days").format("YYYY-MM-DD");
-    // this.loadData()
+  },
+  mounted() {
+    this.setLoadData();
+    this.lotate();
   },
   computed: {
     req2svr: () => req2svr,
@@ -461,10 +467,32 @@ export default {
       chart2: null,
       gubun: 1,
       codeText: '전체',
-      choice2: 1
+      choice2: 1,
+      interval: null,
+      jasaSaleList: []
     }
   },
   methods: {
+    lotate() {
+      let lotation = sessionStorage.getItem("loatation")
+      if(lotation == "true" || lotation == true) {
+        this.interval = window.setTimeout(this.func, 10000);
+      } 
+    },
+    func() {
+      this.$router.push({
+        name: "STO0003_1",
+        params: {
+          data: 
+          {
+            flag: true
+          }
+        }
+      })
+    },
+    clear(timer) {
+      clearInterval(timer)
+    },
     getMakeRate(jasa, out, tot, gu) {
       if(Number(jasa)+Number(out)  == 0 || Number(tot) == 0 ) {
         return "0.0"
@@ -514,6 +542,8 @@ export default {
       //this.getITOnOffDetailData()
       this.getBaseSaleList()
       this.setChartData(this.month)
+      let source = []
+      this.geJasaSaleList()
     },
     getSaleByBrandList: function () {
       this.req2svr.getSaleByBrandList(this.year).then(
@@ -608,7 +638,7 @@ export default {
             }
 
             this.baseSaleList.unshift(totObj);
-            console.log("baseSaleList >>> ", this.baseSaleList);
+            // console.log("baseSaleList >>> ", this.baseSaleList);
             
             //console.log(this.brandSaleList);
           }
@@ -636,7 +666,7 @@ export default {
               totObj["TOTSILAMT"+(i+1)] = this.brdSaleMslList.map(x => Number(x["TOTSILAMT"+(i+1)])).reduce(function (pre, value) { return pre + value; });
             }
             this.brdSaleMslList.push(totObj);
-            console.log("this.brdSaleMslList >>> ", this.brdSaleMslList);
+            // console.log("this.brdSaleMslList >>> ", this.brdSaleMslList);
           }
         },
         rej => {
@@ -670,7 +700,7 @@ export default {
               offDataObj["AMT"+(i+1)] = this.itOnffImptMslList.map(x => Number(x["AMT"+(i+1)])).reduce(function (pre, value) { return pre - value; });
             }
             this.itOnffImptMslList.push(offDataObj);
-            console.log("getITOnOffDetailData >> ", this.itOnffImptMslList);
+            // console.log("getITOnOffDetailData >> ", this.itOnffImptMslList);
           }
         },
         rej => {
@@ -692,7 +722,7 @@ export default {
       //let startDate = (this.year).toString() + this.twinNum(mon) + "01"
       let endDate = this.year.toString() + "1231";
       // let endDate = this.year.toString() + this.twinNum(mon) + ( new Date(this.year, mon, 0) ).getDate().toString();
-      console.log("!!MonthlyDate >>> ", startDate, " / ", endDate);
+      // console.log("!!MonthlyDate >>> ", startDate, " / ", endDate);
       this.req2svr.getMonthlySaleList(startDate, endDate).then(
         res => {
           if (res.MACHBASE_ERROR) {
@@ -734,7 +764,7 @@ export default {
             this.makeDailyChart(mon, this.monthlySaleList)
             //this.makeMonthlyChart(this.monthlySaleList)
             //this.makeMonthlyBarChart(this.monthlySaleList)
-            console.log("monthlySaleList >>> ", this.monthlySaleList);
+            // console.log("monthlySaleList >>> ", this.monthlySaleList);
           }
         },
         rej => {
@@ -926,7 +956,7 @@ export default {
       //let startDate = this.year.toString() + this.twinNum(mon) + "01"
       let startDate = moment(this.selectDate).format("YYYYMM") + "01"
       let endDate = moment(this.selectDate).format("YYYYMMDD");
-      console.log("!!DailyDate >>> ", startDate, " / ", endDate);
+      // console.log("!!DailyDate >>> ", startDate, " / ", endDate);
       this.req2svr.getDailySaleList(startDate, endDate).then(
         res => {
           if (res.MACHBASE_ERROR) {
@@ -983,7 +1013,7 @@ export default {
               }
             }
             this.makeDailyChart(mon, this.dailySaleList)
-            console.log("dailySaleList >>> ", this.dailySaleList);
+            // console.log("dailySaleList >>> ", this.dailySaleList);
           }
         },
         rej => {
@@ -1276,7 +1306,7 @@ export default {
               }
               break;
             default:
-              console.log("unknown month " + month);
+              // console.log("unknown month " + month);
               return 0;
               break;
         }
@@ -1336,37 +1366,17 @@ export default {
       this.initCalendar();
     },
     changeBusiness: function(code) {
-      console.log("code >>> " + code, " / ", this.chart1.graphs);
+      // console.log("code >>> " + code, " / ", this.chart1.graphs);
       if(code == '00') {
         this.codeText = '전체'
       } else {
         this.codeText = code
       }
       this.choice = 1, this.choice_copy = 1;
-      //this.changeGraph(code);
       this.selectedCODE = code;
       this.getDailySaleList(this.month);
       //this.makeDailyChart(this.month, this.dailySaleList);
       //this.makeMonthlyChart(this.monthlySaleList);
-    },
-    changeGraph: function(code) {
-      if(code == "00") {
-        for(var i in this.chart1.graphs) {
-          if(this.chart1.graphs[i].hidden) this.chart1.showGraph(this.chart1.graphs[i])
-        }
-        for(var i in this.chart2.graphs) {
-          if(this.chart2.graphs[i].hidden) this.chart2.showGraph(this.chart2.graphs[i])
-        }
-      } else {
-        for(var i in this.chart1.graphs) {
-          if(this.chart1.graphs[i].hidden) this.chart1.showGraph(this.chart1.graphs[i])
-          if(this.chart2.graphs[i].hidden) this.chart2.showGraph(this.chart2.graphs[i])
-          if(this.chart1.graphs[i].id != "AmGraph-TOT" && this.chart1.graphs[i].id.indexOf(code) != 8) {
-            this.chart1.hideGraph(this.chart1.graphs[i])
-            this.chart2.hideGraph(this.chart2.graphs[i])
-          }
-        }
-      }
     },
     changeCumulativeData: function() {
       let source = [], returnSource = [];
@@ -1417,7 +1427,7 @@ export default {
           TOTDAYTOT : compare_day > this_day? "" : PRE_TOTDAYTOT + Number(source[i].TOTDAYTOT)
         })
       }
-      console.log("!!!!returnSource >>> ",returnSource)
+      // console.log("!!!!returnSource >>> ",returnSource)
       return returnSource
     },
     changeType: function(type) {
@@ -1442,6 +1452,7 @@ export default {
     },
     tabVal: function(gbn) {
       this.gubun = Number(gbn);
+      this.geJasaSaleList();
     },
     comma: function(num) {
       let str
@@ -1452,6 +1463,114 @@ export default {
         return "";
       }
       
+    },
+    geJasaSaleList: function () {
+      let basedt = moment(this.selectDate).format("YYYYMMDD");
+      this.req2svr.geJasaSaleList(this.selectedCODE, basedt, this.gubun).then(
+        res => {
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res);
+          } else {
+            this.jasaSaleList = [];
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            if(count == 1) {
+              this.jasaSaleList.push(res);
+            } else if(count > 1) {
+              this.jasaSaleList = JSON.parse("[" + res + "]");
+            }
+            console.log("jasaSaleList >>> ", this.jasaSaleList);
+            for(let i =0; i < 12; i++) {
+              if(this.jasaSaleList[i]) {
+                this.jasaSaleList[i]["INCRESE_AMT"] = this.comma(this.jasaSaleList[i].YEAR - this.jasaSaleList[i].LAST)
+                this.jasaSaleList[i]["INCRESE_RATE"] = Math.round(((this.jasaSaleList[i].YEAR - this.jasaSaleList[i].LAST)/this.jasaSaleList[i].LAST)*100/100*100)
+                this.jasaSaleList[i]["ORDER_DT"] = Number(this.jasaSaleList[i].ORDER_DT) + "월"
+              } else {
+                this.jasaSaleList.push({ORDER_DT:(i+1)+"월"})
+              }
+            }
+            this.makeJasaSaleChart(this.jasaSaleList)
+          }
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      )
+    },
+    makeJasaSaleChart: function (source) {
+      let divName = "chartdiv" + (this.gubun+1);
+      
+      this.chart2 = AmCharts.makeChart(divName, {
+        type: "serial",
+        startEffect: "easeOutSine",
+        categoryField: "ORDER_DT",
+        colors: ["#DC6788","#67B7DC"],
+        sequencedAnimation: false,
+        startEffect: "easeInSine",
+        categoryAxis: {
+          axisAlpha: 0.1,
+          gridPosition: "start",
+          gridAlpha: 0.05,
+          tickLength: 0,
+          startOnAxis: false,
+          fontSize: 12,
+          autoWrap: false, 
+          minHorizontalGap: 0,
+        },
+        chartCursor: {
+          categoryBalloonEnabled: false,
+          cursorAlpha: 0,
+          zoomable: false
+        },
+        trendLines: [],
+        graphs: [
+          {
+            balloonText: (this.year-1)+"년: [[value]]",
+            id: "AmGraph-LAST",
+            valueField: "LAST",
+            fillAlphas: 0,
+            lineAlpha: 0.99,
+            title: (this.year-1)+"년",
+            bulletSize: 5,
+            bullet: "diamond",
+            markerType: "diamond"
+          },
+          {
+            balloonText: this.year+"년: <b>[[value]]</b><br>작년대비<br>증감액: [[INCRESE_AMT]]<br>증감률: [[INCRESE_RATE]]%",
+            id: "AmGraph-YEAR",
+            valueField: "YEAR",
+            fillAlphas: 0,
+            lineAlpha: 0.99,
+            title: this.year+"년",
+            bulletSize: 5,
+            bullet: "round",
+            markerType: "round",
+            fontSize: 10
+          }
+        ],
+        guides: [],
+        valueAxes: [
+          {
+            axisAlpha: 0.1,
+            id: "ValueAxis-1",
+            gridColor: "#FFFFFF",
+            tickLength: 0,
+            showFirstLabel: true,
+            title: "",
+            fontSize: 13,
+            minimum: 0
+          }
+        ],
+        allLabels: [],
+        balloon: {},
+        legend: {
+          enabled: false,
+          align: "center",
+          fontSize: 13,
+          position: "bottom"
+        },
+        titles: [],
+        dataProvider: source
+      });
     }
   },
   filters: {

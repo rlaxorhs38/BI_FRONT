@@ -543,8 +543,9 @@ export default {
     },
     getSDInfo() {
       this.sdData = []
+      let region = this.selectRegion
 
-      this.req2svr.getSDInfo(this.selectedCODE, this.vdcdData, this.choice, this.year, this.month).then(
+      this.req2svr.getSDInfo(this.selectedCODE, this.vdcdData, this.choice, this.year, this.month, region).then(
         res => {
           this.sdData = []
           if (res.MACHBASE_ERROR) {

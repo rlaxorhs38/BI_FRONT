@@ -864,6 +864,10 @@ const authCheckURL = function(next, isRoot, path) {
       || path == "/DailyReportDetail"
       || path == "/StoreMain"
       || path == "/WeeklyReport"
+      || path == "/HumMain"
+      || path == "/HumRegionSdList"
+      || path == "/HumSeList"
+      || path == "/Crm"
       || path == "/Error") {
         next()
       } else {

@@ -1,5 +1,5 @@
 ﻿<template>
-    <div class="wrap_side_scroll" id="scroll">
+    <div class="wrap_side_scroll" id="scroll" @click="clear(interval)">
         <!-- side menu -->
         <div class="layout_drawer" :class="{on: drawer}">
             <h1 class="tit_drawer teamSelector" @click="toMain"><img src="@/assets/images/img_logo.png" alt="sisun" /></h1>
@@ -503,12 +503,13 @@ export default {
     storeMonthSalesStatusPopup
   },
   props: {
-    // data: {
-    //   type: Object
-    // }
+    data: {
+      type: Object
+    }
   },
   mounted() {
     this.loadData()
+    this.lotate();
   },
   created() {
     // this.year = moment().subtract(1, "month").format("YYYY")
@@ -592,6 +593,7 @@ export default {
       monthSalesPopupData: {},
       salesTotal: [],
       selectedCODE: "1",
+      interval: null,
       gubuns: [
             {category_en: "department", category_ko: "백화점"},
             {category_en: "mall",       category_ko: "몰"},
@@ -601,6 +603,26 @@ export default {
     }
   },
   methods: {
+    lotate() {
+        let lotation = sessionStorage.getItem("loatation")
+        if(lotation == "true" || lotation == true) {
+            this.interval = window.setTimeout (this.func, 10000);
+        } 
+    },
+    func() {
+      this.$router.push({
+        name: "FIN0101",
+        params: {
+          data: 
+          {
+            flag: true
+          }
+        }
+      })
+    },
+    clear(timer) {
+      clearInterval(timer)
+    },
     loadData() {
         this.getSalesTotal()
         this.getMakeDataDate()
@@ -2071,7 +2093,7 @@ export default {
         }
         let color = ["rgb(140, 190, 249)", "rgb(63, 147, 245)"]
         fontFamily: "GothamBold",
-        console.log(val)
+        // console.log(val)
 
         AmCharts.makeChart(divName, {
             type: "serial",

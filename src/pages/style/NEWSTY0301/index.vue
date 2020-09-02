@@ -234,7 +234,7 @@
                     </span>
                   </label>
                   <!-- filter_fabric -->
-                  <label class="tg_btn tg_btn_st2" for="filter-con-2">
+                  <label class="tg_btn tg_btn_st2 mb20" for="filter-con-2">
                     <input type="checkbox" id="filter-con-2" class="tg_radio" name="filter-con" value="1" />
                     <span class="btn_n txt_check">
                       <div class="ct_check_item">
@@ -251,6 +251,31 @@
                         <div class="list">
                           <label class="tg_btn" v-for="(data, index) in fabricCodes" :key="index" :for="'filter-fa-' + index">
                             <input type="checkbox" class="cg_check" :id="'filter-fa-' + index" @click="changeFabric(data)" :checked="data.checked" />
+                            <span class="cg_box"><i class="material-icons">done</i></span>
+                            <span class="btn_n btn_s txt_label">{{ data.code }}</span>
+                          </label>
+                        </div>
+                      </div>
+                    </span>
+                  </label>
+                  <!-- filter_color -->
+                  <label class="tg_btn tg_btn_st2" for="filter-con-3">
+                    <input type="checkbox" id="filter-con-3" class="tg_radio" name="filter-co-3" value="1" />
+                    <span class="btn_n txt_check">
+                      <div class="ct_check_item">
+                        <label class="tg_btn" for="filter-con-3-0">
+                          <input type="checkbox" id="filter-con-3-0" class="cg_check" v-model="color_a" @click="changeColorAll(null)" />
+                          <span class="cg_box"><i class="material-icons">done</i></span>
+                          <span class="txt_label">컬러 전체</span>
+                        </label>
+                      </div>
+                    </span>
+                    <span class="btn_n btn_dropdown"><i class="material-icons">arrow_drop_down</i></span>
+                    <span class="dropdown cg_sty03" style="height: 390px;">
+                      <div class="scroll_cont">
+                        <div class="list">
+                          <label class="tg_btn" v-for="(data, index) in colorCodes" :key="index" :for="'filter-co-' + index">
+                            <input type="checkbox" class="cg_check" :id="'filter-co-' + index" @click="changeColor(data)" :checked="data.checked" />
                             <span class="cg_box"><i class="material-icons">done</i></span>
                             <span class="btn_n btn_s txt_label">{{ data.code }}</span>
                           </label>
@@ -404,6 +429,9 @@ export default {
       fabricCodes: [{code:"", checked:false}], // 소재
       fabric_a: false,
       fabrics: [],
+      colorCodes: [{code:"", checked:false}], // 컬러
+      color_a: false,
+      colors: [],
       releaseNm: "출고 유형 전체", // 선택한 출고 유형 텍스트
       releaseCodes: "RELEASEALL", // 선택한 출고 유형 code
       saleNm: "판매 유형 전체", // 선택한 판매 유형 텍스트
@@ -716,6 +744,38 @@ export default {
           // 소재 전체 선택
           this.changeFabricAll(true)
 
+          // color
+          this.getColorsCodeList(changeSucd)
+        },
+        rej => {
+          console.log("rej", rej);
+        }
+      )
+    },
+    getColorsCodeList(changeSucd) {
+
+      // color
+      this.req2svr.getColorsCodeList().then(
+        res => {
+          if (res.MACHBASE_ERROR) {
+            console.log("res", res);
+          } else {
+            this.colorCodes = []
+            let count = (JSON.stringify(res).match(/{/g) || []).length;
+            if(count < 1) {
+            } else if(count == 1) {
+              this.colorCodes.push({code: res.COLCD, checked: false});
+            } else {
+              let list = JSON.parse("[" + res + "]");
+              for (let i=0;i<list.length;i++) {
+                this.colorCodes.push({code: list[i].COLCD, checked: false});
+              }
+            }
+          }
+
+          // color 전체 선택
+          this.changeColorAll(true)
+
           if(!this.cloneFilterData.first && !changeSucd){
             this.initData()
           } else {
@@ -873,6 +933,26 @@ export default {
           this.fabric_a = true
         } else {
           this.fabric_a = false
+        }
+
+        this.colors = this.cloneFilterData.colors
+        if (this.colors.length > 0) {
+          for (let i=0;i<this.colorCodes.length;i++) {
+            if (_.indexOf(this.colors, this.colorCodes[i].code) > -1) {
+              this.colorCodes[i].checked = true
+            } else {
+              this.colorCodes[i].checked = false
+            }
+          }
+        } else {
+          for (let i=0;i<this.colorCodes.length;i++) {
+            this.colorCodes[i].checked = false
+          }
+        }
+        if (this.cloneFilterData.color_a) {
+          this.color_a = true
+        } else {
+          this.color_a = false
         }
 
         this.releaseCodes = this.cloneFilterData.releaseCodes
@@ -1157,6 +1237,46 @@ export default {
         this.fabric_a = false
       }
     },
+    // 컬러 전체 선택
+    changeColorAll(isAll) {
+      if (isAll == null) {
+        isAll = document.getElementById("filter-con-3-0").checked
+      }
+      if (isAll == false) {
+        this.colors = []
+        for (let i=0;i<this.colorCodes.length;i++) {
+          this.colorCodes[i].checked = false
+        }
+      } else if (isAll == true) {
+        this.colors = []
+        for (let i=0;i<this.colorCodes.length;i++) {
+          this.colorCodes[i].checked = true
+          this.colors.push(this.colorCodes[i].code)
+        }        
+      }
+      if (this.colors.length == this.colorCodes.length) {
+        this.color_a = true
+      } else {
+        this.color_a = false
+      }
+    },
+    // 컬러 개별 선택
+    changeColor(data) {
+      data.checked = !data.checked
+      if (data.checked) {
+        this.colors.push(data.code)
+      } else {
+        let index = this.colors.indexOf(data.code)
+        if (index > -1) {
+          this.colors.splice(index, 1)
+        }
+      }
+      if (this.colors.length == this.colorCodes.length) {
+        this.color_a = true
+      } else {
+        this.color_a = false
+      }
+    },
     // 출고유형 선택
     changeRelease(code , codenm) {
       this.releaseNm = codenm
@@ -1200,6 +1320,8 @@ export default {
           cloth_a: this.cloth_a, // 복종전체 체크
           fabrics: this.fabrics, // 소재
           fabric_a: this.fabric_a, // 소재전체 체크
+          colors: this.colors, // 소재
+          color_a: this.color_a, // 소재전체 체크
           releaseCodes: this.releaseCodes, // 출고유형
           releaseNm: this.releaseNm, // 출고유형 텍스트
           saleCodes: this.saleCodes, // 판매유형
