@@ -414,12 +414,12 @@ export default {
   },
   created() {
     this.brandList = ["MI", "MO", "FO", "IT", "SO"];
-    const today = moment('2020-07-26')
-    let defaultStartDate = today.format('YYYY-MM') + "-01";
-    this.calDefaultDate = moment('2020-07-26').day('Sunday').format('YYYY-MM-DD')
+    //const today = moment('2020-07-26')
+    let defaultStartDate = moment().format('YYYY-MM') + "-01";
+    this.calDefaultDate = moment().day('Sunday').format('YYYY-MM-DD')
     this.standardStartDate = moment(this.calDefaultDate).subtract(6, 'days').format('YYYY-MM-DD')
-    if(moment(this.standardStartDate, 'YYYY-MM-DD').format('MM') != today.format('MM') 
-      && today.format('YYYYMMDD') >= moment(this.standardStartDate).day('Sunday').add(14, 'days').format('YYYYMMDD')) {
+    if(moment(this.standardStartDate, 'YYYY-MM-DD').format('MM') != moment().format('MM') 
+      && moment().format('YYYYMMDD') >= moment(this.standardStartDate).day('Sunday').add(14, 'days').format('YYYYMMDD')) {
       this.standardStartDate = defaultStartDate
     }
     if(moment(this.calDefaultDate).format('YYYYMMDD') == moment(this.defaultStartDate).day('Sunday').add(7, 'days').format('YYYYMMDD')) {
@@ -427,18 +427,22 @@ export default {
     }
 
     this.standardEndDate = this.calDefaultDate
-    if((moment(this.calDefaultDate, 'YYYY-MM-DD').format('MM') != today.format('MM') || moment(this.calDefaultDate, 'YYYY-MM-DD').format('MM') != moment(this.standardStartDate, 'YYYY-MM-DD').format('MM')) 
-      && moment(this.standardStartDate, 'YYYY-MM-DD').format('MM') < moment(this.calDefaultDate).day('Sunday').add(7, 'days').format('MM')) {
+    if((moment(this.calDefaultDate, 'YYYY-MM-DD').format('MM') != moment().format('MM') || moment(this.calDefaultDate, 'YYYY-MM-DD').format('MM') != moment(this.standardStartDate, 'YYYY-MM-DD').format('MM')) 
+      && moment().format('MM') < moment(this.calDefaultDate).day('Sunday').add(7, 'days').format('MM')) {
       this.standardEndDate = moment(this.standardStartDate).endOf('month').format('YYYY-MM-DD');
     }
-    if(today.format('YYYYMMDD') == moment(this.calDefaultDate).format('YYYYMMDD')) {
-      this.standardStartDate = today.subtract(13, 'days').format('YYYY-MM-DD')
+    if(moment().format('YYYYMMDD') == moment(this.calDefaultDate).format('YYYYMMDD')) {
+      this.standardStartDate = moment().subtract(13, 'days').format('YYYY-MM-DD')
       this.standardEndDate = moment(this.standardStartDate).add(6, 'days').format('YYYY-MM-DD')
     }
     this.year = moment(this.standardStartDate).format("YYYY");
     this.month = moment(this.standardStartDate).format("M");
 
-    let cuerrentYear = Number(today.format("YYYY"));
+    console.log("calDefaultDate >>> ", this.calDefaultDate)
+    console.log("standardStartDate >>> ", this.standardStartDate)
+    console.log("standardEndDate >>> ", this.standardEndDate)
+
+    let cuerrentYear = Number(moment().format("YYYY"));
     let code
     for (let i = 0; i < 5; i++) {
       code = this.$store.getters.getYearCode(cuerrentYear - (4 - i))

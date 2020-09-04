@@ -62,7 +62,7 @@
                 <div class="input_text" type="text" id="date">
                   <date-pick
                     v-model="selectDate"
-                    @input="getStoreList"
+                    @input="p_changeDate"
                     startWeekOnSunday
                     :inputAttributes="{readonly: true}"
                   ></date-pick>
@@ -552,6 +552,15 @@ export default {
         document.getElementById("table_1").style.display = "none";
         document.getElementById("table_2").style.display = "block";
         this.getsalesRanking();
+      }
+    },
+    p_changeDate() {
+      if(this.p_tb_choice == 1) {
+        this.getStoreList();
+      } else if (this.p_tb_choice == 2) {
+        this.getsalesRanking();
+      } else {
+        // 오류~
       }
     },
     getsalesRanking() {
