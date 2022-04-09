@@ -15,7 +15,7 @@
     "exif-js": "^2.3.0",
     "lodash": "^4.17.10",
     "material-design-icons-iconfont": "^4.0.3",
-    "moment": "^2.23.0",
+    "moment": "^2.29.2",
     "url-search-params-polyfill": "^5.0.0",
     "vue": "^2.5.2",
     "vue-date-pick": "^1.1.0",
